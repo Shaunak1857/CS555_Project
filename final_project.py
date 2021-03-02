@@ -198,5 +198,5 @@ class GEDCOM:
 
 
 if __name__ == '__main__':
-    gedcom1 = GEDCOM('project1.ged', sort='uid')
+    gedcom1 = GEDCOM('Test.ged', sort='uid')
     gedcom1.pretty_print()
