@@ -191,7 +191,9 @@ class GEDCOM:
         return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
     def pretty_print(self):
+        print('Individuals')
         print(tabulate(self.indi_df, headers='keys', tablefmt='psql'), '\n')
+        print('Families')
         print(tabulate(self.fam_df, headers='keys', tablefmt='psql'))
 
 
