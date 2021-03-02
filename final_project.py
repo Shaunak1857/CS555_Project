@@ -1,3 +1,6 @@
+import datetime
+import re
+
 import pandas as pd
 from tabulate import tabulate
 
@@ -8,10 +11,17 @@ class Individual:
         self.name = name
         self.sex = sex
         self.birt = birt
+        self.age = self.get_age()
         self.deat = deat
         self.alive = True if self.deat is None else False
         self.famc = famc
         self.fams = fams
+
+    def get_age(self):
+        if self.birt is not None:
+            return datetime.date.today().year - datetime.datetime.strptime(self.birt, '%Y %b %d').year
+        else:
+            return None
 
     def as_dict(self):
         return {
@@ -19,6 +29,7 @@ class Individual:
             'name': self.name,
             'sex': self.sex,
             'birt': self.birt,
+            'age': self.age,
             'deat': self.deat,
             'alive': self.alive,
             'famc': self.famc,
@@ -51,8 +62,14 @@ class Family:
 
 
 class GEDCOM:
-    def __init__(self, filename):
-        self.fileparser(filename)
+    def __init__(self, filename, sort=None):
+        indi_df, fam_df = self.fileparser(filename)
+
+        self.indi_df = indi_df
+        self.fam_df = fam_df
+
+        if sort is not None:
+            self.sort(sort)
 
     @staticmethod
     def fileLength(f):
@@ -68,6 +85,31 @@ class GEDCOM:
                 xdata = i + i
         return xdata
 
+    def sort(self, sort):
+        # for when sorting by id, sort by the number inside the id instead of alphabetically
+        def human_sort(col): return pd.Series(
+            [int(re.findall(r'(\d+)', x)[0]) for x in col])
+
+        def sort_by_column(sort, df):
+            human_sort_keys = ['uid', 'famc', 'fams', 'husb', 'wife']
+            if sort in human_sort_keys:
+                key = human_sort
+            else:
+                key = None
+
+            if sort in df:
+                return df.sort_values(sort, ignore_index=True,
+                                      key=key).reset_index(drop=True)
+            else:
+                return df
+
+        if type(sort) is str:
+            self.indi_df = sort_by_column(sort, self.indi_df)
+            self.fam_df = sort_by_column(sort, self.fam_df)
+        elif type(sort) is list:
+            self.indi_df = sort_by_column(sort[0], self.indi_df)
+            self.fam_df = sort_by_column(sort[1], self.fam_df)
+
     def fileparser(self, filename):
         File = open(filename, 'r')
         f = GEDCOM.fileLength(open(filename))
@@ -75,9 +117,9 @@ class GEDCOM:
         fam = 0
         indiData = Individual()
         familyData = Family()
-        indi_pd = pd.DataFrame(columns=list(
+        indi_df = pd.DataFrame(columns=list(
             indiData.as_dict().keys()))      # pandas dataframe of INDI objects
-        fam_pd = pd.DataFrame(columns=list(
+        fam_df = pd.DataFrame(columns=list(
             familyData.as_dict().keys()))    # pandas dataframe of FAM objects
 
         for line in File:
@@ -102,11 +144,11 @@ class GEDCOM:
                         indiData.famc = elems[2]
                     if(elems[1] == 'HUSB'):
                         familyData.husb = elems[2]
-                        familyData.husb_name = indi_pd[indi_pd.uid ==
+                        familyData.husb_name = indi_df[indi_df.uid ==
                                                        familyData.husb].iloc[0]['name']     # Find the husband's name in the individual list
                     if(elems[1] == 'WIFE'):
                         familyData.wife = elems[2]
-                        familyData.wife_name = indi_pd[indi_pd.uid ==
+                        familyData.wife_name = indi_df[indi_df.uid ==
                                                        familyData.wife].iloc[0]['name']     # Find the wife's name in the individual list
                     if(elems[1] == 'CHIL'):
                         familyData.childrens.append(elems[2])
@@ -116,6 +158,7 @@ class GEDCOM:
                         date = elems[4] + " " + elems[3] + " " + elems[2]
                         if(dateID == 'BIRT'):
                             indiData.birt = date
+                            indiData.age = indiData.get_age()
                         if(dateID == 'DEAT'):
                             indiData.deat = date
                             indiData.alive = False
@@ -126,12 +169,12 @@ class GEDCOM:
 
                 if(elems[0] == '0'):
                     if(indi == 1):  # adding the last object in the file
-                        indi_pd = indi_pd.append(
+                        indi_df = indi_df.append(
                             indiData.as_dict(), ignore_index=True)
                         indiData = Individual()
                         indi = 0
                     if(fam == 1):
-                        fam_pd = fam_pd.append(
+                        fam_df = fam_df.append(
                             familyData.as_dict(), ignore_index=True)
                         famData = Family()
                         fam = 0
@@ -145,11 +188,13 @@ class GEDCOM:
                             fam = 1
                             familyData.uid = (elems[1])
 
-        self.indi_pd = indi_pd
-        self.fam_pd = fam_pd
+        return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
+
+    def pretty_print(self):
+        print(tabulate(self.indi_df, headers='keys', tablefmt='psql'), '\n')
+        print(tabulate(self.fam_df, headers='keys', tablefmt='psql'))
 
 
 if __name__ == '__main__':
-    gedcom1 = GEDCOM('project1.ged')
-    print(tabulate(gedcom1.indi_pd, headers='keys', tablefmt='psql'), '\n')
-    print(tabulate(gedcom1.fam_pd, headers='keys', tablefmt='psql'))
+    gedcom1 = GEDCOM('project1.ged', sort='uid')
+    gedcom1.pretty_print()
