@@ -77,13 +77,13 @@ class GEDCOM:
             pass
         return i + 1
 
-    @staticmethod
-    def Name(x):
-        xdata = ''
-        for i in x:
-            if(i != '/'):
-                xdata = i + i
-        return xdata
+    # @staticmethod
+    # def Name(x):
+    #     xdata = ''
+    #     for i in x:
+    #         if(i != '/'):
+    #             xdata = i + i
+    #     return xdata
 
     def sort(self, sort):
         # for when sorting by id, sort by the number inside the id instead of alphabetically
@@ -127,7 +127,7 @@ class GEDCOM:
             if(elems != []):
                 if(elems[0] == '1'):
                     if(elems[1] == 'NAME'):
-                        indiData.name = elems[2] + " " + GEDCOM.Name(elems[3])
+                        indiData.name = ' '.join(elems[2:])
                     if(elems[1] == 'SEX'):
                         indiData.sex = elems[2]
                     if(elems[1] == 'BIRT'):
