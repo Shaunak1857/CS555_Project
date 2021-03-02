@@ -151,5 +151,7 @@ class GEDCOM:
 
 if __name__ == '__main__':
     gedcom1 = GEDCOM('project1.ged')
+    print("Individials")
     print(tabulate(gedcom1.indi_pd, headers='keys', tablefmt='psql'), '\n')
+    print("Families")
     print(tabulate(gedcom1.fam_pd, headers='keys', tablefmt='psql'))
