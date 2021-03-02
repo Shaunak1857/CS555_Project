@@ -1,4 +1,5 @@
 import pandas as pd
+from tabulate import tabulate
 
 
 class Individual:
@@ -150,5 +151,5 @@ class GEDCOM:
 
 if __name__ == '__main__':
     gedcom1 = GEDCOM('project1.ged')
-    print(gedcom1.indi_pd, '\n')
-    print(gedcom1.fam_pd)
+    print(tabulate(gedcom1.indi_pd, headers='keys', tablefmt='psql'), '\n')
+    print(tabulate(gedcom1.fam_pd, headers='keys', tablefmt='psql'))
