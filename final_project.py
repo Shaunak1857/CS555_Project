@@ -190,13 +190,19 @@ class GEDCOM:
 
         return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
-    def pretty_print(self):
-        print('Individuals')
-        print(tabulate(self.indi_df, headers='keys', tablefmt='psql'), '\n')
-        print('Families')
-        print(tabulate(self.fam_df, headers='keys', tablefmt='psql'))
+    def pretty_print(self, filename=None):
+        tables = 'Individuals\n'
+        tables += tabulate(self.indi_df, headers='keys', tablefmt='psql')
+        tables += '\n'
+        tables += 'Families\n'
+        tables += tabulate(self.fam_df, headers='keys', tablefmt='psql')
+        print(tables)
+
+        if filename is not None:
+            with open(filename, 'w+') as f:
+                f.write(tables)
 
 
 if __name__ == '__main__':
     gedcom1 = GEDCOM('Test.ged', sort='uid')
-    gedcom1.pretty_print()
+    gedcom1.pretty_print(filename='gedcom1_table.txt')
