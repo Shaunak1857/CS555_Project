@@ -6,22 +6,59 @@ from tabulate import tabulate
 
 
 class Individual:
+    DEFAULT_DATE_FORMAT = '%Y %b %d'
+
     def __init__(self, uid=None, name=None, sex=None, birt=None, deat=None, famc=None, fams=None):
         self.uid = uid
         self.name = name
         self.sex = sex
         self.birt = birt
-        self.age = self.get_age()
         self.deat = deat
+        self.age = self.get_age()
         self.alive = True if self.deat is None else False
         self.famc = famc
         self.fams = fams
 
-    def get_age(self):
+    def get_age(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is not None:
-            return datetime.date.today().year - datetime.datetime.strptime(self.birt, '%Y %b %d').year
+            last_year = datetime.date.today().year
+            if self.deat is not None:
+                last_year = datetime.datetime.strptime(
+                    self.deat, date_format).year
+            return last_year - datetime.datetime.strptime(self.birt, date_format).year
         else:
             return None
+
+    # Validation functions to be used in validate() that follows the standard:
+    # Input : self
+    # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error)
+    def validate_birt_deat(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.birt is None:
+            return 'ERROR', self.uid, self.name, 'has no birth date'
+
+        if self.deat is None:
+            return None
+
+        birthday = datetime.datetime.strptime(self.birt, date_format)
+        deathday = datetime.datetime.strptime(self.deat, date_format)
+        if (deathday - birthday).days < 0:
+            pronoun = 'his' if self.sex == 'M' else 'her'
+            return 'ERROR', self.name, self.uid, 'has a birth date later than ' + pronoun + ' death date'
+        else:
+            return None
+
+    # Takes in a list of validation functions that follows the above mentioned standard
+    # Input : self, list of validation functions
+    # Output: List of errors/anomalies associated with this Individual object
+    def validate(self, validations=[validate_birt_deat]):
+        messages = []
+        for v in validations:
+            results = v(self)
+            if results is not None:
+                msg = '{type}: {name} ({uid}) {msg}.'.format(
+                    type=results[0], uid=results[1], name=results[2], msg=results[3])
+                messages.append(msg)
+        return messages
 
     def as_dict(self):
         return {
@@ -38,7 +75,9 @@ class Individual:
 
 
 class Family:
-    def __init__(self, uid=None, husb=None, husb_name=None, wife=None, wife_name=None, marr=None, div=None, childrens=[]):
+    DEFAULT_DATE_FORMAT = '%Y %b %d'
+
+    def __init__(self, uid=None, husb=None, husb_name=None, wife=None, wife_name=None, marr=None, div=None, childrens=None):
         self.uid = uid
         self.husb = husb
         self.husb_name = husb_name
@@ -46,7 +85,40 @@ class Family:
         self.wife_name = wife_name
         self.marr = marr
         self.div = div
-        self.childrens = childrens
+        self.childrens = [] if childrens is None else childrens
+
+    # Validation functions to be used in validate() that follows the standard:
+    # Input : self
+    # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error),
+    #         list of uid of individuals involved,
+    #         list of name of individuals involved (order must match list of individual uid)
+    def validate_marr_div(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.div is None:
+            return None
+
+        marriage_date = datetime.datetime.strptime(self.marr, date_format)
+        divorce_date = datetime.datetime.strptime(self.div, date_format)
+        if (divorce_date - marriage_date).days < 0:
+            return 'ERROR', self.uid, 'has a marriage date later than its divorce date', [self.husb, self.wife], [self.husb_name, self.wife_name]
+        else:
+            return None
+
+    # Takes in a list of validation functions that follows the above mentioned standard
+    # Input : self, list of validation functions
+    # Output: List of errors/anomalies associated with this Family object
+    def validate(self, validations=[validate_marr_div]):
+        messages = []
+        for v in validations:
+            results = v(self)
+            if results is not None:
+                indi_uids = results[3]
+                indi_names = results[4]
+                indi_involved = ', '.join(
+                    [uid + ' (' + name + ')' for uid, name in zip(indi_uids, indi_names)])
+                msg = '{type}: Family {uid} {msg}.\nIndividual(s) involved: {indis}'.format(
+                    type=results[0], uid=results[1], msg=results[2], indis=indi_involved)
+                messages.append(msg)
+        return messages
 
     def as_dict(self):
         return {
@@ -61,21 +133,22 @@ class Family:
         }
 
 
-class GEDCOM:
+class Gedcom:
     def __init__(self, filename, sort=None):
-        indi_df, fam_df = self.fileparser(filename)
+        indi_df, fam_df, reports = self.fileparser(filename)
 
         self.indi_df = indi_df
         self.fam_df = fam_df
+        self.reports = reports
 
         if sort is not None:
             self.sort(sort)
 
-    @staticmethod
-    def fileLength(f):
-        for i, l in enumerate(f):
-            pass
-        return i + 1
+    # @staticmethod
+    # def fileLength(f):
+    #     for i, l in enumerate(f):
+    #         pass
+    #     return i + 1
 
     # @staticmethod
     # def Name(x):
@@ -111,8 +184,8 @@ class GEDCOM:
             self.fam_df = sort_by_column(sort[1], self.fam_df)
 
     def fileparser(self, filename):
-        File = open(filename, 'r')
-        f = GEDCOM.fileLength(open(filename))
+        f = open(filename)
+        # f = Gedcom.fileLength(open(filename))
         indi = 0
         fam = 0
         indiData = Individual()
@@ -121,8 +194,9 @@ class GEDCOM:
             indiData.as_dict().keys()))      # pandas dataframe of INDI objects
         fam_df = pd.DataFrame(columns=list(
             familyData.as_dict().keys()))    # pandas dataframe of FAM objects
+        reports = {}    # Dictionary that maps line number to a list of anomalies/errors
 
-        for line in File:
+        for i, line in enumerate(f):
             elems = line.split()
             if(elems != []):
                 if(elems[0] == '1'):
@@ -161,6 +235,7 @@ class GEDCOM:
                             indiData.age = indiData.get_age()
                         if(dateID == 'DEAT'):
                             indiData.deat = date
+                            indiData.age = indiData.get_age()
                             indiData.alive = False
                         if(dateID == 'MARR'):
                             familyData.marr = date
@@ -169,14 +244,20 @@ class GEDCOM:
 
                 if(elems[0] == '0'):
                     if(indi == 1):  # adding the last object in the file
+                        report = indiData.validate()
+                        if len(report) > 0:
+                            reports[i] = report
                         indi_df = indi_df.append(
                             indiData.as_dict(), ignore_index=True)
                         indiData = Individual()
                         indi = 0
                     if(fam == 1):
+                        report = familyData.validate()
+                        if len(report) > 0:
+                            reports[i] = report
                         fam_df = fam_df.append(
                             familyData.as_dict(), ignore_index=True)
-                        famData = Family()
+                        familyData = Family()
                         fam = 0
                     if(elems[1] in ['NOTE', 'TRLR', 'HEAD']):
                         pass
@@ -187,22 +268,35 @@ class GEDCOM:
                         if(elems[2] == 'FAM'):
                             fam = 1
                             familyData.uid = (elems[1])
-
-        return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
+        f.close()
+        return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True), reports
 
     def pretty_print(self, filename=None):
+        tables = self.__str__()
+        print(tables)
+        if filename is not None:
+            with open(filename, 'w+') as f:
+                f.write(tables)
+
+    def __str__(self):
         tables = 'Individuals\n'
         tables += tabulate(self.indi_df, headers='keys', tablefmt='psql')
         tables += '\n'
         tables += 'Families\n'
         tables += tabulate(self.fam_df, headers='keys', tablefmt='psql')
-        print(tables)
+        tables += '\n'
 
-        if filename is not None:
-            with open(filename, 'w+') as f:
-                f.write(tables)
+        if self.reports:
+            tables += 'Anomalies/Errors\n'
+            tables += '\n'.join(['Line ' + str(k) + ':\n' +
+                                 '\n'.join(v) for k, v in self.reports.items()])
+        return tables
 
 
 if __name__ == '__main__':
-    gedcom1 = GEDCOM('Test.ged', sort='uid')
+    gedcom_wrong = Gedcom('./tests/test_wrong.ged', sort='uid')
+    gedcom_wrong.pretty_print(filename='./tests/gedcom_wrong_table.txt')
+    gedcom_correct = Gedcom('./tests/test_correct.ged', sort='uid')
+    gedcom_correct.pretty_print(filename='./tests/gedcom_correct_table.txt')
+    gedcom1 = Gedcom('Test.ged', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')
