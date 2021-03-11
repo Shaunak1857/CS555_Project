@@ -1,14 +1,80 @@
 import datetime
 import re
+import os
+import json
+import sqlite3
 
 import pandas as pd
 from tabulate import tabulate
 
 
-class Individual:
+class GedcomeItem:
+    def __init__(self, db):
+        self.db = db
+
+    def db_indi_select(self, uid):
+        select_query = '''SELECT * FROM individuals WHERE uid=?'''
+        individual = None
+
+        try:
+            conn = sqlite3.connect(self.db)
+            cursor = conn.cursor()
+            cursor.execute(select_query, [uid])
+
+            indi = cursor.fetchone()
+            indi = [i if i != 'null' else None for i in indi]
+            individual = Individual(uid=indi[0],
+                                    name=indi[1],
+                                    sex=indi[2],
+                                    birt=indi[3],
+                                    deat=indi[5],
+                                    famc=json.loads(indi[7]),
+                                    fams=json.loads(indi[8]), db=self.db)
+        except sqlite3.Error as e:
+            print(e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+            return individual
+
+    def db_family_select(self, uid):
+        select_query = '''SELECT * FROM families WHERE uid=?'''
+        family = None
+
+        try:
+            conn = sqlite3.connect(self.db)
+            cursor = conn.cursor()
+            cursor.execute(select_query, [uid])
+
+            fam = cursor.fetchone()
+            fam = [f if f != 'null' else None for f in fam]
+            family = Family(uid=fam[0],
+                            husb=fam[1],
+                            husb_name=fam[2],
+                            wife=fam[3],
+                            wife_name=fam[4],
+                            marr=fam[5],
+                            div=fam[6],
+                            childrens=json.loads(fam[7]),
+                            db=self.db)
+        except sqlite3.Error as e:
+            print(e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+            return family
+
+
+class Individual(GedcomeItem):
     DEFAULT_DATE_FORMAT = '%Y %b %d'
 
-    def __init__(self, uid=None, name=None, sex=None, birt=None, deat=None, famc=None, fams=None):
+    def __init__(self, uid=None, name=None, sex=None, birt=None, deat=None, famc=None, fams=None, db=None, additional_validations=None):
+        super().__init__(db)
+
         self.uid = uid
         self.name = name
         self.sex = sex
@@ -18,6 +84,8 @@ class Individual:
         self.alive = True if self.deat is None else False
         self.famc = famc
         self.fams = fams
+
+        self.additional_validations = additional_validations
 
     def get_age(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is not None:
@@ -47,12 +115,37 @@ class Individual:
         else:
             return None
 
-    # Takes in a list of validation functions that follows the above mentioned standard
-    # Input : self, list of validation functions
+    def validate_birt_before_marr(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.famc is None:
+            return None
+
+        family = self.db_family_select(self.famc)
+        father = family.husb_name
+        mother = family.wife_name
+
+        birth_date = datetime.datetime.strptime(self.birt, date_format)
+        marriage_date = datetime.datetime.strptime(family.marr, date_format)
+        divorce_date = None
+        if family.div is not None:
+            divorce_date = datetime.datetime.strptime(family.div, date_format)
+        pronoun = 'his' if self.sex == 'M' else 'her'
+        if (birth_date - marriage_date).days < 0:
+            return 'ANOMALY', self.name, self.uid, 'has a birth date before ' + pronoun + ' parents\' marriage date'
+        elif divorce_date and (birth_date - divorce_date).days > 280:
+            return 'ANOMALY', self.name, self.uid, 'has a birth date more than 280 days later than ' + pronoun + ' parents\' divorce date'
+        else:
+            return None
+
+    validations = [validate_birt_deat, validate_birt_before_marr]
+    # Go through the list of validation functions in self.validations that follows the above mentioned standard
+    # Input : self
     # Output: List of errors/anomalies associated with this Individual object
-    def validate(self, validations=[validate_birt_deat]):
+
+    def validate(self):
         messages = []
-        for v in validations:
+        if self.additional_validations is not None:
+            self.validations += self.additional_validations
+        for v in self.validations:
             results = v(self)
             if results is not None:
                 msg = '{type}: {name} ({uid}) {msg}.'.format(
@@ -74,10 +167,12 @@ class Individual:
         }
 
 
-class Family:
+class Family(GedcomeItem):
     DEFAULT_DATE_FORMAT = '%Y %b %d'
 
-    def __init__(self, uid=None, husb=None, husb_name=None, wife=None, wife_name=None, marr=None, div=None, childrens=None):
+    def __init__(self, uid=None, husb=None, husb_name=None, wife=None, wife_name=None, marr=None, div=None, childrens=None, db=None, additional_validations=None):
+        super().__init__(db)
+
         self.uid = uid
         self.husb = husb
         self.husb_name = husb_name
@@ -86,6 +181,10 @@ class Family:
         self.marr = marr
         self.div = div
         self.childrens = [] if childrens is None else childrens
+
+        self.db = db
+
+        self.additional_validations = additional_validations
 
     # Validation functions to be used in validate() that follows the standard:
     # Input : self
@@ -103,19 +202,23 @@ class Family:
         else:
             return None
 
+    validations = [validate_marr_div]
     # Takes in a list of validation functions that follows the above mentioned standard
-    # Input : self, list of validation functions
+    # Input : self
     # Output: List of errors/anomalies associated with this Family object
-    def validate(self, validations=[validate_marr_div]):
+
+    def validate(self):
         messages = []
-        for v in validations:
+        if self.additional_validations is not None:
+            self.validations += self.additional_validations
+        for v in self.validations:
             results = v(self)
             if results is not None:
                 indi_uids = results[3]
                 indi_names = results[4]
                 indi_involved = ', '.join(
                     [uid + ' (' + name + ')' for uid, name in zip(indi_uids, indi_names)])
-                msg = '{type}: Family {uid} {msg}.\nIndividual(s) involved: {indis}'.format(
+                msg = '{type}: Family {uid} {msg}.\nIndividual(s) involved - {indis}'.format(
                     type=results[0], uid=results[1], msg=results[2], indis=indi_involved)
                 messages.append(msg)
         return messages
@@ -134,12 +237,23 @@ class Family:
 
 
 class Gedcom:
-    def __init__(self, filename, sort=None):
-        indi_df, fam_df, reports = self.fileparser(filename)
+    def __init__(self, filename, db, indi_validations=None, fam_validations=None, sort=None):
+        self.indi_validations = indi_validations
+        self.fam_validations = fam_validations
+
+        if Gedcom.db_setup(db):
+            self.db = db
+        else:
+            raise
+
+        individuals, families, indi_df, fam_df = self.fileparser(
+            filename)
 
         self.indi_df = indi_df
         self.fam_df = fam_df
-        self.reports = reports
+        self.individuals = individuals
+        self.families = families
+        self.reports = self.validate()
 
         if sort is not None:
             self.sort(sort)
@@ -157,6 +271,88 @@ class Gedcom:
     #         if(i != '/'):
     #             xdata = i + i
     #     return xdata
+
+    @staticmethod
+    def db_setup(db_file):
+        if os.path.exists(db_file):
+            os.remove(db_file)
+
+        conn = None
+        success = False
+
+        create_indi_table = '''
+                            CREATE TABLE individuals(
+                                uid TEXT PRIMARY KEY,
+                                name TEXT,
+                                sex TEXT,
+                                birt TEXT,
+                                age TEXT,
+                                deat TEXT,
+                                alive INTEGER,
+                                famc TEXT,
+                                fams TEXT
+                            )
+                            '''
+        create_family_table = '''
+                                CREATE TABLE families(
+                                    uid TEXT PRIMARY KEY,
+                                    husb TEXT,
+                                    husb_name TEXT,
+                                    wife TEXT,
+                                    wife_name TEXT,
+                                    marr TEXT,
+                                    div TEXT,
+                                    childrens TEXT
+                                )'''
+
+        try:
+            conn = sqlite3.connect(db_file)
+            cursor = conn.cursor()
+            cursor.execute(create_family_table)
+            cursor.execute(create_indi_table)
+            success = True
+        except sqlite3.Error as e:
+            print(e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+            return success
+
+    def db_insert(self, obj):
+        success = False
+        insert_query = ''
+        if type(obj) is Individual:
+            insert_query = '''INSERT INTO individuals(uid, name, sex, birt, age, deat, alive, famc, fams)
+                              VALUES (?,?,?,?,?,?,?,?,?)'''
+            params = list(obj.as_dict().values())
+            # Turn famc and fams list into string representation
+            # params[-2] = json.dumps(params[-2])
+            # params[-1] = json.dumps(params[-1])
+            # Turn alive into int
+            params[6] = int(params[6])
+        elif type(obj) is Family:
+            insert_query = '''INSERT INTO families(uid, husb, husb_name, wife, wife_name, marr, div, childrens)
+                              VALUES (?,?,?,?,?,?,?,?)'''
+            params = list(obj.as_dict().values())
+            # Turn childrens list into string representation
+            params[-1] = json.dumps(params[-1])
+
+        try:
+            conn = sqlite3.connect(self.db)
+            cursor = conn.cursor()
+            cursor.execute(insert_query, params)
+            conn.commit()
+            success = True
+        except sqlite3.Error as e:
+            print(e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+            return success
 
     def sort(self, sort):
         # for when sorting by id, sort by the number inside the id instead of alphabetically
@@ -186,15 +382,18 @@ class Gedcom:
     def fileparser(self, filename):
         f = open(filename)
         # f = Gedcom.fileLength(open(filename))
-        indi = 0
         fam = 0
-        indiData = Individual()
-        familyData = Family()
+        indi = 0
+        indiData = Individual(
+            db=self.db, additional_validations=self.indi_validations)
+        familyData = Family(
+            db=self.db, additional_validations=self.fam_validations)
         indi_df = pd.DataFrame(columns=list(
-            indiData.as_dict().keys()))      # pandas dataframe of INDI objects
+            indiData.as_dict().keys()))      # pandas dataframe of all individuals
         fam_df = pd.DataFrame(columns=list(
-            familyData.as_dict().keys()))    # pandas dataframe of FAM objects
-        reports = {}    # Dictionary that maps line number to a list of anomalies/errors
+            familyData.as_dict().keys()))    # pandas dataframe of all families
+        individuals = []    # List of all Individual object. Should match the info in indi_df
+        families = []       # List of all Family object. Should match the info in family_df
 
         for i, line in enumerate(f):
             elems = line.split()
@@ -244,20 +443,30 @@ class Gedcom:
 
                 if(elems[0] == '0'):
                     if(indi == 1):  # adding the last object in the file
-                        report = indiData.validate()
-                        if len(report) > 0:
-                            reports[i] = report
+                        # insert individual into database
+                        if not self.db_insert(indiData):
+                            raise
+                        # report = indiData.validate()
+                        # if len(report) > 0:
+                        #     reports[i] = report
+                        individuals.append(indiData)
                         indi_df = indi_df.append(
                             indiData.as_dict(), ignore_index=True)
-                        indiData = Individual()
+                        indiData = Individual(
+                            db=self.db, additional_validations=self.indi_validations)
                         indi = 0
                     if(fam == 1):
-                        report = familyData.validate()
-                        if len(report) > 0:
-                            reports[i] = report
+                        # Insert family into database
+                        if not self.db_insert(familyData):
+                            raise
+                        # report = familyData.validate()
+                        # if len(report) > 0:
+                        #     reports[i] = report
+                        families.append(familyData)
                         fam_df = fam_df.append(
                             familyData.as_dict(), ignore_index=True)
-                        familyData = Family()
+                        familyData = Family(
+                            db=self.db, additional_validations=self.indi_validations)
                         fam = 0
                     if(elems[1] in ['NOTE', 'TRLR', 'HEAD']):
                         pass
@@ -269,7 +478,21 @@ class Gedcom:
                             fam = 1
                             familyData.uid = (elems[1])
         f.close()
-        return indi_df.reset_index(drop=True), fam_df.reset_index(drop=True), reports
+        return individuals, families, indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
+
+    def validate(self):
+        reports = []
+        for i in self.individuals:
+            r = i.validate()
+            if r:
+                reports.append(i.validate())
+
+        for f in self.families:
+            r = f.validate()
+            if r:
+                reports.append(f.validate())
+
+        return reports
 
     def pretty_print(self, filename=None):
         tables = self.__str__()
@@ -288,15 +511,24 @@ class Gedcom:
 
         if self.reports:
             tables += 'Anomalies/Errors\n'
-            tables += '\n'.join(['Line ' + str(k) + ':\n' +
-                                 '\n'.join(v) for k, v in self.reports.items()])
+            tables += '\n'.join(sum(self.reports, []))
+
         return tables
+
+    # def __del__(self):
+    #     os.remove(self.db)
 
 
 if __name__ == '__main__':
-    gedcom_wrong = Gedcom('./tests/test_wrong.ged', sort='uid')
-    gedcom_wrong.pretty_print(filename='./tests/gedcom_wrong_table.txt')
-    gedcom_correct = Gedcom('./tests/test_correct.ged', sort='uid')
-    gedcom_correct.pretty_print(filename='./tests/gedcom_correct_table.txt')
-    gedcom1 = Gedcom('Test.ged', sort='uid')
+    gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
+                          db='./tests/steven/steven_test_wrong.db', sort='uid')
+    gedcom_wrong.pretty_print(
+        filename='./tests/steven/steven_gedcom_wrong_table.txt')
+
+    gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
+                            db='./tests/steven/steven_test_correct.db', sort='uid')
+    gedcom_correct.pretty_print(
+        filename='./tests/steven/steven_gedcom_correct_table.txt')
+
+    gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')

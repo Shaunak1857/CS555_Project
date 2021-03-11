@@ -9,24 +9,24 @@ Individuals
 |  4 | @I5@  | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |             | True    |        | @F4@   |
 |  5 | @I6@  | Adam /Smith/     | M     | 1949 JUN 6  |    72 |             | True    |        | @F2@   |
 |  6 | @I7@  | Jane /List/      | F     | 1948 SEP 6  |    73 |             | True    |        | @F2@   |
-|  7 | @I8@  | Henry /Lane/     | M     | 1970 OCT 13 |     0 | 1970 FEB 12 | False   | @F5@   | @F3@   |
+|  7 | @I8@  | Henry /Lane/     | M     | 1967 OCT 13 |   -17 | 1950 FEB 12 | False   | @F5@   | @F3@   |
 |  8 | @I9@  | Stephen /Lane/   | M     | 1991 OCT 13 |    30 |             | True    | @F3@   |        |
 |  9 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |             | True    |        | @F5@   |
 | 10 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |             | True    |        | @F5@   |
 +----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
 Families
-+----+-------+--------+---------------+--------+------------------+-------------+------------+-------------+
-|    | uid   | husb   | husb_name     | wife   | wife_name        | marr        | div        | childrens   |
-|----+-------+--------+---------------+--------+------------------+-------------+------------+-------------|
-|  0 | @F1@  | @I1@   | John /Smith/  | @I2@   | Mary /Jane/      | 2005 MAY 19 |            | ['@I3@']    |
-|  1 | @F2@  | @I6@   | Adam /Smith/  | @I7@   | Jane /List/      | 1969 JUL 10 |            | ['@I1@']    |
-|  2 | @F3@  | @I8@   | Henry /Lane/  | @I2@   | Mary /Jane/      | 1990 SEP 3  | 1970 OCT 8 | ['@I9@']    |
-|  3 | @F4@  | @I4@   | Bruce /Wayne/ | @I5@   | Martha /Barbara/ | 1940 NOV 6  |            | ['@I2@']    |
-|  4 | @F5@  | @I10@  | Joe /Lane/    | @I11@  | Amy /Luis/       | 1968 AUG 9  |            | ['@I8@']    |
-+----+-------+--------+---------------+--------+------------------+-------------+------------+-------------+
++----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------+
+|    | uid   | husb   | husb_name     | wife   | wife_name        | marr        | div         | childrens   |
+|----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------|
+|  0 | @F1@  | @I1@   | John /Smith/  | @I2@   | Mary /Jane/      | 2005 MAY 19 |             | ['@I3@']    |
+|  1 | @F2@  | @I6@   | Adam /Smith/  | @I7@   | Jane /List/      | 1969 JUL 10 |             | ['@I1@']    |
+|  2 | @F3@  | @I8@   | Henry /Lane/  | @I2@   | Mary /Jane/      | 1990 SEP 3  | 1970 OCT 8  | ['@I9@']    |
+|  3 | @F4@  | @I4@   | Bruce /Wayne/ | @I5@   | Martha /Barbara/ | 1940 NOV 6  |             | ['@I2@']    |
+|  4 | @F5@  | @I10@  | Joe /Lane/    | @I11@  | Amy /Luis/       | 1968 AUG 9  | 1970 AUG 10 | ['@I8@']    |
++----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------+
 Anomalies/Errors
-Line 92:
 ERROR: @I8@ (Henry /Lane/) has a birth date later than his death date.
-Line 147:
+ANOMALY: @I8@ (Henry /Lane/) has a birth date before his parents' marriage date.
+ANOMALY: @I9@ (Stephen /Lane/) has a birth date more than 280 days later than his parents' divorce date.
 ERROR: Family @F3@ has a marriage date later than its divorce date.
-Individual(s) involved: @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
