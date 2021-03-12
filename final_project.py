@@ -100,6 +100,8 @@ class Individual(GedcomeItem):
     # Validation functions to be used in validate() that follows the standard:
     # Input : self
     # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error)
+
+    # US3 - validate birth before death
     def validate_birt_deat(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is None:
             return 'ERROR', self.uid, self.name, 'has no birth date'
@@ -115,6 +117,7 @@ class Individual(GedcomeItem):
         else:
             return None
 
+    # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
     def validate_birt_before_marr(self, date_format=DEFAULT_DATE_FORMAT):
         if self.famc is None:
             return None
@@ -191,6 +194,8 @@ class Family(GedcomeItem):
     # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error),
     #         list of uid of individuals involved,
     #         list of name of individuals involved (order must match list of individual uid)
+
+    # US4 - validate marriage before divorce
     def validate_marr_div(self, date_format=DEFAULT_DATE_FORMAT):
         if self.div is None:
             return None

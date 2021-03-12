@@ -10,9 +10,9 @@ from final_project import *
 class TestGedcomSteven(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
-            './tests/steven/steven_test_correct.ged', './tests/steven_test_correct.db', sort='uid')
+            './tests/steven/steven_test_correct.ged', './tests/steven/steven_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/steven/steven_test_wrong.ged', './tests/steven_test_wrong.db', sort='uid')
+            './tests/steven/steven_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
 
     def test_birt_after_deat(self):
         indi_wrong = Individual(
