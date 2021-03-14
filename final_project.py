@@ -291,7 +291,7 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
     
-    validations = [validate_marr_div,validate_marr_before_death,validate_divorce_before_death,]
+    validations = [validate_marr_div,validate_marr_before_death,validate_divorce_before_death]
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Family object
