@@ -214,9 +214,7 @@ class Family(GedcomeItem):
 
     # US5 - Marriage should occur before death of either spouse
     def validate_marr_before_death(self,date_format=DEFAULT_DATE_FORMAT):
-        print(self.husb, self.wife)
         husb, wife = self.db_indi_select(uid = self.husb), self.db_indi_select(uid = self.wife)
-        print(husb, wife)
         if husb.deat is None:
             #alive
             if wife.deat is None:
@@ -225,14 +223,14 @@ class Family(GedcomeItem):
             else:
                 wifedeat = datetime.datetime.strptime(wife.deat, date_format)
                 marrdeat = datetime.datetime.strptime(self.marr, date_format)
-                if (marrdeat - wifedeat).days<0:
+                if (wifedeat - marrdeat).days<0:
                     return 'ERROR', self.wife, 'has a marriage date after her death date', [self.husb, self.wife], [self.husb_name, self.wife_name]
                 else:
                     return None
         else:
             husbdeat = datetime.datetime.strptime(husb.deat, date_format)
             marrdeat = datetime.datetime.strptime(self.marr, date_format)
-            if (marrdeat - husbdeat).days<0:
+            if (husbdeat - marrdeat).days<0:
                 return 'ERROR', self.husb, 'has a marriage date after his death date', [self.husb, self.wife], [self.husb_name, self.wife_name]
             else:
                 if wife.deat is None:
@@ -241,7 +239,7 @@ class Family(GedcomeItem):
                 else:
                     wifedeat = datetime.datetime.strptime(wife.deat, date_format)
                     marrdeat = datetime.datetime.strptime(self.marr, date_format)
-                    if (marrdeat - wifedeat)<0:
+                    if (wifedeat - marrdeat)<0:
                         return 'ERROR', self.wife, 'has a marriage date after her death date', [self.husb, self.wife], [self.husb_name, self.wife_name]
                     else:
                         return None
@@ -273,7 +271,7 @@ class Family(GedcomeItem):
                         return None
             else:
                 #husb died, and check error
-                husbdeat = datetime.datetime.strptime(self.div, date_format)
+                husbdeat = datetime.datetime.strptime(husb.deat, date_format)
                 if (husbdeat - divorce_date).days < 0:
                     # husband dided and there is an error
                     return 'ERROR', self.husb, 'has a divorce date after his death', [self.husb, self.wife], [self.husb_name, self.wife_name]
@@ -291,7 +289,7 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
     
-    validations = [validate_marr_div,validate_marr_before_death,validate_divorce_before_death]
+    validations = [validate_marr_div, validate_marr_before_death, validate_divorce_before_death]
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Family object
@@ -609,15 +607,15 @@ class Gedcom:
 
 
 if __name__ == '__main__':
-    # gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
-    #                       db='./tests/steven/steven_test_wrong.db', sort='uid')
-    # gedcom_wrong.pretty_print(
-    #     filename='./tests/steven/steven_gedcom_wrong_table.txt')
+    gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
+                          db='./tests/steven/steven_test_wrong.db', sort='uid')
+    gedcom_wrong.pretty_print(
+        filename='./tests/steven/steven_gedcom_wrong_table.txt')
 
-    # gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
-    #                         db='./tests/steven/steven_test_correct.db', sort='uid')
-    # gedcom_correct.pretty_print(
-    #     filename='./tests/steven/steven_gedcom_correct_table.txt')
+    gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
+                            db='./tests/steven/steven_test_correct.db', sort='uid')
+    gedcom_correct.pretty_print(
+        filename='./tests/steven/steven_gedcom_correct_table.txt')
 
     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')
