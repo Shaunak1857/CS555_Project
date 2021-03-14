@@ -28,8 +28,55 @@ class TestGedcomSteven(unittest.TestCase):
         received = indi_wrong.validate_birt_deat()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
+    
+    # US5 : Unit Test, Rachi
+    def test_mar_before_deat(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2000 MAY 5',
+            div='1999 MAY 5',
+            db='Test.db'
+        )
+
+        expected = ('ERROR', '@I11@', 'has a marriage date after his death date',
+                    ['@I11@', '@I2@'], ['Joe Philipson', 'Susan Johnson'])
+        
+        received = fam_wrong.validate_marr_before_death()
+        
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+        
+    # US5 : Unit Test, Rachi
+    def test_div_before_deat(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2000 MAY 5',
+            div='1999 MAY 5',
+            db='Test.db'
+        )
+
+        expected = ('ERROR', '@I11@', 'has a divorce date after his death',
+                    ['@I11@', '@I2@'], ['Joe Philipson', 'Susan Johnson'])
+        
+        received = fam_wrong.validate_divorce_before_death()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+
 
     def test_marr_after_div(self):
+
         fam_wrong = Family(
             uid='@F1@',
             husb='@I2@',
@@ -85,6 +132,7 @@ class TestGedcomSteven(unittest.TestCase):
         with open('./tests/steven/steven_gedcom_correct_table.txt') as f:
             expected = f.read()
         msg = 'Expected:\n' + expected + '\nReceived:\n' + received
+        #print(expected, received)
 
         self.assertEqual(received, expected)
 
@@ -106,12 +154,16 @@ class TestGedcomSteven(unittest.TestCase):
 
 def steven_suite():
     suite = unittest.TestSuite()
+    suite.addTest(TestGedcomSteven('test_mar_before_deat'))
+    suite.addTest(TestGedcomSteven('test_div_before_deat'))
+    # above two test cases seems fine 
     suite.addTest(TestGedcomSteven('test_birt_after_deat'))
     suite.addTest(TestGedcomSteven('test_marr_after_div'))
     suite.addTest(TestGedcomSteven('test_birt_before_marr'))
     suite.addTest(TestGedcomSteven('test_birt_after_div'))
     suite.addTest(TestGedcomSteven('test_ged_correct'))
     suite.addTest(TestGedcomSteven('test_ged_wrong'))
+    
     return suite
 
 
