@@ -52,7 +52,7 @@ class TestGedcomSteven(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
         
-    # US5 : Unit Test, Rachi
+    # US6 : Unit Test, Rachi
     def test_div_before_deat(self):
         fam_wrong = Family(
             uid='@F1@',
