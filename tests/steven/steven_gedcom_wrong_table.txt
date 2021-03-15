@@ -30,3 +30,7 @@ ANOMALY: @I8@ (Henry /Lane/) has a birth date before his parents' marriage date.
 ANOMALY: @I9@ (Stephen /Lane/) has a birth date more than 280 days later than his parents' divorce date.
 ERROR: Family @F3@ has a marriage date later than its divorce date.
 Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+ERROR: Family @I8@ has a marriage date after his death date.
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+ERROR: Family @I8@ has a divorce date after his death.
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)

@@ -288,6 +288,30 @@ class Family(GedcomeItem):
                         else:
                             # husband alive, wife died but no error
                             return None
+                        
+                        
+                    
+        
+    def marrage_after_14(self,date_format=DEFAULT_DATE_FORMAT):
+        if self.marr is None:
+            return 'Error', self.uid, ' has no married date'
+        marriage_date = datetime.datetime.strptime(self.marr, date_format)
+        husband, wife = self.db_indi_select(uid = self.husb), self.db_indi_select(uid = self.wife)
+        husband_birth = datetime.datetime.strptime(husband.birt, date_format)
+        wife_birth = datetime.datetime.strptime(wife.birt, date_format)
+        if husband_birth is None:
+            return 'ERROR', self.husb, self.husb_name, 'has no birth date'
+        else:
+            return None
+        if (marriage_date.year - husband_birth.year) < 14:
+            return 'Error', self.husb, self.husb_name, ' has married before the age of 14'
+        else:
+            return None
+        if (marriage_date.year - wife_birth.year) < 14:
+            return 'Error', self.wife, self.wife_name, ' has married before the age of 14'
+        else:
+            return None
+        
     
     validations = [validate_marr_div, validate_marr_before_death, validate_divorce_before_death]
     # Takes in a list of validation functions that follows the above mentioned standard
@@ -454,8 +478,7 @@ class Gedcom:
                 key = None
 
             if sort in df:
-                return df.sort_values(sort, ignore_index=True,
-                                      key=key).reset_index(drop=True)
+                return df.sort_values(sort, ignore_index=True, key=key).reset_index(drop=True)
             else:
                 return df
 
@@ -619,3 +642,5 @@ if __name__ == '__main__':
 
     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')
+    
+
