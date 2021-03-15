@@ -14,6 +14,73 @@ class TestGedcomSteven(unittest.TestCase):
         self.ged_wrong = Gedcom(
             './tests/steven/steven_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
 
+    #US1: Unit Test, Brendan
+
+    def test_birth_after_current_date(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='2022 AUG 10'
+        )
+
+        expected =('ERROR', 'First Last', '@I1@',
+                  'has a birth date later than today\'s date')
+        recieved = indi_wrong.validate_birth_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_death_after_current_date(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1955 AUG 10',
+            deat='2022 AUG 12'
+        )
+
+        expected =('ERROR', 'First Last', '@I1@',
+                  'has a death date later than today\'s date')
+        recieved = indi_wrong.validate_death_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_wed_after_current_date(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2023 MAY 5'
+
+        )
+
+        expected =('ERROR', '@F1@',
+                  'has a marriage date later than today\'s date')
+        recieved = indi_wrong.validate_marr_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_div_after_current_date(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2020 MAY 5',
+            div='2027 MARCH 10'
+
+        )
+
+        expected =('ERROR', '@F1@',
+                  'has a divorce date later than today\'s date')
+        recieved = indi_wrong.validate_div_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+
     def test_birt_after_deat(self):
         indi_wrong = Individual(
             uid='@I1@',
@@ -29,6 +96,7 @@ class TestGedcomSteven(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
     
+
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
         fam_wrong = Family(
