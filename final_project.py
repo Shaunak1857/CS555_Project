@@ -102,6 +102,32 @@ class Individual(GedcomeItem):
     # Input : self
     # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error)
 
+    #US1- validate birth is not after today's date
+    def validate_birth_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.birt is None:
+            return 'ERROR', self.uid, self.name, 'has no birth date'
+
+        birthday = datetime.datetime.strptime(self.birt, date_format)
+        today = datetime.date.today()
+
+        if (today - birthday).days < 0:
+            return 'ERROR', self.name, self.uid, 'has a birth date later than today\'s date' 
+        else:
+            return None
+
+    #US1- validate death is not after today's date
+    def validate_death_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.deat is None:
+            return None
+        
+        deathday = datetime.datetime.strptime(self.deat, date_format)
+        today = datetime.date.today()
+
+        if (today - deathday).days < 0:
+            return 'ERROR', self.name, self.uid, 'has a date date later than today\'s date' 
+        else:
+            return None
+
     # US3 - validate birth before death
     def validate_birt_deat(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is None:
@@ -117,7 +143,28 @@ class Individual(GedcomeItem):
             return 'ERROR', self.name, self.uid, 'has a birth date later than ' + pronoun + ' death date'
         else:
             return None
-    
+    #US7 - validate age is less than 150 years old
+    def validate_age_from_birth(self,date_format=DEFAULT_DATE_FORMAT):
+        if self.birt is None:
+            return 'ERROR', self.uid, self.name, 'has no birth date'
+        if self.deat is None:
+            age = self.get_age()
+
+            if age >= 150:
+                return 'Error', self.uid, self.name, 'is older than 150 years old'
+            else:
+                return None
+        else:
+            birthday = datetime.datetime.strptime(self.birt, date_format)
+            deathday = datetime.datetime.strptime(self.deat, date_format)
+
+            if (deathday - birthday).days < 0:
+                return 'ERROR', self.name, self.uid, 'is older than 150 years old'
+            else:
+                return None
+
+        
+        
 
 
     # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
@@ -142,7 +189,7 @@ class Individual(GedcomeItem):
         else:
             return None
 
-    validations = [validate_birt_deat, validate_birt_before_marr]
+    validations = [validate_birth_before_current_date, validate_death_before_current_date, validate_birt_deat, validate_birt_before_marr, validate_age_from_birth]
     # Go through the list of validation functions in self.validations that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Individual object
@@ -197,6 +244,32 @@ class Family(GedcomeItem):
     # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error),
     #         list of uid of individuals involved,
     #         list of name of individuals involved (order must match list of individual uid)
+
+    #US1- validate marriage before today's date
+    def validate_marr_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.marr is None:
+            return 'ERROR', self.uid, 'has no marriage date'
+        marriage_date = datetime.datetime.strptime(self.marr, date_format)
+        today = datetime.date.today()
+
+        if (today - marriage_date).days < 0:
+            return 'ERROR', self.uid, 'has a marriage date later than today\'s date' 
+        else:
+            return None
+
+    #US1- validate divorce before today's date
+    def validate_div_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
+        if self.div is None:
+            return None
+
+        divorce_date = datetime.datetime.strptime(self.div, date_format)
+        today = datetime.date.today()
+
+        if (today - divorce_date).days < 0:
+            return 'ERROR', self.uid, 'has a divorce date later than today\'s date' 
+        else:
+            return None
+
 
     # US4 - validate marriage before divorce
     def validate_marr_div(self, date_format=DEFAULT_DATE_FORMAT):
@@ -289,7 +362,7 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
     
-    validations = [validate_marr_div, validate_marr_before_death, validate_divorce_before_death]
+    validations = [validate_marr_before_current_date, validate_div_before_current_date, validate_marr_div, validate_marr_before_death, validate_divorce_before_death]
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Family object
