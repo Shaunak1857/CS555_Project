@@ -14,71 +14,6 @@ class TestGedcomSteven(unittest.TestCase):
         self.ged_wrong = Gedcom(
             './tests/steven/steven_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
 
-    # US1: Unit Test, Brendan
-
-    def test_birth_after_current_date(self):
-        indi_wrong = Individual(
-            uid='@I1@',
-            name='First Last',
-            sex='M',
-            birt='2022 AUG 10'
-        )
-
-        expected = ('ERROR', 'First Last', '@I1@',
-                    'has a birth date later than today\'s date')
-        recieved = indi_wrong.validate_birth_before_current_date()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test_death_after_current_date(self):
-        indi_wrong = Individual(
-            uid='@I1@',
-            name='First Last',
-            sex='M',
-            birt='1955 AUG 10',
-            deat='2022 AUG 12'
-        )
-
-        expected = ('ERROR', 'First Last', '@I1@',
-                    'has a death date later than today\'s date')
-        recieved = indi_wrong.validate_death_before_current_date()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test_wed_after_current_date(self):
-        fam_wrong = Family(
-            uid='@F1@',
-            husb='@I11@',
-            husb_name='Joe Philipson',
-            wife='@I2@',
-            wife_name='Susan Johnson',
-            marr='2023 MAY 5'
-
-        )
-
-        expected = ('ERROR', '@F1@',
-                    'has a marriage date later than today\'s date')
-        recieved = indi_wrong.validate_marr_before_current_date()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test_div_after_current_date(self):
-        fam_wrong = Family(
-            uid='@F1@',
-            husb='@I11@',
-            husb_name='Joe Philipson',
-            wife='@I2@',
-            wife_name='Susan Johnson',
-            marr='2020 MAY 5',
-            div='2027 MARCH 10'
-
-        )
-
-        expected = ('ERROR', '@F1@',
-                    'has a divorce date later than today\'s date')
-        recieved = indi_wrong.validate_div_before_current_date()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
 
     def test_birt_after_deat(self):
         indi_wrong = Individual(
@@ -258,8 +193,131 @@ class TestGedcomSteven(unittest.TestCase):
     #     os.remove('./tests/steven_test_wrong.db')
 
 
+class TestGedcomBrendan(unittest.TestCase):
+    def setUp(self):
+        self.ged_correct = Gedcom(
+            './tests/steven/steven_test_correct.ged', './tests/steven/steven_test_correct.db', sort='uid')
+        self.ged_wrong = Gedcom(
+            './tests/brendan/brendan_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
+    
+    # US1: Unit Test, Brendan
 
+    def test_birth_after_current_date(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='2022 AUG 10'
+        )
 
+        expected = ('ERROR', 'First Last', '@I1@',
+                    'has a birth date later than today\'s date')
+        received = indi_wrong.validate_birth_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_death_after_current_date(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1955 AUG 10',
+            deat='2022 AUG 12'
+        )
+
+        expected = ('ERROR', 'First Last', '@I1@',
+                    'has a death date later than today\'s date')
+        received = indi_wrong.validate_death_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_wed_after_current_date(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2023 MAY 5'
+
+        )
+
+        expected = ('ERROR', '@F1@',
+                    'has a marriage date later than today\'s date')
+        received = fam_wrong.validate_marr_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_div_after_current_date(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2020 MAY 5',
+            div='2027 MARCH 10'
+
+        )
+
+        expected = ('ERROR', '@F1@',
+                    'has a divorce date later than today\'s date')
+        received = fam_wrong.validate_div_before_current_date()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    #US7- age from birth
+    def test_age_from_birth(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1800 AUG 10'
+        )
+
+        expected = ('ERROR', 'First Last', '@I1@',
+                    'is older than 150 years old')
+        received = indi_wrong.validate_age_from_birth()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_age_from_death(self):
+        indi_wrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1850 AUG 10',
+            deat='2005 AUG 12'
+        )
+
+        expected = ('ERROR', 'First Last', '@I1@',
+                    'is older than 150 years old')
+        received = indi_wrong.validate_age_from_birth()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+
+    def test_ged_correct(self):
+        received = str(self.ged_correct)
+
+        expected = ''
+        with open('./tests/steven/steven_gedcom_correct_table.txt') as f:
+            expected = f.read()
+        msg = 'Expected:\n' + expected + '\nReceived:\n' + received
+        #print(expected, received)
+
+        self.assertEqual(received, expected)
+
+    def test_ged_wrong(self):
+        received = str(self.ged_wrong)
+
+        expected = ''
+        with open('./tests/steven/steven_gedcom_wrong_table.txt') as f:
+            expected = f.read()
+
+        msg = 'Expected: ' + str(expected) + '\nReceived: ' + str(received)
+
+        self.assertEqual(received, expected, msg)
 
 
 class TestGedcomRachi(unittest.TestCase):
@@ -362,8 +420,23 @@ def rachi_suite():
 
     return suite
 
+def brendan_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(TestGedcomBrendan('test_birth_after_current_date'))
+    suite.addTest(TestGedcomBrendan('test_death_after_current_date'))
+    suite.addTest(TestGedcomBrendan('test_death_after_current_date'))
+    suite.addTest(TestGedcomBrendan('test_wed_after_current_date'))
+    suite.addTest(TestGedcomBrendan('test_div_after_current_date'))
+    suite.addTest(TestGedcomBrendan('test_age_from_birth'))
+    suite.addTest(TestGedcomBrendan('test_age_from_death'))
+    suite.addTest(TestGedcomBrendan('test_ged_correct'))
+    suite.addTest(TestGedcomBrendan('test_ged_wrong'))
+
+    
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(steven_suite())
     runner.run(rachi_suite())
+    runner.run(brendan_suite())
