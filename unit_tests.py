@@ -247,6 +247,7 @@ class TestGedcomRachi(unittest.TestCase):
 
 
 def steven_suite():
+    suite = unittest.TestSuite()
     suite.addTest(TestGedcomSteven('test_birt_after_deat'))
     suite.addTest(TestGedcomSteven('test_marr_after_div'))
     suite.addTest(TestGedcomSteven('test_birt_before_marr'))
