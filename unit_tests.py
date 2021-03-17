@@ -230,7 +230,8 @@ class TestGedcomBrendan(unittest.TestCase):
         )
 
         expected = ('ERROR', '@F1@',
-                    'has a marriage date later than today\'s date')
+                    'has a marriage date later than today\'s date',
+                    ['@I11@', '@I2@'], ['Joe Philipson', 'Susan Johnson'])
         received = fam_wrong.validate_marr_before_current_date()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
@@ -248,7 +249,8 @@ class TestGedcomBrendan(unittest.TestCase):
         )
 
         expected = ('ERROR', '@F1@',
-                    'has a divorce date later than today\'s date')
+                    'has a divorce date later than today\'s date',
+                    ['@I11@', '@I2@'], ['Joe Philipson', 'Susan Johnson'])
         received = fam_wrong.validate_div_before_current_date()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
@@ -262,7 +264,7 @@ class TestGedcomBrendan(unittest.TestCase):
             birt='1800 AUG 10'
         )
 
-        expected = ('ERROR', 'First Last', '@I1@',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is older than 150 years old')
         received = indi_wrong.validate_age_from_birth()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -277,7 +279,7 @@ class TestGedcomBrendan(unittest.TestCase):
             deat='2005 AUG 12'
         )
 
-        expected = ('ERROR', 'First Last', '@I1@',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is older than 150 years old')
         received = indi_wrong.validate_age_from_birth()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -298,7 +300,7 @@ class TestGedcomBrendan(unittest.TestCase):
         received = str(self.ged_wrong)
 
         expected = ''
-        with open('./tests/steven/steven_gedcom_wrong_table.txt') as f:
+        with open('./tests/brendan/brendan_gedcom_wrong_table.txt') as f:
             expected = f.read()
 
         msg = 'Expected: ' + str(expected) + '\nReceived: ' + str(received)
@@ -415,7 +417,6 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_div_after_current_date'))
     suite.addTest(TestGedcomBrendan('test_age_from_birth'))
     suite.addTest(TestGedcomBrendan('test_age_from_death'))
-    suite.addTest(TestGedcomBrendan('test_ged_correct'))
     suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite

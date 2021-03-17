@@ -124,7 +124,7 @@ class Individual(GedcomeItem):
         today = datetime.datetime.now()
 
         if (today - deathday).days < 0:
-            return 'ERROR', self.name, self.uid, 'has a date date later than today\'s date'
+            return 'ERROR', self.name, self.uid, 'has a death date later than today\'s date'
         else:
             return None
 
@@ -152,15 +152,15 @@ class Individual(GedcomeItem):
             age = self.get_age()
 
             if age >= 150:
-                return 'Error', self.uid, self.name, 'is older than 150 years old'
+                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
             else:
                 return None
         else:
             birthday = datetime.datetime.strptime(self.birt, date_format)
             deathday = datetime.datetime.strptime(self.deat, date_format)
 
-            if (deathday - birthday).days < 0:
-                return 'ERROR', self.name, self.uid, 'is older than 150 years old'
+            if (deathday - birthday).days > 150:
+                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
             else:
                 return None
 
