@@ -10,26 +10,29 @@ Individuals
 |  5 | @I6@  | Steven /Tester/    | M     | 1947 JUN 15 |    74 |             | True    |        | @F2@   |
 |  6 | @I7@  | Lilian /Roberts/   | F     | 1946 APR 4  |    75 |             | True    |        | @F2@   |
 |  7 | @I8@  | Jim /Tester/       | M     | 2022 JAN 3  |    -1 |             | True    | @F1@   |        |
-|  8 | @I9@  | Sally /Johnson/    | F     | 1997 JAN 10 |    24 |             | True    |        | @F4@   |
+|  8 | @I9@  | Sally /Johnson/    | F     | 1997 JAN 10 |    24 |             | True    | @F6@   | @F4@   |
 |  9 | @I10@ | Alex /Smith/       | M     | 1700 JAN 13 |   321 |             | True    |        | @F5@   |
 | 10 | @I11@ | Alexa /Fakename/   | F     | 1800 JAN 3  |   200 | 2000 FEB 3  | False   |        | @F5@   |
-| 11 | @I12@ | Amy /Tester/       | F     | 1970 MAR 10 |    51 |             | True    | @F2@   | @F6@   |
-| 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  | False   |        | @F6@   |
-| 13 | @I14@ | Jimmy /Smith/      | M     | 1972 MAR 3  |    49 |             | True    | @F3@   | @F7@   |
-| 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 | False   |        | @F7@   |
+| 11 | @I12@ | Amy /Tester/       | F     | 1970 MAR 10 |    51 |             | True    | @F2@   | @F7@   |
+| 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  | False   |        | @F7@   |
+| 13 | @I14@ | Jimmy /Smith/      | M     | 1972 MAR 3  |    49 |             | True    | @F3@   | @F8@   |
+| 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 | False   |        | @F8@   |
+| 15 | @I16@ | Jason /Johnson/    | M     | 1964 APR 4  |    57 |             | True    |        | @F6@   |
+| 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  | False   |        | @F6@   |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
 Families
-+----+-------+--------+------------------+--------+--------------------+-------------+------------+-------------------+
-|    | uid   | husb   | husb_name        | wife   | wife_name          | marr        | div        | childrens         |
-|----+-------+--------+------------------+--------+--------------------+-------------+------------+-------------------|
-|  0 | @F1@  | @I1@   | Jack /Tester/    | @I2@   | Mary /Smith/       | 1990 JUL 14 |            | ['@I3@', '@I8@']  |
-|  1 | @F2@  | @I6@   | Steven /Tester/  | @I7@   | Lilian /Roberts/   | 1964 JUL 2  | 2022 JUN 6 | ['@I1@', '@I12@'] |
-|  2 | @F3@  | @I4@   | Rick /Smith/     | @I5@   | Jane /Adams/       | 1963 NOV 5  |            | ['@I2@', '@I14@'] |
-|  3 | @F4@  | @I3@   | Steve /Tester/   | @I9@   | Sally /Johnson/    | 2022 APR 15 |            | []                |
-|  4 | @F5@  | @I10@  | Alex /Smith/     | @I11@  | Alexa /Fakename/   | 1820 FEB 4  |            | ['@I4@']          |
-|  5 | @F6@  | @I13@  | Ryan /Fredricks/ | @I12@  | Amy /Tester/       | 2019 MAR 1  |            | []                |
-|  6 | @F7@  | @I14@  | Jimmy /Smith/    | @I15@  | Jackie /Jergensen/ | 2015 FEB 2  | 2020 APR 4 | []                |
-+----+-------+--------+------------------+--------+--------------------+-------------+------------+-------------------+
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+|    | uid   | husb   | husb_name        | wife   | wife_name          | marr        | div         | childrens         |
+|----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------|
+|  0 | @F1@  | @I1@   | Jack /Tester/    | @I2@   | Mary /Smith/       | 1990 JUL 14 |             | ['@I3@', '@I8@']  |
+|  1 | @F2@  | @I6@   | Steven /Tester/  | @I7@   | Lilian /Roberts/   | 1964 JUL 2  | 2022 JUN 6  | ['@I1@', '@I12@'] |
+|  2 | @F3@  | @I4@   | Rick /Smith/     | @I5@   | Jane /Adams/       | 1963 NOV 5  |             | ['@I2@', '@I14@'] |
+|  3 | @F4@  | @I3@   | Steve /Tester/   | @I9@   | Sally /Johnson/    | 2022 APR 15 |             | []                |
+|  4 | @F5@  | @I10@  | Alex /Smith/     | @I11@  | Alexa /Fakename/   | 1820 FEB 4  |             | ['@I4@']          |
+|  5 | @F6@  | @I16@  | Jason /Johnson/  | @I17@  | Alyssa /Peterson/  | 1992 JUN 5  | 2020 JUL 15 | ['@I9@']          |
+|  6 | @F7@  | @I13@  | Ryan /Fredricks/ | @I12@  | Amy /Tester/       | 2019 MAR 1  |             | []                |
+|  7 | @F8@  | @I14@  | Jimmy /Smith/    | @I15@  | Jackie /Jergensen/ | 2015 FEB 2  | 2020 APR 4  | []                |
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
 Anomalies/Errors
 ERROR: @I2@ (Mary /Smith/) has a death date later than today's date.
 ERROR: Mary /Smith/ (@I2@) is older than 150 years old.
@@ -38,6 +41,7 @@ ERROR: Alex /Smith/ (@I10@) is older than 150 years old.
 ERROR: Alexa /Fakename/ (@I11@) is older than 150 years old.
 ERROR: Ryan /Fredricks/ (@I13@) is older than 150 years old.
 ERROR: Jackie /Jergensen/ (@I15@) is older than 150 years old.
+ERROR: Alyssa /Peterson/ (@I17@) is older than 150 years old.
 ERROR: Family @F2@ has a divorce date later than today's date.
 Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
 ERROR: Family @F4@ has a marriage date later than today's date.
