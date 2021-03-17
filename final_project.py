@@ -100,7 +100,7 @@ class Individual(GedcomeItem):
 
     # Validation functions to be used in validate() that follows the standard:
     # Input : self
-    # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error)
+    # Output: type (ANOMALY or ERROR), name, uid, message (in regard to the nomaly/error)
 
     # US1- validate birth is not after today's date
     def validate_birth_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
