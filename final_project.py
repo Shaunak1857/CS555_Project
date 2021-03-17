@@ -303,7 +303,7 @@ class Family(GedcomeItem):
         today = datetime.datetime.now()
 
         if (today - marriage_date).days < 0:
-            return 'ERROR', self.uid, 'has a marriage date later than today\'s date'
+            return 'ERROR', self.uid, 'has a marriage date later than today\'s date', [self.husb, self.wife], [self.husb_name, self.wife_name]
         else:
             return None
 
@@ -316,7 +316,7 @@ class Family(GedcomeItem):
         today = datetime.datetime.now()
 
         if (today - divorce_date).days < 0:
-            return 'ERROR', self.uid, 'has a divorce date later than today\'s date'
+            return 'ERROR', self.uid, 'has a divorce date later than today\'s date', [self.husb, self.wife], [self.husb_name, self.wife_name]
         else:
             return None
 
