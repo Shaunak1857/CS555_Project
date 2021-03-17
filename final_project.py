@@ -780,5 +780,8 @@ if __name__ == '__main__':
     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')
 
+    gedcom2 = Gedcom('./tests/brendan/brendan_tests_wrong.ged',db='./test/brendan/brendan_test_wrong.db', sort='uid')
+    gedcom2.pretty_print(filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+
     #gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
