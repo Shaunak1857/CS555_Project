@@ -243,7 +243,7 @@ class TestGedcomBrendan(unittest.TestCase):
             wife='@I2@',
             wife_name='Susan Johnson',
             marr='2020 MAY 5',
-            div='2027 MARCH 10'
+            div='2027 MAR 10'
 
         )
 
