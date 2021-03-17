@@ -148,22 +148,10 @@ class Individual(GedcomeItem):
     def validate_age_from_birth(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is None:
             return 'ERROR', self.uid, self.name, 'has no birth date'
-        if self.deat is None:
-            age = self.get_age()
-
-            if age >= 150:
-                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
-            else:
-                return None
+        if self.age >= 150:
+            return 'ERROR', self.uid, self.name, 'is older than 150 years old'
         else:
-            birthday = datetime.datetime.strptime(self.birt, date_format)
-            deathday = datetime.datetime.strptime(self.deat, date_format)
-
-            if (deathday - birthday).days > 150:
-                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
-            else:
-                return None
-
+            return None
     # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
 
     def validate_birt_before_marr(self, date_format=DEFAULT_DATE_FORMAT):
@@ -780,7 +768,7 @@ if __name__ == '__main__':
     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
     gedcom1.pretty_print(filename='gedcom1_table.txt')
 
-    gedcom2 = Gedcom('./tests/brendan/brendan_tests_wrong.ged',db='./test/brendan/brendan_test_wrong.db', sort='uid')
+    gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',db='./tests/brendan/brendan_test_wrong.db', sort='uid')
     gedcom2.pretty_print(filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
 
     #gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
