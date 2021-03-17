@@ -376,7 +376,7 @@ class Family(GedcomeItem):
                 else:
                     # wife is dead, check error
                     wifedeat = datetime.datetime.strptime(
-                        self.div, date_format)
+                        wife.deat, date_format)
                     if (wifedeat - divorce_date).days < 0:
                         # husband alive, wife died but error, wife might be dead before divorce
                         return 'ERROR', self.wife, 'has a divorce date after her death', [self.husb, self.wife], [self.husb_name, self.wife_name]
@@ -396,7 +396,7 @@ class Family(GedcomeItem):
                     else:
                         # wife is dead, check error
                         wifedeat = datetime.datetime.strptime(
-                            self.div, date_format)
+                            wife.deat, date_format)
                         if (wifedeat - divorce_date).days < 0:
                             # husband alive, wife died but error, wife might be dead before divorce
                             return 'ERROR', self.wife, 'has a divorce date after her death', [self.husb, self.wife], [self.husb_name, self.wife_name]
