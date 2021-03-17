@@ -35,13 +35,9 @@ Families
 +----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
 Anomalies/Errors
 ERROR: @I2@ (Mary /Smith/) has a death date later than today's date.
-ERROR: Mary /Smith/ (@I2@) is older than 150 years old.
 ERROR: @I8@ (Jim /Tester/) has a birth date later than today's date.
 ERROR: Alex /Smith/ (@I10@) is older than 150 years old.
 ERROR: Alexa /Fakename/ (@I11@) is older than 150 years old.
-ERROR: Ryan /Fredricks/ (@I13@) is older than 150 years old.
-ERROR: Jackie /Jergensen/ (@I15@) is older than 150 years old.
-ERROR: Alyssa /Peterson/ (@I17@) is older than 150 years old.
 ERROR: Family @F2@ has a divorce date later than today's date.
 Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
 ERROR: Family @F4@ has a marriage date later than today's date.

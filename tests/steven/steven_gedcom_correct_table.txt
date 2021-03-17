@@ -27,7 +27,6 @@ Families
 Anomalies/Errors
 Error: Bruce /Wayne/ (@I4@) has married before its birth date.
 Error: Martha /Barbara/ (@I5@) has married before its birth date.
-ERROR: Henry /Lane/ (@I8@) is older than 150 years old.
 Error: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
 Error: Family @F4@  has married before the age of 14.
 Individual(s) involved - @I4@ (Bruce /Wayne/), @I5@ (Martha /Barbara/)

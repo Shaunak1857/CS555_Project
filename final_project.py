@@ -148,22 +148,10 @@ class Individual(GedcomeItem):
     def validate_age_from_birth(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is None:
             return 'ERROR', self.uid, self.name, 'has no birth date'
-        if self.deat is None:
-            age = self.get_age()
-
-            if age >= 150:
-                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
-            else:
-                return None
+        if self.age >= 150:
+            return 'ERROR', self.uid, self.name, 'is older than 150 years old'
         else:
-            birthday = datetime.datetime.strptime(self.birt, date_format)
-            deathday = datetime.datetime.strptime(self.deat, date_format)
-
-            if (deathday - birthday).days > 150:
-                return 'ERROR', self.uid, self.name, 'is older than 150 years old'
-            else:
-                return None
-
+            return None
     # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
 
     def validate_birt_before_marr(self, date_format=DEFAULT_DATE_FORMAT):
