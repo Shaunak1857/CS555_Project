@@ -30,6 +30,7 @@ Error: Martha /Barbara/ (@I5@) has married before its birth date.
 ERROR: @I8@ (Henry /Lane/) has a birth date later than his death date.
 ANOMALY: @I8@ (Henry /Lane/) has a birth date before his parents' marriage date.
 ERROR: @I8@ (Henry /Lane/) is older than 150 years old.
+Error: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
 ANOMALY: @I9@ (Stephen /Lane/) has a birth date more than 280 days later than his parents' divorce date.
 ERROR: Family @F3@ has a marriage date later than its divorce date.
 Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)

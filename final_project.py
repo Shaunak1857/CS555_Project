@@ -108,7 +108,7 @@ class Individual(GedcomeItem):
             return 'ERROR', self.uid, self.name, 'has no birth date'
 
         birthday = datetime.datetime.strptime(self.birt, date_format)
-        today = datetime.date.today()
+        today = datetime.datetime.now()
 
         if (today - birthday).days < 0:
             return 'ERROR', self.name, self.uid, 'has a birth date later than today\'s date' 
@@ -121,7 +121,7 @@ class Individual(GedcomeItem):
             return None
         
         deathday = datetime.datetime.strptime(self.deat, date_format)
-        today = datetime.date.today()
+        today = datetime.datetime.now()
 
         if (today - deathday).days < 0:
             return 'ERROR', self.name, self.uid, 'has a date date later than today\'s date' 
@@ -303,7 +303,7 @@ class Family(GedcomeItem):
         if self.marr is None:
             return 'ERROR', self.uid, 'has no marriage date'
         marriage_date = datetime.datetime.strptime(self.marr, date_format)
-        today = datetime.date.today()
+        today = datetime.datetime.now()
 
         if (today - marriage_date).days < 0:
             return 'ERROR', self.uid, 'has a marriage date later than today\'s date' 
@@ -316,7 +316,7 @@ class Family(GedcomeItem):
             return None
 
         divorce_date = datetime.datetime.strptime(self.div, date_format)
-        today = datetime.date.today()
+        today = datetime.datetime.now()
 
         if (today - divorce_date).days < 0:
             return 'ERROR', self.uid, 'has a divorce date later than today\'s date' 
@@ -498,6 +498,7 @@ class Gedcom:
             self.db = db
         else:
             raise
+
 
         individuals, families, indi_df, fam_df = self.fileparser(filename)
 

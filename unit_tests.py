@@ -413,10 +413,10 @@ def steven_suite():
 
 def rachi_suite():
     suite = unittest.TestSuite()
-    suite.addTest(TestGedcomSteven('test_mar_before_deat'))
-    suite.addTest(TestGedcomSteven('test_div_before_deat'))
-    suite.addTest(TestGedcomSteven('test_ged_correct'))
-    suite.addTest(TestGedcomSteven('test_ged_wrong'))
+    suite.addTest(TestGedcomRachi('test_mar_before_deat'))
+    suite.addTest(TestGedcomRachi('test_div_before_deat'))
+    suite.addTest(TestGedcomRachi('test_ged_correct'))
+    suite.addTest(TestGedcomRachi('test_ged_wrong'))
 
     return suite
 
@@ -431,6 +431,8 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_age_from_death'))
     suite.addTest(TestGedcomBrendan('test_ged_correct'))
     suite.addTest(TestGedcomBrendan('test_ged_wrong'))
+
+    return suite
 
     
 

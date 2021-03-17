@@ -30,3 +30,8 @@ Families
 |  4 | @F5@  | @I11@  | Joe /Philipson/   | @I8@   | Jamie /Adams/        | 1967 JUN 3  | 1970 OCT 8 | ['@I12@']                  |
 |  5 | @F6@  | @I15@  | Steven /Henricks/ | @I14@  | Jeniffer /Smith/     | 1991 MAR 7  |            | ['@I16@']                  |
 +----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
+Anomalies/Errors
+Error: Jim /Smith/ (@I1@) is born before 9 months after death of father.
+Error: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
+Error: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
+Error: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
