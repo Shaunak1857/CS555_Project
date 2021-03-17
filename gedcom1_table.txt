@@ -32,6 +32,10 @@ Families
 +----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
 Anomalies/Errors
 Error: Jim /Smith/ (@I1@) is born before 9 months after death of father.
+ERROR: Linda /McGee/ (@I5@) is older than 150 years old.
+ERROR: Ted /Smith/ (@I6@) is older than 150 years old.
+ERROR: Joe /Philipson/ (@I11@) is older than 150 years old.
 Error: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
 Error: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
+ERROR: Jacob /Smith/ (@I13@) is older than 150 years old.
 Error: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
