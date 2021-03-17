@@ -101,79 +101,7 @@ class TestGedcomSteven(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
 
-    def test_validate_marr_after_14(self):
-        # unit test US10 Shaunak Saklikar
-        familyWrong = Family(
-            uid="@F4@",
-            husb="@I4@",
-            husb_name="Bruce Wayne",
-            wife="@I5@",
-            wife_name="Martha Barbara",
-            marr="1940 NOV 6",
-            div="",
-            childrens="[@I2@]",
-            db='./tests/steven/steven_test_wrong.db'
-        )
-        expected = ('Error', '@F4@', ' has married before the age of 14',
-                    ['@I4@', '@I5@'], ['Bruce Wayne', 'Martha Barbara'])
 
-        received = familyWrong.validate_marr_after_14()
-
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test_birth_before_marr_US02(self):
-        # unit test US02 Shaunak Saklikar
-        indiWrong = Individual(
-            uid='@I4@',
-            name='Bruce Wayne',
-            sex='M',
-            birt='1950 OCT 16',
-            deat='2050 OCT 20',
-            fams='@F4@',
-            db='./tests/steven/steven_test_wrong.db'
-
-        )
-
-        expected = ('Error', '@I4@', 'Bruce Wayne',
-                    'has married before its birth date')
-        received = indiWrong.birth_before_marr_US02()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test_birth_before_death_of_parents(self):
-        # unit test US09 Shaunak Saklikar PART 1
-        indiWrong = Individual(
-            uid='@I1@',
-            name='First Last',
-            sex='M',
-            birt='1971 JAN 5',
-            deat='2050 OCT 20',
-            famc='@F3@',
-            db='Test.db'
-        )
-        expected = ('Error', '@I1@', 'First Last',
-                    'is born after death of mother')
-        received = indiWrong.birth_before_death_of_parents()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
-
-    def test2_birth_before_death_of_parents(self):
-        # unit test US09 Shaunak Saklikar PART 2
-        indiWrong = Individual(
-            uid='@I1@',
-            name='First Last',
-            sex='M',
-            birt='1998 JAN 5',
-            deat='2050 OCT 20',
-            famc='@F2@',
-            db='Test.db'
-        )
-        expected = ('Error', '@I1@', 'First Last',
-                    'is born before 9 months after death of father')
-        received = indiWrong.birth_before_death_of_parents()
-        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        self.assertEqual(received, expected, msg)
 
     # def tearDown(self):
     #     os.remove('./tests/steven_test_correct.db')
@@ -382,6 +310,105 @@ class TestGedcomRachi(unittest.TestCase):
         self.assertEqual(received, expected, msg)
 
 
+
+
+
+class TestGedcomShaunak(unittest.TestCase):
+    def setUp(self):
+        self.ged_correct = Gedcom(
+            './tests/steven/steven_test_correct.ged', './tests/steven/steven_test_correct.db', sort='uid')
+        self.ged_wrong = Gedcom(
+            './tests/steven/steven_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
+        
+        
+    def test_validate_marr_after_14(self):
+        # unit test US10 Shaunak Saklikar
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I4@",
+            husb_name="Bruce Wayne",
+            wife="@I5@",
+            wife_name="Martha Barbara",
+            marr="1940 NOV 6",
+            div="",
+            childrens="[@I2@]",
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error', '@F4@', ' has married before the age of 14',
+                    ['@I4@', '@I5@'], ['Bruce Wayne', 'Martha Barbara'])
+
+        received = familyWrong.validate_marr_after_14()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_birth_before_marr_US02(self):
+        # unit test US02 Shaunak Saklikar
+        indiWrong = Individual(
+            uid='@I4@',
+            name='Bruce Wayne',
+            sex='M',
+            birt='1950 OCT 16',
+            deat='2050 OCT 20',
+            fams='@F4@',
+            db='./tests/steven/steven_test_wrong.db'
+
+        )
+
+        expected = ('Error', '@I4@', 'Bruce Wayne',
+                    'has married before its birth date')
+        received = indiWrong.birth_before_marr_US02()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_birth_before_death_of_parents(self):
+        # unit test US09 Shaunak Saklikar PART 1
+        indiWrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1971 JAN 5',
+            deat='2050 OCT 20',
+            famc='@F3@',
+            db='Test.db'
+        )
+        expected = ('Error', '@I1@', 'First Last',
+                    'is born after death of mother')
+        received = indiWrong.birth_before_death_of_parents()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test2_birth_before_death_of_parents(self):
+        # unit test US09 Shaunak Saklikar PART 2
+        indiWrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1998 JAN 5',
+            deat='2050 OCT 20',
+            famc='@F2@',
+            db='Test.db'
+        )
+        expected = ('Error', '@I1@', 'First Last',
+                    'is born before 9 months after death of father')
+        received = indiWrong.birth_before_death_of_parents()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+        
+    def test_ged_correct(self):
+        received = str(self.ged_correct)
+
+        expected = ''
+        with open('./tests/steven/steven_gedcom_correct_table.txt') as f:
+            expected = f.read()
+        msg = 'Expected:\n' + expected + '\nReceived:\n' + received
+        #print(expected, received)
+
+        self.assertEqual(received, expected)
+        
+        
+
 def steven_suite():
     suite = unittest.TestSuite()
     suite.addTest(TestGedcomSteven('test_birt_after_deat'))
@@ -390,10 +417,7 @@ def steven_suite():
     suite.addTest(TestGedcomSteven('test_birt_after_div'))
     suite.addTest(TestGedcomSteven('test_ged_correct'))
     suite.addTest(TestGedcomSteven('test_ged_wrong'))
-    suite.addTest(TestGedcomSteven('test_validate_marr_after_14'))
-    suite.addTest(TestGedcomSteven('test_birth_before_marr_US02'))
-    suite.addTest(TestGedcomSteven('test_birth_before_death_of_parents'))
-    suite.addTest(TestGedcomSteven('test2_birth_before_death_of_parents'))
+    
 
     return suite
 
@@ -422,8 +446,23 @@ def brendan_suite():
     return suite
 
 
+
+
+def shaunak_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(TestGedcomShaunak('test_validate_marr_after_14'))
+    suite.addTest(TestGedcomShaunak('test_birth_before_marr_US02'))
+    suite.addTest(TestGedcomShaunak('test_birth_before_death_of_parents'))
+    suite.addTest(TestGedcomShaunak('test2_birth_before_death_of_parents'))
+    suite.addTest(TestGedcomShaunak('test_ged_correct'))
+    return suite
+
+
+
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(steven_suite())
     runner.run(rachi_suite())
     runner.run(brendan_suite())
+    runner.run(shaunak_suite())
