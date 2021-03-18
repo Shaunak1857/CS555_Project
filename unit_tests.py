@@ -236,12 +236,13 @@ class TestGedcomBrendan(unittest.TestCase):
         self.assertEqual(received, expected, msg)
 
 
+
 class TestGedcomRachi(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
-            './tests/steven/steven_test_correct.ged', './tests/steven/steven_test_correct.db', sort='uid')
+            './tests/rachi/rachi_test_correct.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/steven/steven_test_wrong.ged', './tests/steven/steven_test_wrong.db', sort='uid')
+            './tests/rachi/rachi_test_wrong.ged', './tests/rachi/rachi_test_wrong.db', sort='uid')
 
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
@@ -294,24 +295,19 @@ class TestGedcomRachi(unittest.TestCase):
         with open('./tests/steven/steven_gedcom_correct_table.txt') as f:
             expected = f.read()
         msg = 'Expected:\n' + expected + '\nReceived:\n' + received
-        #print(expected, received)
-
+        
         self.assertEqual(received, expected)
 
     def test_ged_wrong(self):
         received = str(self.ged_wrong)
 
         expected = ''
-        with open('./tests/steven/steven_gedcom_wrong_table.txt') as f:
+        with open('./tests/rachi/rachi_wrong_table.txt') as f:
             expected = f.read()
 
         msg = 'Expected: ' + str(expected) + '\nReceived: ' + str(received)
 
         self.assertEqual(received, expected, msg)
-
-
-
-
 
 class TestGedcomShaunak(unittest.TestCase):
     def setUp(self):
@@ -428,7 +424,7 @@ def rachi_suite():
     suite.addTest(TestGedcomRachi('test_div_before_deat'))
     suite.addTest(TestGedcomRachi('test_ged_correct'))
     suite.addTest(TestGedcomRachi('test_ged_wrong'))
-
+    
     return suite
 
 
