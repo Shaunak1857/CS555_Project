@@ -42,5 +42,11 @@ ERROR: Family @F2@ has a divorce date later than today's date.
 Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
 ERROR: Family @F4@ has a marriage date later than today's date.
 Individual(s) involved - @I3@ (Steve /Tester/), @I9@ (Sally /Johnson/)
+ERROR: Family @F5@ Alexa /Fakename/ is more than 60 years older than her child Rick /Smith/, Alex /Smith/ is more than 80 years older than his child Rick /Smith/.
+Individual(s) involved - @I11@ (Alexa /Fakename/), @I10@ (Alex /Smith/), @I4@ (Rick /Smith/)
+ERROR: Family @I17@ has a divorce date after her death.
+Individual(s) involved - @I16@ (Jason /Johnson/), @I17@ (Alyssa /Peterson/)
 ERROR: Family @I13@ has a marriage date after his death date.
 Individual(s) involved - @I13@ (Ryan /Fredricks/), @I12@ (Amy /Tester/)
+ERROR: Family @I15@ has a divorce date after her death.
+Individual(s) involved - @I14@ (Jimmy /Smith/), @I15@ (Jackie /Jergensen/)

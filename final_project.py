@@ -12,62 +12,102 @@ class GedcomeItem:
     def __init__(self, db):
         self.db = db
 
-    def db_indi_select(self, uid):
-        select_query = '''SELECT * FROM individuals WHERE uid=?'''
-        individual = None
+    # Method to turn the list received from database query into Individual object
+    def list_to_indi(self, indi):
+        individual = Individual(uid=indi[0],
+                                name=indi[1],
+                                sex=indi[2],
+                                birt=indi[3],
+                                deat=indi[5],
+                                famc=indi[7],
+                                fams=indi[8],
+                                db=self.db)
+        return individual
 
+    # Same as above but for Family
+    def list_to_fam(self, fam):
+        family = Family(uid=fam[0],
+                        husb=fam[1],
+                        husb_name=fam[2],
+                        wife=fam[3],
+                        wife_name=fam[4],
+                        marr=fam[5],
+                        div=fam[6],
+                        childrens=json.loads(fam[7]),
+                        db=self.db)
+        return family
+
+    def db_query(self, query, params=None):
         try:
             conn = sqlite3.connect(self.db)
             cursor = conn.cursor()
-            cursor.execute(select_query, [uid])
+            cursor.execute(query, params)
 
-            indi = cursor.fetchone()
-            indi = [i if i != 'null' else None for i in indi]
-            individual = Individual(uid=indi[0],
-                                    name=indi[1],
-                                    sex=indi[2],
-                                    birt=indi[3],
-                                    deat=indi[5],
-                                    famc=indi[7],
-                                    fams=indi[8], db=self.db)
+            results = cursor.fetchall()
+            obj_list = []
+            for obj in results:
+                obj = [i if i != 'null' else None for i in obj]
+                obj_list.append(obj)
         except sqlite3.Error as e:
-            print("ERRROR FROM SQLITE", e)
-
+            print("ERRROR FROM SQLITE: ", e)
         finally:
             if cursor:
                 cursor.close()
             if conn:
                 conn.close()
-            return individual
+            return obj_list if obj_list else None
+
+    def db_indi_select(self, uid):
+        select_query = '''SELECT * FROM individuals WHERE uid=?'''
+        indi = self.db_query(select_query, (uid,))
+
+        if indi:
+            indi = indi[0]
+        else:
+            return None
+
+        individual = self.list_to_indi(indi)
+        return individual
 
     def db_family_select(self, uid):
         select_query = '''SELECT * FROM families WHERE uid=?'''
-        family = None
+        fam = self.db_query(select_query, (uid,))
 
-        try:
-            conn = sqlite3.connect(self.db)
-            cursor = conn.cursor()
-            cursor.execute(select_query, [uid])
+        if fam:
+            fam = fam[0]
+        else:
+            return None
 
-            fam = cursor.fetchone()
-            fam = [f if f != 'null' else None for f in fam]
-            family = Family(uid=fam[0],
-                            husb=fam[1],
-                            husb_name=fam[2],
-                            wife=fam[3],
-                            wife_name=fam[4],
-                            marr=fam[5],
-                            div=fam[6],
-                            childrens=json.loads(fam[7]),
-                            db=self.db)
-        except sqlite3.Error as e:
-            print(e)
-        finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
-            return family
+        family = self.list_to_fam(fam)
+        return family
+
+    # Given an individual's uid, select all family this individual is (or was) a spouse in
+    def db_family_select_by_spouse(self, spouse_uid):
+        select_query = '''SELECT * FROM families WHERE husb=? OR wife=?'''
+        result = self.db_query(select_query, [spouse_uid, spouse_uid])
+
+        if not result:
+            return []
+
+        families = []
+        for fam in result:
+            family = self.list_to_fam(fam)
+            families.append(family)
+        return families
+
+    # Given and individual's famc and uid, select all other individuals that share the same uid.
+    def db_indi_select_by_famc(self, famc, uid):
+        select_query = '''SELECT * FROM individuals WHERE famc=?'''
+        result = self.db_query(select_query, (famc,))
+
+        if not result:
+            return []
+
+        individuals = []
+        for indi in result:
+            individual = self.list_to_indi(indi)
+            individuals.append(individual)
+        return individuals
 
 
 class Individual(GedcomeItem):
@@ -97,6 +137,36 @@ class Individual(GedcomeItem):
             return last_year - datetime.datetime.strptime(self.birt, date_format).year
         else:
             return None
+
+    def age_at(self, date, date_format=DEFAULT_DATE_FORMAT):
+        year = datetime.datetime.strptime(date, date_format).year
+        return year - datetime.datetime.strptime(self.birt, date_format).year
+
+    # Retrieve a list of family this individual has been a spouse in.
+    def past_fams(self):
+        families = self.db_family_select_by_spouse(self.uid)
+        return families
+
+    # Retrieve a list of descendant uid (NOT Individual object) based on the family this individual has been a spouse in.
+    def descendants(self):
+        descendants = set()
+        for fam in self.past_fams():
+            descendants |= set(fam.desecendants())
+        return list(descendants)
+
+    # Retrieve a list of siblings of this individual (i.e. any individual that shares the same famc)
+    def siblings(self):
+        siblings = self.db_indi_select_by_famc(self.famc, self.uid)
+        return siblings
+
+    # Retrieve a list of nieces/nephews uid (NOT Individual object) for this individual
+    def niblings(self):
+        niblings = []
+        for sibling in self.siblings():
+            sibling_fam = self.db_family_select(sibling.fams)
+            if sibling_fam:
+                niblings += sibling_fam.childrens
+        return niblings
 
     # Validation functions to be used in validate() that follows the standard:
     # Input : self
@@ -143,8 +213,8 @@ class Individual(GedcomeItem):
             return 'ERROR', self.name, self.uid, 'has a birth date later than ' + pronoun + ' death date'
         else:
             return None
-    # US7 - validate age is less than 150 years old
 
+    # US7 - validate age is less than 150 years old
     def validate_age_from_birth(self, date_format=DEFAULT_DATE_FORMAT):
         if self.birt is None:
             return 'ERROR', self.uid, self.name, 'has no birth date'
@@ -152,8 +222,8 @@ class Individual(GedcomeItem):
             return 'ERROR', self.uid, self.name, 'is older than 150 years old'
         else:
             return None
-    # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
 
+    # US8 - validate birth is after marriage of parents, and birth is no later than 9 month after divorce.
     def validate_birt_before_marr(self, date_format=DEFAULT_DATE_FORMAT):
         if self.famc is None:
             return None
@@ -176,7 +246,6 @@ class Individual(GedcomeItem):
             return None
 
     # Birth before marriage
-
     def birth_before_marr_US02(self, date_format=DEFAULT_DATE_FORMAT):
         # US 02 @Shaunak1857
         familyData = self.db_family_select(self.fams)
@@ -189,7 +258,6 @@ class Individual(GedcomeItem):
                 return 'Error', self.uid, self.name, 'has married before its birth date'
 
     # Birth before death of parents
-
     def birth_before_death_of_parents(self, date_format=DEFAULT_DATE_FORMAT):
         # US09 @Shaunak1857 Shaunak Saklikar
         family = self.db_family_select(self.famc)
@@ -228,6 +296,7 @@ class Individual(GedcomeItem):
                    validate_birt_deat,
                    validate_birt_before_marr,
                    validate_age_from_birth]
+
     # Go through the list of validation functions in self.validations that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Individual object
@@ -277,6 +346,31 @@ class Family(GedcomeItem):
 
         self.additional_validations = additional_validations
 
+    # Function to retrieve all descendants of this family
+    # Return: list of uid of all individual who descended from this family
+    def desecendants(self):
+        descendants = []
+        # We start with a queue of this family's children
+        queue = self.childrens.copy()
+        checked_fams = [self.uid]
+
+        # Loop through the queue until it is empty.
+        while queue:
+            # Pop a descendant form the queue and add it to the descendants list
+            desc_id = queue.pop(0)
+            descendants.append(desc_id)
+            desc = self.db_indi_select(desc_id)
+
+            # If this descendant is married (aka is a spouse in a family), we add their childrens to the queue.
+            # Make sure descendant's family hasn't been checked in this loop,
+            # this is in case we have an error where parent married descendant.
+            if desc.fams and desc.fams not in checked_fams:
+                desc_fam = self.db_family_select(desc.fams)
+                if desc_fam.childrens:
+                    queue += desc_fam.childrens
+
+        return descendants
+
     # Validation functions to be used in validate() that follows the standard:
     # Input : self
     # Output: type (ANOMALY or ERROR), uid, message (in regard to the nomaly/error),
@@ -284,6 +378,7 @@ class Family(GedcomeItem):
     #         list of name of individuals involved (order must match list of individual uid)
 
     # US1- validate marriage before today's date
+
     def validate_marr_before_current_date(self, date_format=DEFAULT_DATE_FORMAT):
         if self.marr is None:
             return 'ERROR', self.uid, 'has no marriage date'
@@ -309,7 +404,6 @@ class Family(GedcomeItem):
             return None
 
     # US4 - validate marriage before divorce
-
     def validate_marr_div(self, date_format=DEFAULT_DATE_FORMAT):
         if self.div is None:
             return None
@@ -322,7 +416,6 @@ class Family(GedcomeItem):
             return None
 
     # US5 - Marriage should occur before death of either spouse
-
     def validate_marr_before_death(self, date_format=DEFAULT_DATE_FORMAT):
         husb, wife = self.db_indi_select(
             uid=self.husb), self.db_indi_select(uid=self.wife)
@@ -405,7 +498,6 @@ class Family(GedcomeItem):
                             return None
 
     # Marriage after 14
-
     def validate_marr_after_14(self, date_format=DEFAULT_DATE_FORMAT):
         # US10 @Shaunak1857 Shaunak Saklikar
         if self.marr is None:
@@ -433,16 +525,89 @@ class Family(GedcomeItem):
                     else:
                         return None
 
+    # US12 - Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+    def validate_parents_age(self, date_format=DEFAULT_DATE_FORMAT):
+        if not self.childrens:
+            return None
+
+        msg = ''
+        individual_ids = [self.wife, self.husb]
+        individual_names = [self.wife_name, self.husb_name]
+        for c in self.childrens:
+            child = self.db_indi_select(c)
+            husband = self.db_indi_select(self.husb)
+            wife = self.db_indi_select(self.wife)
+
+            if wife.age_at(child.birt) >= 60:
+                msg += wife.name + ' is more than 60 years older than her child ' + child.name + ', '
+            if husband.age_at(child.birt) - child.age >= 80:
+                msg += husband.name + ' is more than 80 years older than his child ' + child.name + ', '
+
+            individual_ids.append(child.uid)
+            individual_names.append(child.name)
+
+        if msg != '':
+            return 'ERROR', self.uid, msg[:-2], individual_ids, individual_names
+        else:
+            return None
+
+    # US17 - Parents should not marry any of their descendants
+    def validate_marriage_to_descendants(self):
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+
+        husb_desc = husband.descendants()
+        wife_desc = wife.descendants()
+
+        if self.wife in husb_desc:
+            msg = self.husb_name + \
+                ' (' + self.husb + ')' + ' is married to his descendant ' + \
+                self.wife_name + ' (' + self.wife + ')'
+            return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
+
+        if self.husb in wife_desc:
+            msg = self.wife_name + \
+                ' (' + self.wife + ')' + ' is married to her descendant ' + \
+                self.husb_name + ' (' + self.husb + ')'
+            return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
+
+        return None
+
+    # US20 - Aunts and uncles should not marry their nieces or nephews
+    def validate_marriage_to_niblings(self):
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+
+        husb_niblings = husband.niblings()
+        wife_niblings = wife.niblings()
+
+        if self.wife in husb_niblings:
+            msg = self.husb_name + \
+                ' (' + self.husb + ')' + ' is married to his nibling ' + \
+                self.wife_name + ' (' + self.wife + ')'
+            return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
+
+        if self.husb in wife_niblings:
+            msg = self.wife_name + \
+                ' (' + self.wife + ')' + ' is married to her nibling ' + \
+                self.husb_name + ' (' + self.husb + ')'
+            return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
+
+        return None
+
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
                    validate_marr_after_14,
                    validate_marr_div,
                    validate_marr_before_death,
-                   validate_divorce_before_death]
+                   validate_divorce_before_death,
+                   validate_parents_age,
+                   validate_marriage_to_descendants,
+                   validate_marriage_to_niblings]
+
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Family object
-
     def validate(self):
         messages = []
         if self.additional_validations is not None:
@@ -773,5 +938,5 @@ if __name__ == '__main__':
     gedcom2.pretty_print(
         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
 
-    #gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
+    # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
