@@ -289,13 +289,16 @@ class Individual(GedcomeItem):
                     return 'Error', self.uid, self.name, 'is born after death of mother'
                 else:
                     return None
+                
+                
+    
 
     validations = [validate_birth_before_current_date,
                    validate_death_before_current_date, birth_before_death_of_parents,
                    birth_before_marr_US02,
                    validate_birt_deat,
                    validate_birt_before_marr,
-                   validate_age_from_birth]
+                   validate_age_from_birth,]
 
     # Go through the list of validation functions in self.validations that follows the above mentioned standard
     # Input : self
@@ -594,6 +597,44 @@ class Family(GedcomeItem):
             return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
 
         return None
+    
+    
+    
+    # US15 - There should be fewer than 15 siblings in a family
+    def validate_fewerThan15Siblings(self):
+        # US15 @Shaunak1857 Shaunak Saklikar
+        if len(self.childrens) > 15:
+            return 'Error: ', self.uid, 'has a children greater than 15', [self.husb, self.wife], [self.husb_name, self.wife_name]
+        return None
+    
+    # US16 - All male members of a family should have the same last name
+    def validate_maleSameLastName(self):
+        # US16 @Shaunak1857 Shaunak Saklikar
+        husbname = self.husb_name.split('/')
+        lastname = husbname[1]
+
+        if len(self.childrens) > 0:
+            for i in self.childrens:
+                child = self.db_indi_select(i)
+                childLastname = child.name.split('/')[1]
+                if child.sex == 'M':
+                    if lastname != childLastname:
+                        return 'Error:', self.uid, ' doesn''t have sme male last names', [self.husb, child.uid], [self.husb_name, child.name]
+            
+            return None
+        
+    # US18 - Siblings should not marry one another
+    def validate_siblingsShouldNotBeMarried(self):
+        # US18 @Shaunak1857 Shaunak Saklikar
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+        
+        if husband.famc != None and wife.famc != None:
+            if husband.famc == wife.famc:
+                return 'Error', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
+            
+        return None
+        
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -603,7 +644,11 @@ class Family(GedcomeItem):
                    validate_divorce_before_death,
                    validate_parents_age,
                    validate_marriage_to_descendants,
-                   validate_marriage_to_niblings]
+                   validate_marriage_to_niblings,
+                   validate_fewerThan15Siblings,
+                   validate_maleSameLastName,
+                   validate_siblingsShouldNotBeMarried]
+
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self

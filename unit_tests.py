@@ -446,6 +446,68 @@ class TestGedcomShaunak(unittest.TestCase):
         #print(expected, received)
 
         self.assertEqual(received, expected)
+        
+    def test_siblingsShouldNotBeMarried(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex Jane",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="1940 DEC 6",
+            div="",
+            childrens="[@I13@]",
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error', '@F4@', ' are married siblings',
+                    ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
+
+        received = familyWrong.validate_siblingsShouldNotBeMarried()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+        
+    def test_maleSameLastName(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex /Jane/",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="1940 DEC 6",
+            div="",
+            childrens=['@I4@'],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error:', '@F4@', ' doesnt have sme male last names',
+                    ['@I13@', '@I4@'], ['Alex /Jane/', 'Bruce /Wayne/'])
+
+        received = familyWrong.validate_maleSameLastName()
+        
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+        
+    def test_fewerThan15Siblings(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex Jane",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="1940 DEC 6",
+            div="",
+            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@', '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error: ', '@F4@', 'has a children greater than 15',
+                    ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
+
+        received = familyWrong.validate_fewerThan15Siblings()
+        
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
 
 
 def steven_suite():
@@ -494,6 +556,9 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_birth_before_death_of_parents'))
     suite.addTest(TestGedcomShaunak('test2_birth_before_death_of_parents'))
     suite.addTest(TestGedcomShaunak('test_ged_correct'))
+    suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
+    suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
+    suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))
     return suite
 
 
