@@ -108,7 +108,32 @@ class GedcomeItem:
             individual = self.list_to_indi(indi)
             individuals.append(individual)
         return individuals
+    
+    def db_indi_select_by_fams(self,fams,uid):
+        select_query = '''SELECT * FROM individuals WHERE fams=?'''
+        result = self.db_query(select_query, (fams,))
 
+        if not result:
+            return []
+
+        individuals = []
+        for indi in result:
+            individual = self.list_to_indi(indi)
+            individuals.append(individual)
+        return individuals
+
+    def db_indi_select_parents(self,famc,uid):
+        select_query = '''SELECT * FROM individuals WHERE fams=?'''
+        result = self.db_query(select_query, (famc,))
+
+        if not result:
+            return []
+
+        individuals = []
+        for indi in result:
+            individual = self.list_to_indi(indi)
+            individuals.append(individual)
+        return individuals
 
 class Individual(GedcomeItem):
     DEFAULT_DATE_FORMAT = '%Y %b %d'
@@ -153,6 +178,11 @@ class Individual(GedcomeItem):
         for fam in self.past_fams():
             descendants |= set(fam.desecendants())
         return list(descendants)
+
+    def parents(self):
+        parents = self.db_indi_select_parents(self.famc, self.uid)
+        return parents
+
 
     # Retrieve a list of siblings of this individual (i.e. any individual that shares the same famc)
     def siblings(self):
@@ -289,6 +319,9 @@ class Individual(GedcomeItem):
                     return 'Error', self.uid, self.name, 'is born after death of mother'
                 else:
                     return None
+    
+    
+
                 
                 
     
@@ -727,6 +760,38 @@ class Family(GedcomeItem):
                 return 'Error', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
             
         return None
+    #US14- Brendan - parents cannot have more than 5 kids at once
+    def validate_multipleBirths(self):
+        dates = {}
+        if len(self.childrens) > 5:
+            for child in self.childrens:
+                if dates[child.birt] is None:
+                    dates[child.birt] = 1
+                else:
+                    if dates[child.birt] > 5:
+                        return 'Error', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
+                    else: 
+                        dates[child.birt] += 1
+        return None
+
+    #US19- Brendan - first cousins cannot marry
+    def validate_firstCousinMarriage(self):
+
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+
+        husband_parents += db_indi_select_parents(husband)
+        wife_parents += db_indi_select_parents(wife)
+        husband_grandparents = []
+        wife_grandparents = []
+        for parent in husband_parents:
+            husband_grandparents += db_indi_select_parents(parent)
+        for parent in wife_parents:
+            wife_grandparents += db_indi_select_parents(parent)
+        if len(list(set(husband_grandparents) & set(wife_grandparents))) != len(husband_grandparents + wife_grandparents):
+            return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
+    
+
         
 
     validations = [validate_marr_before_current_date,
@@ -742,7 +807,9 @@ class Family(GedcomeItem):
                    validate_maleSameLastName,
                    validate_siblingsShouldNotBeMarried,
                    bigamy,
-                   checksiblings]
+                   checksiblings,
+                   validate_multipleBirths,
+                   validate_firstCousinMarriage]
 
 
     # Takes in a list of validation functions that follows the above mentioned standard
