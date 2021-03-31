@@ -1153,6 +1153,11 @@ if __name__ == '__main__':
                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
     gedcom2.pretty_print(
         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+    
+    #gedcom_wrong = Gedcom('./tests/rachi/rachi_test_wrong_new.ged',
+                          #db='./tests/rachi/rachi_test_wrong_new.db', sort='uid')
+    #gedcom_wrong.pretty_print(
+        #filename='./tests/rachi/rachi_gedcom_wrong_new.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
