@@ -1,0 +1,220 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 2
+1 DATE 31 MAR 2021
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Steve Tester
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME John /Personson/
+2 GIVN John
+2 SURN Personson
+2 _MARNM Personson
+1 SEX M
+1 BIRT
+2 DATE 2 JAN 2000
+1 FAMS @F1@
+1 FAMC @F2@
+0 @I2@ INDI
+1 NAME Jack /Personson/
+2 GIVN Jack
+2 SURN Personson
+2 _MARNM Personson
+1 SEX M
+1 BIRT
+2 DATE 4 FEB 1969
+1 FAMS @F2@
+1 FAMC @F3@
+0 @I3@ INDI
+1 NAME Sally /Peopleton/
+2 GIVN Sally
+2 SURN Peopleton
+2 _MARNM Personson
+1 SEX F
+1 BIRT
+2 DATE 3 FEB 1970
+1 FAMS @F2@
+1 FAMC @F4@
+0 @I4@ INDI
+1 NAME Steve /Personson/
+2 GIVN Steve
+2 SURN Personson
+2 _MARNM Personson
+1 SEX M
+1 BIRT
+2 DATE 6 JUL 1945
+1 FAMS @F3@
+0 @I5@ INDI
+1 NAME Mary /Smith/
+2 GIVN Mary
+2 SURN Smith
+2 _MARNM Personson
+1 SEX F
+1 BIRT
+2 DATE 3 APR 1948
+1 FAMS @F3@
+0 @I6@ INDI
+1 NAME Jane /Personson/
+2 GIVN Jane
+2 SURN Personson
+2 _MARNM Realperson
+1 SEX F
+1 BIRT
+2 DATE 6 FEB 1973
+1 FAMS @F5@
+1 FAMC @F3@
+0 @I7@ INDI
+1 NAME Ray /Realperson/
+2 GIVN Ray
+2 SURN Realperson
+2 _MARNM Realperson
+1 SEX M
+1 BIRT
+2 DATE 4 DEC 1971
+1 FAMS @F5@
+1 FAMC @F6@
+0 @I8@ INDI
+1 NAME Judy /Realperson/
+2 GIVN Judy
+2 SURN Realperson
+2 _MARNM Personson
+1 SEX F
+1 BIRT
+2 DATE 6 MAR 1998
+1 FAMS @F1@
+1 FAMC @F5@
+0 @I9@ INDI
+1 NAME Jack /Fakename/
+2 GIVN Jack
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 3 JUN 1946
+1 FAMS @F4@
+0 @I10@ INDI
+1 NAME Judy /Rickles/
+2 GIVN Judy
+2 SURN Rickles
+2 _MARNM Fakename
+1 SEX F
+1 BIRT
+2 DATE 7 APR 1948
+1 FAMS @F4@
+0 @I11@ INDI
+1 NAME Max /Realperson/
+2 GIVN Max
+2 SURN Realperson
+2 _MARNM Realperson
+1 SEX M
+1 BIRT
+2 DATE 4 APR 1944
+1 FAMS @F6@
+0 @I12@ INDI
+1 NAME Mary /Jacobs/
+2 GIVN Mary
+2 SURN Jacobs
+2 _MARNM Realperson
+1 SEX F
+1 BIRT
+2 DATE 4 SEP 1946
+1 FAMS @F6@
+0 @I13@ INDI
+1 NAME Rick /Fakename/
+2 GIVN Rick
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMC @F4@
+0 @I14@ INDI
+1 NAME Ricky /Fakename/
+2 GIVN Ricky
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMC @F4@
+0 @I15@ INDI
+1 NAME Zach /Fakename/
+2 GIVN Zach
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMC @F4@
+0 @I16@ INDI
+1 NAME Zachary /Fakename/
+2 GIVN Zachary
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMC @F4@
+0 @I17@ INDI
+1 NAME Dave /Fakename/
+2 GIVN Dave
+2 SURN Fakename
+2 _MARNM Fakename
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMC @F4@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I8@
+1 MARR
+2 DATE 4 MAR 2020
+1 _CURRENT Y
+0 @F2@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I1@
+1 MARR
+2 DATE 8 APR 1998
+1 _CURRENT Y
+0 @F3@ FAM
+1 HUSB @I4@
+1 WIFE @I5@
+1 CHIL @I2@
+1 CHIL @I6@
+1 MARR
+2 DATE 11 MAR 1966
+1 _CURRENT Y
+0 @F4@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 CHIL @I3@
+1 CHIL @I13@
+1 CHIL @I14@
+1 CHIL @I15@
+1 CHIL @I16@
+1 CHIL @I17@
+1 MARR
+2 DATE 4 MAR 1968
+1 _CURRENT Y
+0 @F5@ FAM
+1 HUSB @I7@
+1 WIFE @I6@
+1 CHIL @I8@
+1 MARR
+2 DATE 4 JUN 1995
+1 _CURRENT Y
+0 @F6@ FAM
+1 HUSB @I11@
+1 WIFE @I12@
+1 CHIL @I7@
+1 MARR
+2 DATE 5 SEP 1965
+1 _CURRENT Y
+0 TRLR

@@ -779,18 +779,36 @@ class Family(GedcomeItem):
 
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
-
-        husband_parents += db_indi_select_parents(husband)
-        wife_parents += db_indi_select_parents(wife)
+        husband_parents = []
+        wife_parents = []
         husband_grandparents = []
         wife_grandparents = []
+        husband_parents += husband.parents()
+        wife_parents += wife.parents()
+        husband_grandparents = []
+        wife_grandparents = [] 
         for parent in husband_parents:
-            husband_grandparents += db_indi_select_parents(parent)
+            husband_grandparents += parent.parents()
         for parent in wife_parents:
-            wife_grandparents += db_indi_select_parents(parent)
-        if len(list(set(husband_grandparents) & set(wife_grandparents))) != len(husband_grandparents + wife_grandparents):
-            return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
-    
+            wife_grandparents += parent.parents()
+        
+        if len(husband_grandparents) == 4 and len(wife_grandparents) == 4:
+            check = list(set(husband_grandparents) & set(wife_grandparents))
+        
+            if len(check) > 0:
+                return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
+        else:
+            husband_siblings = []
+            wife_siblings = []
+            for parent in husband_parents:
+                husband_siblings += parent.siblings()
+            for parent in wife_parents:
+                wife_siblings += parent.siblings()
+            check = list(set(husband_siblings) & set(wife_siblings))
+
+            if len(check) > 0:
+                return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
+        return None
 
         
 
@@ -1144,6 +1162,11 @@ if __name__ == '__main__':
                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
     gedcom2.pretty_print(
         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+
+    brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
+                     db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
+    brendan_sprint2.pretty_print(
+        filename='./tests/brendan/brendan_sprint2_tests.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
