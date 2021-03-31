@@ -332,7 +332,48 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
+        
+    #US 11 No Bigamy
+    def test_bigamy(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2000 MAY 5',
+            div='1999 MAY 5',
+            db='Test.db'
+        )
 
+        expected = ("ERROR : BIGAMY")
+        received = fam_wrong.bigamy()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+    
+    #US 13 Sibling Spacing
+    def test_siblings(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2000 MAY 5',
+            div='1999 MAY 5',
+            db='Test.db'
+        )
+
+        expected = "ERROR : SIBLINGS TOGETHER"
+        received = fam_wrong.checksiblings()
+        
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+    
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
