@@ -533,8 +533,9 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
                         
-    #US 11 No Bigamy    
-    def bigamy(self, wrongdb = None):
+    #US 11 No Bigamy #Rachi
+    
+    def validate_bigamy(self, wrongdb = None):
         if wrongdb is None:
             wrongdb = self.db
         conn = sqlite3.connect(wrongdb)
@@ -579,7 +580,10 @@ class Family(GedcomeItem):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    return "ERROR : BIGAMY"
+                    fmi = fam[fam.husb == h][["wife_name", "wife",]].drop_duplicates()
+                    wifenames = [i for i in fmi.wife_name.unique()]
+                    wifeids = [i for i in fmi.wife.unique()]
+                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
         
         if wids:
             for h in wids:
@@ -589,12 +593,16 @@ class Family(GedcomeItem):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    return "ERROR : BIGAMY"
+                    fmi = fam[fam.wife == h][["husb_name", "husb",]].drop_duplicates()
+                    hsbname = [i for i in fmi.husb_name.unique()]
+                    hsbid = [i for i in fmi.husb.unique()]
+                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
                 
         return None
     
-    # US 13 Sibling Spacing
-    def checksiblings(self, wrongdb = None):
+    # US 13 Sibling Spacing #Rachi
+    
+    def validate_checksiblings(self, wrongdb = None):
         if wrongdb is None:
             wrongdb = self.db
         from itertools import combinations
@@ -622,7 +630,8 @@ class Family(GedcomeItem):
             for i in combinations(datecom,2):
                 j = reduce(lambda x,y:x-y, sorted(i,reverse=True))
                 if j.days>2 and j.days<8*30:
-                    return "ERROR : SIBLINGS TOGETHER"
+                    sibnames = [ind[ind.uid == s].name.item() for s in sib]
+                    return 'Error', sib[0], 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
         
         return None
     
@@ -824,8 +833,8 @@ class Family(GedcomeItem):
                    validate_fewerThan15Siblings,
                    validate_maleSameLastName,
                    validate_siblingsShouldNotBeMarried,
-                   bigamy,
-                   checksiblings,
+                   validate_bigamy,
+                   validate_checksiblings,
                    validate_multipleBirths,
                    validate_firstCousinMarriage]
 
@@ -1162,6 +1171,11 @@ if __name__ == '__main__':
                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
     gedcom2.pretty_print(
         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+    
+    #gedcom_wrong = Gedcom('./tests/rachi/rachi_test_wrong_new.ged',
+                          #db='./tests/rachi/rachi_test_wrong_new.db', sort='uid')
+    #gedcom_wrong.pretty_print(
+        #filename='./tests/rachi/rachi_gedcom_wrong_new.txt')
 
     brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
                      db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')

@@ -1,0 +1,99 @@
+Individuals
++----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name               | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I1@  | Jack /Tester/      | M     | 1965 AUG 12 |    56 |             | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Mary /Smith/       | F     | 1968 MAR 12 |    57 | 2025 MAR 8  | False   | @F3@   | @F1@   |
+|  2 | @I3@  | Steve /Tester/     | M     | 1995 FEB 2  |    26 |             | True    | @F1@   | @F4@   |
+|  3 | @I4@  | Rick /Smith/       | M     | 1938 MAY 4  |    83 |             | True    | @F5@   | @F3@   |
+|  4 | @I5@  | Jane /Adams/       | F     | 1941 MAR 6  |    80 |             | True    |        | @F3@   |
+|  5 | @I6@  | Steven /Tester/    | M     | 1947 JUN 15 |    74 |             | True    |        | @F2@   |
+|  6 | @I7@  | Lilian /Roberts/   | F     | 1946 APR 4  |    75 |             | True    |        | @F2@   |
+|  7 | @I8@  | Jim /Tester/       | M     | 1995 JAN 8  |    26 |             | True    | @F1@   |        |
+|  8 | @I9@  | Sally /Johnson/    | F     | 1997 JAN 10 |    24 |             | True    | @F6@   | @F4@   |
+|  9 | @I10@ | Alex /Smith/       | M     | 1700 JAN 13 |   321 |             | True    |        | @F5@   |
+| 10 | @I11@ | Alexa /Fakename/   | F     | 1800 JAN 3  |   200 | 2000 FEB 3  | False   |        | @F5@   |
+| 11 | @I12@ | Amy /Tester/       | F     | 1970 MAR 10 |    51 |             | True    | @F2@   | @F7@   |
+| 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  | False   |        | @F7@   |
+| 13 | @I14@ | Jimmy /Smith/      | M     | 1972 MAR 3  |    49 |             | True    | @F3@   | @F8@   |
+| 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 | False   |        | @F8@   |
+| 15 | @I16@ | Jason /Johnson/    | M     | 1964 APR 4  |    57 |             | True    |        | @F6@   |
+| 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  | False   |        |        |
+| 17 | @I18@ | Jenny /Fischer/    | F     | 1970 APR 5  |    51 |             | True    |        | @F9@   |
+| 18 | @I19@ | Alisha /Jones/     | F     | 1940 APR 8  |    81 |             | True    |        | @F9@   |
++----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+Families
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+|    | uid   | husb   | husb_name        | wife   | wife_name          | marr        | div         | childrens         |
+|----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------|
+|  0 | @F1@  | @I1@   | Jack /Tester/    | @I2@   | Mary /Smith/       | 1990 JUL 14 |             | ['@I3@', '@I8@']  |
+|  1 | @F2@  | @I6@   | Steven /Tester/  | @I7@   | Lilian /Roberts/   | 1964 JUL 2  | 2022 JUN 6  | ['@I1@', '@I12@'] |
+|  2 | @F3@  | @I4@   | Rick /Smith/     | @I5@   | Jane /Adams/       | 1963 NOV 5  |             | ['@I2@', '@I14@'] |
+|  3 | @F4@  | @I3@   | Steve /Tester/   | @I9@   | Sally /Johnson/    | 2022 APR 15 |             | []                |
+|  4 | @F5@  | @I10@  | Alex /Smith/     | @I11@  | Alexa /Fakename/   | 1820 FEB 4  |             | ['@I4@']          |
+|  5 | @F6@  | @I16@  | Jason /Johnson/  | @I17@  | Alyssa /Peterson/  | 1992 JUN 5  | 2020 JUL 15 | ['@I9@']          |
+|  6 | @F7@  | @I13@  | Ryan /Fredricks/ | @I12@  | Amy /Tester/       | 2019 MAR 1  |             | []                |
+|  7 | @F8@  | @I14@  | Jimmy /Smith/    | @I15@  | Jackie /Jergensen/ | 2015 FEB 2  | 2020 APR 4  | []                |
+|  8 | @F9@  | @I3@   | Steve /Tester/   | @I18@  | Jenny /Fischer/    | 2000 JAN 6  |             | []                |
+|  9 | @F10@ | @I4@   | Rick /Smith/     | @I19@  | Alisha /Jones/     | 1900 FEB 15 |             | []                |
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+Anomalies/Errors
+ERROR: @I2@ (Mary /Smith/) has a death date later than today's date.
+ERROR: Alex /Smith/ (@I10@) is older than 150 years old.
+ERROR: Alexa /Fakename/ (@I11@) is older than 150 years old.
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @F2@ has a divorce date later than today's date.
+Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @F4@ has a marriage date later than today's date.
+Individual(s) involved - @I3@ (Steve /Tester/), @I9@ (Sally /Johnson/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @F5@ Alexa /Fakename/ is more than 60 years older than her child Rick /Smith/, Alex /Smith/ is more than 80 years older than his child Rick /Smith/.
+Individual(s) involved - @I11@ (Alexa /Fakename/), @I10@ (Alex /Smith/), @I4@ (Rick /Smith/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @I17@ has a divorce date after her death.
+Individual(s) involved - @I16@ (Jason /Johnson/), @I17@ (Alyssa /Peterson/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @I13@ has a marriage date after his death date.
+Individual(s) involved - @I13@ (Ryan /Fredricks/), @I12@ (Amy /Tester/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+ERROR: Family @I15@ has a divorce date after her death.
+Individual(s) involved - @I14@ (Jimmy /Smith/), @I15@ (Jackie /Jergensen/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+Error: Family @F9@  has married before the age of 14.
+Individual(s) involved - @I3@ (Steve /Tester/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
+Error: Family @F10@  has married before the age of 14.
+Individual(s) involved - @I4@ (Rick /Smith/), @I19@ (Alisha /Jones/)
+Error: Family @I3@ Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
