@@ -499,6 +499,7 @@ class Family(GedcomeItem):
                         else:
                             # husband alive, wife died but no error
                             return None
+                        
     #US 11 No Bigamy    
     def bigamy(self, wrongdb = None):
         if wrongdb is None:
