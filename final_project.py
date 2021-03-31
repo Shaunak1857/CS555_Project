@@ -499,7 +499,99 @@ class Family(GedcomeItem):
                         else:
                             # husband alive, wife died but no error
                             return None
+    #US 11 No Bigamy    
+    def bigamy(self, wrongdb = None):
+        if wrongdb is None:
+            wrongdb = self.db
+        conn = sqlite3.connect(wrongdb)
+        cursor = conn.cursor()
 
+        idcol = ["uid","name","sex","birt","age","deat","alive","famc","fams"]
+        famcol = ['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens']
+
+
+        def createtable(cursorexecute, cols = None):
+            return pd.DataFrame(data = [*cursorexecute], columns=cols)
+
+        fam = createtable([*cursor.execute("select * from families","")], famcol)
+        ind = createtable([*cursor.execute("select * from individuals","")], idcol)
+
+        fms = fam[["husb","wife","div"]].drop_duplicates()
+
+        ids = ind[["uid","deat"]]
+        maps = dict(zip(ids.uid, ids.deat))
+
+        fms['h_deat'] = fms['husb'].apply(lambda x:maps.get(x))
+        fms['w_deat'] = fms['wife'].apply(lambda x:maps.get(x))
+        
+        cursor.close()
+
+        if fms.wife.value_counts().max()>1:
+            wids, _ = zip(*filter(lambda x:x[1]>1,dict(fms.wife.value_counts()).items()))
+        else:
+            wids = None
+
+        if fms.husb.value_counts().max()>1:
+            hids, _ = zip(*filter(lambda x:x[1]>1,dict(fms.husb.value_counts()).items()))
+        else:
+            hids = None
+
+        q = {}
+        if hids:
+            for h in hids:
+                temp = fms[fms.husb == h][["div","w_deat"]]
+                v = []
+                for i,j in zip(temp["div"],temp["w_deat"]):
+                    if i or j:
+                        v.append(i or j)
+                if not v:
+                    return "ERROR : BIGAMY"
+        
+        if wids:
+            for h in wids:
+                temp = fms[fms.wife == h][["div","h_deat"]]
+                v = []
+                for i,j in zip(temp["div"],temp["h_deat"]):
+                    if i or j:
+                        v.append(i or j)
+                if not v:
+                    return "ERROR : BIGAMY"
+                
+        return None
+    
+    # US 13 Sibling Spacing
+    def checksiblings(self, wrongdb = None):
+        if wrongdb is None:
+            wrongdb = self.db
+        from itertools import combinations
+        from functools import reduce
+        
+        DEFAULT_DATE_FORMAT = '%Y %b %d'
+        conn = sqlite3.connect(wrongdb)
+        cursor = conn.cursor()
+
+        def createtable(cursorexecute, cols = None):
+            return pd.DataFrame(data = [*cursorexecute], columns=cols)
+
+        idcol = ["uid","name","sex","birt","age","deat","alive","famc","fams"]
+        famcol = ['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens']
+
+        fam = createtable([*cursor.execute("select * from families","")], famcol)
+        ind = createtable([*cursor.execute("select * from individuals","")], idcol)
+
+        cursor.close()
+
+        siblings = [*filter(lambda x:len(x)>1,list(map(eval, fam.childrens)))]
+        for sib in siblings:
+            dates = [*map(lambda x:ind[ind.uid == x].birt.unique().item(), sib)]
+            datecom = [*map(lambda x:datetime.datetime.strptime(x, DEFAULT_DATE_FORMAT), dates)]
+            for i in combinations(datecom,2):
+                j = reduce(lambda x,y:x-y, sorted(i,reverse=True))
+                if j.days>2 and j.days<8*30:
+                    return "ERROR : SIBLINGS TOGETHER"
+        
+        return None
+    
     # Marriage after 14
     def validate_marr_after_14(self, date_format=DEFAULT_DATE_FORMAT):
         # US10 @Shaunak1857 Shaunak Saklikar
@@ -647,7 +739,9 @@ class Family(GedcomeItem):
                    validate_marriage_to_niblings,
                    validate_fewerThan15Siblings,
                    validate_maleSameLastName,
-                   validate_siblingsShouldNotBeMarried]
+                   validate_siblingsShouldNotBeMarried,
+                   bigamy,
+                   checksiblings]
 
 
     # Takes in a list of validation functions that follows the above mentioned standard
