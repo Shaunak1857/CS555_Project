@@ -815,8 +815,8 @@ class Family(GedcomeItem):
                    validate_fewerThan15Siblings,
                    validate_maleSameLastName,
                    validate_siblingsShouldNotBeMarried,
-                   bigamy,
-                   checksiblings,
+                   validate_bigamy,
+                   validate_checksiblings,
                    validate_multipleBirths,
                    validate_firstCousinMarriage]
 
