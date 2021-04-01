@@ -772,6 +772,8 @@ class Family(GedcomeItem):
                 return 'Error', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
             
         return None
+    
+    
     #US14- Brendan - parents cannot have more than 5 kids at once
     def validate_multipleBirths(self):
         dates = {}

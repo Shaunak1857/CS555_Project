@@ -1,0 +1,178 @@
+Individuals
++----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name             | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I1@  | John /Smith/     | M     | 1969 NOV 10 |    52 |             | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Mary /Jane/      | F     | 1972 MAR 18 |    49 |             | True    | @F4@   | @F8@   |
+|  2 | @I3@  | Kevin /Smith/    | M     | 2007 SEP 8  |    14 |             | True    | @F1@   |        |
+|  3 | @I4@  | Bruce /Wayne/    | M     | 1950 OCT 16 |    71 |             | True    |        | @F4@   |
+|  4 | @I5@  | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |             | True    |        | @F4@   |
+|  5 | @I6@  | Adam /Smith/     | M     | 1949 JUN 6  |    72 |             | True    |        | @F2@   |
+|  6 | @I7@  | Jane /List/      | F     | 1948 SEP 6  |    73 |             | True    |        | @F2@   |
+|  7 | @I8@  | Henry /Lane/     | M     | 1967 OCT 13 |   -67 | 1900 FEB 12 | False   | @F5@   | @F3@   |
+|  8 | @I9@  | Stephen /Lane/   | M     | 1991 OCT 13 |    30 |             | True    | @F3@   |        |
+|  9 | @I10@ | Joe /Lane/       | M     | 1850 DEC 20 |   171 |             | True    |        | @F5@   |
+| 10 | @I11@ | Amy /Luis/       | F     | 1880 JUN 9  |   141 |             | True    |        |        |
+| 11 | @I12@ | Alex /Lane/      | M     | 1970 JUN 9  |    51 |             | True    | @F5@   | @F7@   |
+| 12 | @I13@ | Alyssa /Rex/     | F     | 1971 MAY 10 |    50 |             | True    | @F4@   | @F7@   |
+| 13 | @I14@ | Gabe /Lane/      | M     | 1991 MAY 10 |    30 |             | True    | @F7@   | @F8@   |
++----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
+Families
++----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------------+
+|    | uid   | husb   | husb_name     | wife   | wife_name        | marr        | div         | childrens         |
+|----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------------|
+|  0 | @F1@  | @I1@   | John /Smith/  | @I2@   | Mary /Jane/      | 2005 MAY 19 | 2008 OCT 8  | ['@I3@']          |
+|  1 | @F2@  | @I6@   | Adam /Smith/  | @I7@   | Jane /List/      | 1969 JUL 10 |             | ['@I1@']          |
+|  2 | @F3@  | @I8@   | Henry /Lane/  | @I2@   | Mary /Jane/      | 1990 SEP 3  | 1970 OCT 8  | ['@I9@']          |
+|  3 | @F4@  | @I4@   | Bruce /Wayne/ | @I5@   | Martha /Barbara/ | 1940 NOV 6  |             | ['@I2@', '@I13@'] |
+|  4 | @F5@  | @I10@  | Joe /Lane/    | @I11@  | Amy /Luis/       | 1968 AUG 9  | 1970 AUG 10 | ['@I8@', '@I12@'] |
+|  5 | @F6@  | @I4@   | Bruce /Wayne/ | @I2@   | Mary /Jane/      | 1930 NOV 6  | 1931 NOV 6  | []                |
+|  6 | @F7@  | @I12@  | Alex /Lane/   | @I13@  | Alyssa /Rex/     | 1991 NOV 6  |             | ['@I14@']         |
+|  7 | @F8@  | @I14@  | Gabe /Lane/   | @I2@   | Mary /Jane/      | 2007 NOV 6  |             | []                |
++----+-------+--------+---------------+--------+------------------+-------------+-------------+-------------------+
+Anomalies/Errors
+Error: Bruce /Wayne/ (@I4@) has married before its birth date.
+Error: Martha /Barbara/ (@I5@) has married before its birth date.
+ERROR: @I8@ (Henry /Lane/) has a birth date later than his death date.
+ANOMALY: @I8@ (Henry /Lane/) has a birth date before his parents' marriage date.
+Error: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
+ANOMALY: @I9@ (Stephen /Lane/) has a birth date more than 280 days later than his parents' divorce date.
+ERROR: Joe /Lane/ (@I10@) is older than 150 years old.
+ANOMALY: @I14@ (Gabe /Lane/) has a birth date before his parents' marriage date.
+ERROR: Family @F3@ has a marriage date later than its divorce date.
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+ERROR: Family @I8@ has a marriage date after his death date.
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+ERROR: Family @I8@ has a divorce date after his death.
+Individual(s) involved - @I8@ (Henry /Lane/), @I2@ (Mary /Jane/)
+Error: Family @F4@  has married before the age of 14.
+Individual(s) involved - @I4@ (Bruce /Wayne/), @I5@ (Martha /Barbara/)
+ERROR: Family @F5@ Amy /Luis/ is more than 60 years older than her child Henry /Lane/, Joe /Lane/ is more than 80 years older than his child Henry /Lane/, Amy /Luis/ is more than 60 years older than her child Alex /Lane/.
+Individual(s) involved - @I11@ (Amy /Luis/), @I10@ (Joe /Lane/), @I8@ (Henry /Lane/), @I12@ (Alex /Lane/)
+Error: Family @F6@  has married before the age of 14.
+Individual(s) involved - @I4@ (Bruce /Wayne/), @I2@ (Mary /Jane/)
+ERROR: Family @F6@ Bruce /Wayne/ (@I4@) is married to his descendant Mary /Jane/ (@I2@).
+Individual(s) involved - @I2@ (Mary /Jane/), @I4@ (Bruce /Wayne/)
+ERROR: Family @F8@ Mary /Jane/ (@I2@) is married to her nibling Gabe /Lane/ (@I14@).
+Individual(s) involved - @I2@ (Mary /Jane/), @I14@ (Gabe /Lane/)
+Individuals
++----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name             | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I1@  | John /Smith/     | M     | 1969 NOV 10 |    52 |             | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Mary /Jane/      | F     | 1972 MAR 18 |    49 |             | True    | @F4@   | @F3@   |
+|  2 | @I3@  | Kevin /Smith/    | M     | 2007 SEP 8  |    14 |             | True    | @F1@   |        |
+|  3 | @I4@  | Bruce /Wayne/    | M     | 1950 OCT 16 |    71 |             | True    |        | @F4@   |
+|  4 | @I5@  | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |             | True    |        | @F4@   |
+|  5 | @I6@  | Adam /Smith/     | M     | 1949 JUN 6  |    72 |             | True    |        | @F2@   |
+|  6 | @I7@  | Jane /List/      | F     | 1948 SEP 6  |    73 |             | True    |        | @F2@   |
+|  7 | @I8@  | Henry /Lane/     | M     | 1970 OCT 13 |    30 | 2000 NOV 12 | False   | @F5@   | @F3@   |
+|  8 | @I9@  | Stephen /Lane/   | M     | 1991 OCT 13 |    30 |             | True    | @F3@   |        |
+|  9 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |             | True    |        | @F5@   |
+| 10 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |             | True    |        | @F5@   |
++----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
+Families
++----+-------+--------+---------------+--------+------------------+-------------+-------+-------------+
+|    | uid   | husb   | husb_name     | wife   | wife_name        | marr        | div   | childrens   |
+|----+-------+--------+---------------+--------+------------------+-------------+-------+-------------|
+|  0 | @F1@  | @I1@   | John /Smith/  | @I2@   | Mary /Jane/      | 2005 MAY 19 |       | ['@I3@']    |
+|  1 | @F2@  | @I6@   | Adam /Smith/  | @I7@   | Jane /List/      | 1969 JUL 10 |       | ['@I1@']    |
+|  2 | @F3@  | @I8@   | Henry /Lane/  | @I2@   | Mary /Jane/      | 1990 SEP 3  |       | ['@I9@']    |
+|  3 | @F4@  | @I4@   | Bruce /Wayne/ | @I5@   | Martha /Barbara/ | 1940 NOV 6  |       | ['@I2@']    |
+|  4 | @F5@  | @I10@  | Joe /Lane/    | @I11@  | Amy /Luis/       | 1968 AUG 9  |       | ['@I8@']    |
++----+-------+--------+---------------+--------+------------------+-------------+-------+-------------+
+Anomalies/Errors
+Error: Bruce /Wayne/ (@I4@) has married before its birth date.
+Error: Martha /Barbara/ (@I5@) has married before its birth date.
+Error: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
+Error: Family @F4@  has married before the age of 14.
+Individual(s) involved - @I4@ (Bruce /Wayne/), @I5@ (Martha /Barbara/)
+Individuals
++----+-------+----------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name                 | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+----------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I1@  | Jim /Smith/          | M     | 1963 SEP 10 |    58 |             | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Susan /Johnson/      | F     | 1967 JUN 8  |    54 |             | True    | @F3@   | @F1@   |
+|  2 | @I3@  | John /Smith/         | M     | 1995 JAN 1  |    26 |             | True    | @F1@   |        |
+|  3 | @I4@  | Rick /Johnson/       | M     | 1943 MAR 6  |    78 |             | True    |        | @F4@   |
+|  4 | @I5@  | Linda /McGee/        | F     | 1946 JUN 8  |    25 | 1971 JAN 3  | False   |        | @F3@   |
+|  5 | @I6@  | Ted /Smith/          | M     | 1932 MAY 7  |    65 | 1997 MAR 11 | False   |        | @F2@   |
+|  6 | @I7@  | Maryanne /Rodriguez/ | F     | 1938 MAR 5  |    83 |             | True    |        | @F2@   |
+|  7 | @I8@  | Jamie /Adams/        | F     | 1949 NOV 7  |    72 |             | True    |        | @F5@   |
+|  8 | @I9@  | Steven /Johnson/     | M     | 1977 MAY 5  |    44 |             | True    | @F4@   |        |
+|  9 | @I10@ | Tina Smith /Smith/   | F     | 1999 FEB 10 |    22 |             | True    | @F1@   |        |
+| 10 | @I11@ | Joe /Philipson/      | M     | 1938 JUN 8  |    56 | 1994 JUN 3  | False   |        | @F5@   |
+| 11 | @I12@ | Henry /Philipson/    | M     | 1968 SEP 6  |    53 |             | True    | @F5@   |        |
+| 12 | @I13@ | Jacob /Smith/        | M     | 1965 MAR 14 |    13 | 1978 FEB 5  | False   | @F2@   |        |
+| 13 | @I14@ | Jeniffer /Smith/     | F     | 1969 MAY 9  |    52 |             | True    | @F2@   | @F6@   |
+| 14 | @I15@ | Steven /Henricks/    | M     | 1967 FEB 10 |    54 |             | True    |        | @F6@   |
+| 15 | @I16@ | Frankie /Henricks/   | M     | 2003 MAR 7  |    18 |             | True    | @F6@   |        |
++----+-------+----------------------+-------+-------------+-------+-------------+---------+--------+--------+
+Families
++----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
+|    | uid   | husb   | husb_name         | wife   | wife_name            | marr        | div        | childrens                  |
+|----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------|
+|  0 | @F1@  | @I1@   | Jim /Smith/       | @I2@   | Susan /Johnson/      | 1988 JUL 10 |            | ['@I3@', '@I10@']          |
+|  1 | @F2@  | @I6@   | Ted /Smith/       | @I7@   | Maryanne /Rodriguez/ | 1958 JUN 6  |            | ['@I1@', '@I13@', '@I14@'] |
+|  2 | @F3@  | @I4@   | Rick /Johnson/    | @I5@   | Linda /McGee/        | 1965 JAN 4  |            | ['@I2@']                   |
+|  3 | @F4@  | @I4@   | Rick /Johnson/    | @I8@   | Jamie /Adams/        | 1975 NOV 9  |            | ['@I9@']                   |
+|  4 | @F5@  | @I11@  | Joe /Philipson/   | @I8@   | Jamie /Adams/        | 1967 JUN 3  | 1970 OCT 8 | ['@I12@']                  |
+|  5 | @F6@  | @I15@  | Steven /Henricks/ | @I14@  | Jeniffer /Smith/     | 1991 MAR 7  |            | ['@I16@']                  |
++----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
+Anomalies/Errors
+Error: Jim /Smith/ (@I1@) is born before 9 months after death of father.
+Error: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
+Error: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
+Error: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
+Individuals
++----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name               | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I1@  | Jack /Tester/      | M     | 1965 AUG 12 |    56 |             | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Mary /Smith/       | F     | 1968 MAR 12 |    57 | 2025 MAR 8  | False   | @F3@   | @F1@   |
+|  2 | @I3@  | Steve /Tester/     | M     | 1995 FEB 2  |    26 |             | True    | @F1@   | @F4@   |
+|  3 | @I4@  | Rick /Smith/       | M     | 1938 MAY 4  |    83 |             | True    | @F5@   | @F3@   |
+|  4 | @I5@  | Jane /Adams/       | F     | 1941 MAR 6  |    80 |             | True    |        | @F3@   |
+|  5 | @I6@  | Steven /Tester/    | M     | 1947 JUN 15 |    74 |             | True    |        | @F2@   |
+|  6 | @I7@  | Lilian /Roberts/   | F     | 1946 APR 4  |    75 |             | True    |        | @F2@   |
+|  7 | @I8@  | Jim /Tester/       | M     | 2022 JAN 3  |    -1 |             | True    | @F1@   |        |
+|  8 | @I9@  | Sally /Johnson/    | F     | 1997 JAN 10 |    24 |             | True    | @F6@   | @F4@   |
+|  9 | @I10@ | Alex /Smith/       | M     | 1700 JAN 13 |   321 |             | True    |        | @F5@   |
+| 10 | @I11@ | Alexa /Fakename/   | F     | 1800 JAN 3  |   200 | 2000 FEB 3  | False   |        | @F5@   |
+| 11 | @I12@ | Amy /Tester/       | F     | 1970 MAR 10 |    51 |             | True    | @F2@   | @F7@   |
+| 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  | False   |        | @F7@   |
+| 13 | @I14@ | Jimmy /Smith/      | M     | 1972 MAR 3  |    49 |             | True    | @F3@   | @F8@   |
+| 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 | False   |        | @F8@   |
+| 15 | @I16@ | Jason /Johnson/    | M     | 1964 APR 4  |    57 |             | True    |        | @F6@   |
+| 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  | False   |        | @F6@   |
++----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+Families
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+|    | uid   | husb   | husb_name        | wife   | wife_name          | marr        | div         | childrens         |
+|----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------|
+|  0 | @F1@  | @I1@   | Jack /Tester/    | @I2@   | Mary /Smith/       | 1990 JUL 14 |             | ['@I3@', '@I8@']  |
+|  1 | @F2@  | @I6@   | Steven /Tester/  | @I7@   | Lilian /Roberts/   | 1964 JUL 2  | 2022 JUN 6  | ['@I1@', '@I12@'] |
+|  2 | @F3@  | @I4@   | Rick /Smith/     | @I5@   | Jane /Adams/       | 1963 NOV 5  |             | ['@I2@', '@I14@'] |
+|  3 | @F4@  | @I3@   | Steve /Tester/   | @I9@   | Sally /Johnson/    | 2022 APR 15 |             | []                |
+|  4 | @F5@  | @I10@  | Alex /Smith/     | @I11@  | Alexa /Fakename/   | 1820 FEB 4  |             | ['@I4@']          |
+|  5 | @F6@  | @I16@  | Jason /Johnson/  | @I17@  | Alyssa /Peterson/  | 1992 JUN 5  | 2020 JUL 15 | ['@I9@']          |
+|  6 | @F7@  | @I13@  | Ryan /Fredricks/ | @I12@  | Amy /Tester/       | 2019 MAR 1  |             | []                |
+|  7 | @F8@  | @I14@  | Jimmy /Smith/    | @I15@  | Jackie /Jergensen/ | 2015 FEB 2  | 2020 APR 4  | []                |
++----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+Anomalies/Errors
+ERROR: @I2@ (Mary /Smith/) has a death date later than today's date.
+ERROR: @I8@ (Jim /Tester/) has a birth date later than today's date.
+ERROR: Alex /Smith/ (@I10@) is older than 150 years old.
+ERROR: Alexa /Fakename/ (@I11@) is older than 150 years old.
+ERROR: Family @F2@ has a divorce date later than today's date.
+Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
+ERROR: Family @F4@ has a marriage date later than today's date.
+Individual(s) involved - @I3@ (Steve /Tester/), @I9@ (Sally /Johnson/)
+ERROR: Family @F5@ Alexa /Fakename/ is more than 60 years older than her child Rick /Smith/, Alex /Smith/ is more than 80 years older than his child Rick /Smith/.
+Individual(s) involved - @I11@ (Alexa /Fakename/), @I10@ (Alex /Smith/), @I4@ (Rick /Smith/)
+ERROR: Family @I17@ has a divorce date after her death.
+Individual(s) involved - @I16@ (Jason /Johnson/), @I17@ (Alyssa /Peterson/)
+ERROR: Family @I13@ has a marriage date after his death date.
+Individual(s) involved - @I13@ (Ryan /Fredricks/), @I12@ (Amy /Tester/)
+ERROR: Family @I15@ has a divorce date after her death.
+Individual(s) involved - @I14@ (Jimmy /Smith/), @I15@ (Jackie /Jergensen/)
