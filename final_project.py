@@ -180,7 +180,7 @@ class Individual(GedcomeItem):
         return list(descendants)
 
     def parents(self):
-        parents = self.db_indi_select_parents(self.famc, self.uid)
+        parents = self.db_indi_select_parents(self.fams, self.uid)
         return parents
 
 
@@ -772,15 +772,19 @@ class Family(GedcomeItem):
     #US14- Brendan - parents cannot have more than 5 kids at once
     def validate_multipleBirths(self):
         dates = {}
-        if len(self.childrens) > 5:
-            for child in self.childrens:
-                if dates[child.birt] is None:
+        if len(self.childrens) > 4:
+            for childlookup in self.childrens:
+                child = self.db_indi_select(childlookup)
+                if child.birt not in dates:
                     dates[child.birt] = 1
                 else:
-                    if dates[child.birt] > 5:
-                        return 'Error', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
+                    #print(dates[child.birt])
+                    if dates[child.birt] > 4:
+                        return 'ERROR', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
                     else: 
                         dates[child.birt] += 1
+                        if dates[child.birt] > 4:
+                            return 'ERROR', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
 
     #US19- Brendan - first cousins cannot marry
@@ -788,35 +792,32 @@ class Family(GedcomeItem):
 
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
-        husband_parents = []
-        wife_parents = []
-        husband_grandparents = []
-        wife_grandparents = []
-        husband_parents += husband.parents()
-        wife_parents += wife.parents()
-        husband_grandparents = []
-        wife_grandparents = [] 
-        for parent in husband_parents:
-            husband_grandparents += parent.parents()
-        for parent in wife_parents:
-            wife_grandparents += parent.parents()
+        husband_parents = husband.parents()
+        wife_parents = wife.parents()
         
-        if len(husband_grandparents) == 4 and len(wife_grandparents) == 4:
-            check = list(set(husband_grandparents) & set(wife_grandparents))
-        
-            if len(check) > 0:
-                return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
-        else:
-            husband_siblings = []
-            wife_siblings = []
-            for parent in husband_parents:
-                husband_siblings += parent.siblings()
-            for parent in wife_parents:
-                wife_siblings += parent.siblings()
-            check = list(set(husband_siblings) & set(wife_siblings))
 
-            if len(check) > 0:
-                return 'Error', self.uid, ', first cousins cannot marry', [self.husb, self.wife], [self.husb_name, self.wife_name]
+
+        husband_parent_siblings = []
+        wife_parent_siblings = []
+        for personLookup in husband_parents:
+            #person = self.db_indi_select(personLookup)
+            husband_parent_siblings += personLookup.siblings()
+        
+        for personLookup in wife_parents:
+            #person = self.db_indi_select(personLookup)
+            wife_parent_siblings += personLookup.siblings()
+       
+        check = []
+        check2 = []
+        cousin_check = []#list(set(husband_parent_siblings) & set(wife_parent_siblings))
+        #print(husband.uid)
+        #print(husband_parent_siblings)
+        #print(wife.uid)
+        #print(wife_parent_siblings)
+   
+        #if len(cousin_check) > 0:
+           # return 'ERROR', self.uid, 'cannot marry as first cousins', [self.husb, self.wife], [self.husb_name, self.wife_name]
+
         return None
 
         
@@ -1155,7 +1156,7 @@ class Gedcom:
 
 if __name__ == '__main__':
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
-                          db='./tests/steven/steven_test_wrong.db', sort='uid')
+                            db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
         filename='./tests/steven/steven_gedcom_wrong_table.txt')
 
