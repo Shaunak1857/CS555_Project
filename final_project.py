@@ -584,7 +584,7 @@ class Family(GedcomeItem):
                     wifenames = [i for i in fmi.wife_name.unique()]
                     wifeids = [i for i in fmi.wife.unique()]
                     fmids = list(fmi.uid.unique())
-                    return 'Error', fmids, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
+                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
         
         if wids:
             for h in wids:
@@ -598,7 +598,7 @@ class Family(GedcomeItem):
                     hsbname = [i for i in fmi.husb_name.unique()]
                     hsbid = [i for i in fmi.husb.unique()]
                     fmids = list(fmi.uid.unique())
-                    return 'Error', fmids, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
+                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
                 
         return None
     
@@ -634,7 +634,7 @@ class Family(GedcomeItem):
                 if j.days>2 and j.days<8*30:
                     sibnames = [ind[ind.uid == s].name.item() for s in sib]
                     fid = ind[ind.uid == sib[0]].famc.values.item()
-                    return 'Error', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
+                    return 'ERROR', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
         
         return None
     
