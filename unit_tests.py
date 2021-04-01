@@ -346,7 +346,7 @@ class TestGedcomRachi(unittest.TestCase):
             db='Test.db'
         )
 
-        expected = """Error: Family @I4@ Marriage should not occur during marriage to another spouse.
+        expected = """Error: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
                     Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)"""
         received = fam_wrong.validate_bigamy()
 
@@ -368,7 +368,7 @@ class TestGedcomRachi(unittest.TestCase):
         )
 
         expected = "ERROR : SIBLINGS TOGETHER"
-        expected = """Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+        expected = """Error: Family @F1@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
                         Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)"""
 
         received = fam_wrong.validate_checksiblings()
