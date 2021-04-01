@@ -533,8 +533,8 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
                         
+                   
     #US 11 No Bigamy #Rachi
-    
     def validate_bigamy(self, wrongdb = None):
         if wrongdb is None:
             wrongdb = self.db
@@ -580,23 +580,25 @@ class Family(GedcomeItem):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.husb == h][["wife_name", "wife",]].drop_duplicates()
+                    fmi = fam[fam.husb == h][["wife_name", "wife","uid"]].drop_duplicates()
                     wifenames = [i for i in fmi.wife_name.unique()]
                     wifeids = [i for i in fmi.wife.unique()]
-                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
+                    fmids = list(fmi.uid.unique())
+                    return 'Error', fmids, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
         
         if wids:
             for h in wids:
-                temp = fms[fms.wife == h][["div","h_deat"]]
+                temp = fms[fms.wife == h][["div","h_deat",]]
                 v = []
                 for i,j in zip(temp["div"],temp["h_deat"]):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.wife == h][["husb_name", "husb",]].drop_duplicates()
+                    fmi = fam[fam.wife == h][["husb_name", "husb","uid"]].drop_duplicates()
                     hsbname = [i for i in fmi.husb_name.unique()]
                     hsbid = [i for i in fmi.husb.unique()]
-                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
+                    fmids = list(fmi.uid.unique())
+                    return 'Error', fmids, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
                 
         return None
     
@@ -631,7 +633,8 @@ class Family(GedcomeItem):
                 j = reduce(lambda x,y:x-y, sorted(i,reverse=True))
                 if j.days>2 and j.days<8*30:
                     sibnames = [ind[ind.uid == s].name.item() for s in sib]
-                    return 'Error', sib[0], 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
+                    fid = ind[ind.uid == sib[0]].famc.values.item()
+                    return 'Error', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
         
         return None
     
