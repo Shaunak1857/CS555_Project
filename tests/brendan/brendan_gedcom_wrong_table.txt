@@ -20,6 +20,7 @@ Individuals
 | 15 | @I16@ | Jason /Johnson/    | M     | 1964 APR 4  |    57 |             | True    |        | @F6@   |
 | 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  | False   |        | @F6@   |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+
 Families
 +----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
 |    | uid   | husb   | husb_name        | wife   | wife_name          | marr        | div         | childrens         |
@@ -33,6 +34,7 @@ Families
 |  6 | @F7@  | @I13@  | Ryan /Fredricks/ | @I12@  | Amy /Tester/       | 2019 MAR 1  |             | []                |
 |  7 | @F8@  | @I14@  | Jimmy /Smith/    | @I15@  | Jackie /Jergensen/ | 2015 FEB 2  | 2020 APR 4  | []                |
 +----+-------+--------+------------------+--------+--------------------+-------------+-------------+-------------------+
+
 Anomalies/Errors
 ERROR: @I2@ (Mary /Smith/) has a death date later than today's date.
 ERROR: @I8@ (Jim /Tester/) has a birth date later than today's date.
@@ -50,3 +52,20 @@ ERROR: Family @I13@ has a marriage date after his death date.
 Individual(s) involved - @I13@ (Ryan /Fredricks/), @I12@ (Amy /Tester/)
 ERROR: Family @I15@ has a divorce date after her death.
 Individual(s) involved - @I14@ (Jimmy /Smith/), @I15@ (Jackie /Jergensen/)
+
+List of all living married individuals
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name             | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@  | Jack /Tester/    | M     | 1965 AUG 12 |    56 |        | True    | @F2@   | @F1@   |
+|  1 | @I3@  | Steve /Tester/   | M     | 1995 FEB 2  |    26 |        | True    | @F1@   | @F4@   |
+|  2 | @I4@  | Rick /Smith/     | M     | 1938 MAY 4  |    83 |        | True    | @F5@   | @F3@   |
+|  3 | @I5@  | Jane /Adams/     | F     | 1941 MAR 6  |    80 |        | True    |        | @F3@   |
+|  4 | @I6@  | Steven /Tester/  | M     | 1947 JUN 15 |    74 |        | True    |        | @F2@   |
+|  5 | @I7@  | Lilian /Roberts/ | F     | 1946 APR 4  |    75 |        | True    |        | @F2@   |
+|  6 | @I9@  | Sally /Johnson/  | F     | 1997 JAN 10 |    24 |        | True    | @F6@   | @F4@   |
+|  7 | @I10@ | Alex /Smith/     | M     | 1700 JAN 13 |   321 |        | True    |        | @F5@   |
+|  8 | @I12@ | Amy /Tester/     | F     | 1970 MAR 10 |    51 |        | True    | @F2@   | @F7@   |
+|  9 | @I14@ | Jimmy /Smith/    | M     | 1972 MAR 3  |    49 |        | True    | @F3@   | @F8@   |
+| 10 | @I16@ | Jason /Johnson/  | M     | 1964 APR 4  |    57 |        | True    |        | @F6@   |
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+

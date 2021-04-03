@@ -14,6 +14,7 @@ Individuals
 |  9 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |             | True    |        | @F5@   |
 | 10 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |             | True    |        | @F5@   |
 +----+-------+------------------+-------+-------------+-------+-------------+---------+--------+--------+
+
 Families
 +----+-------+--------+---------------+--------+------------------+-------------+-------+-------------+
 |    | uid   | husb   | husb_name     | wife   | wife_name        | marr        | div   | childrens   |
@@ -24,9 +25,24 @@ Families
 |  3 | @F4@  | @I4@   | Bruce /Wayne/ | @I5@   | Martha /Barbara/ | 1940 NOV 6  |       | ['@I2@']    |
 |  4 | @F5@  | @I10@  | Joe /Lane/    | @I11@  | Amy /Luis/       | 1968 AUG 9  |       | ['@I8@']    |
 +----+-------+--------+---------------+--------+------------------+-------------+-------+-------------+
+
 Anomalies/Errors
-Error: Bruce /Wayne/ (@I4@) has married before its birth date.
-Error: Martha /Barbara/ (@I5@) has married before its birth date.
-Error: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
-Error: Family @F4@  has married before the age of 14.
+ERROR: Bruce /Wayne/ (@I4@) has married before its birth date.
+ERROR: Martha /Barbara/ (@I5@) has married before its birth date.
+ERROR: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
+ERROR: Family @F4@  has married before the age of 14.
 Individual(s) involved - @I4@ (Bruce /Wayne/), @I5@ (Martha /Barbara/)
+
+List of all living married individuals
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name             | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@  | John /Smith/     | M     | 1969 NOV 10 |    52 |        | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Mary /Jane/      | F     | 1972 MAR 18 |    49 |        | True    | @F4@   | @F3@   |
+|  2 | @I4@  | Bruce /Wayne/    | M     | 1950 OCT 16 |    71 |        | True    |        | @F4@   |
+|  3 | @I5@  | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |        | True    |        | @F4@   |
+|  4 | @I6@  | Adam /Smith/     | M     | 1949 JUN 6  |    72 |        | True    |        | @F2@   |
+|  5 | @I7@  | Jane /List/      | F     | 1948 SEP 6  |    73 |        | True    |        | @F2@   |
+|  6 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |        | True    |        | @F5@   |
+|  7 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |        | True    |        | @F5@   |
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
