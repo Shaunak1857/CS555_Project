@@ -19,6 +19,7 @@ Individuals
 | 14 | @I15@ | Steven /Henricks/    | M     | 1967 FEB 10 |    54 |             | True    |        | @F6@   |
 | 15 | @I16@ | Frankie /Henricks/   | M     | 2003 MAR 7  |    18 |             | True    | @F6@   |        |
 +----+-------+----------------------+-------+-------------+-------+-------------+---------+--------+--------+
+
 Families
 +----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
 |    | uid   | husb   | husb_name         | wife   | wife_name            | marr        | div        | childrens                  |
@@ -30,8 +31,22 @@ Families
 |  4 | @F5@  | @I11@  | Joe /Philipson/   | @I8@   | Jamie /Adams/        | 1967 JUN 3  | 1970 OCT 8 | ['@I12@']                  |
 |  5 | @F6@  | @I15@  | Steven /Henricks/ | @I14@  | Jeniffer /Smith/     | 1991 MAR 7  |            | ['@I16@']                  |
 +----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
+
 Anomalies/Errors
-Error: Jim /Smith/ (@I1@) is born before 9 months after death of father.
-Error: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
-Error: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
-Error: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
+ERROR: Jim /Smith/ (@I1@) is born before 9 months after death of father.
+ERROR: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
+ERROR: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
+ERROR: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
+
+List of all living married individuals
++----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name                 | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@  | Jim /Smith/          | M     | 1963 SEP 10 |    58 |        | True    | @F2@   | @F1@   |
+|  1 | @I2@  | Susan /Johnson/      | F     | 1967 JUN 8  |    54 |        | True    | @F3@   | @F1@   |
+|  2 | @I4@  | Rick /Johnson/       | M     | 1943 MAR 6  |    78 |        | True    |        | @F4@   |
+|  3 | @I7@  | Maryanne /Rodriguez/ | F     | 1938 MAR 5  |    83 |        | True    |        | @F2@   |
+|  4 | @I8@  | Jamie /Adams/        | F     | 1949 NOV 7  |    72 |        | True    |        | @F5@   |
+|  5 | @I14@ | Jeniffer /Smith/     | F     | 1969 MAY 9  |    52 |        | True    | @F2@   | @F6@   |
+|  6 | @I15@ | Steven /Henricks/    | M     | 1967 FEB 10 |    54 |        | True    |        | @F6@   |
++----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------+

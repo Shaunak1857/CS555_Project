@@ -127,6 +127,55 @@ class TestGedcomSteven(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
+    def test_corresponding_entry_indi(self):
+        indi_wrong = Individual(
+            uid='@I8@',
+            name='Not Real',
+            famc='@F999@',
+            fams='@F888@',
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        error_msg = 'Family @F999@ this individual is a child in does not exist, Family @F888@ this individual is a spouse in does not exist'
+        expected = ('ERROR', '@I8@', 'Not Real', error_msg)
+        received = indi_wrong.validate_corresponding_entry()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_corresponding_entry_fam(self):
+        fam_wrong = Family(
+            uid='@F8@',
+            husb='@I112@',
+            wife='@I321@',
+            childrens=['@I9999@', '@I1111@'],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        error_msg = 'Husband @I112@ does not exist, Wife @I321@ does not exist, Child @I9999@ does not exist, Child @I1111@ does not exist'
+        expected = ('ERROR', '@F8@', error_msg, ['@I112@', '@I321@', '@I9999@', '@I1111@'],
+                    ['Does Not Exist', 'Does Not Exist', 'Does Not Exist', 'Does Not Exist'])
+        received = fam_wrong.validate_corresponding_entry()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_list_living_married(self):
+        expected = '''+----+--------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid    | name             | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+--------+------------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@   | John /Smith/     | M     | 1969 NOV 10 |    52 |        | True    | @F2@   | @F1@   |
+|  1 | @I2@   | Mary /Jane/      | F     | 1972 MAR 18 |    49 |        | True    | @F4@   | @F8@   |
+|  2 | @I4@   | Bruce /Wayne/    | M     | 1950 OCT 16 |    71 |        | True    |        | @F4@   |
+|  3 | @I5@   | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |        | True    |        | @F4@   |
+|  4 | @I6@   | Adam /Smith/     | M     | 1949 JUN 6  |    72 |        | True    |        | @F2@   |
+|  5 | @I7@   | Jane /List/      | F     | 1948 SEP 6  |    73 |        | True    |        | @F2@   |
+|  6 | @I10@  | Joe /Lane/       | M     | 1850 DEC 20 |   171 |        | True    |        | @F5@   |
+|  7 | @I12@  | Alex /Lane/      | M     | 1970 JUN 9  |    51 |        | True    | @F5@   | @F7@   |
+|  8 | @I13@  | Alyssa /Rex/     | F     | 1971 MAY 10 |    50 |        | True    | @F4@   | @F7@   |
+|  9 | @I14@  | Gabe /Lane/      | M     | 1991 MAY 10 |    30 |        | True    | @F7@   | @F8@   |
+| 10 | @I999@ | Not /Real/       | M     | 1991 MAY 10 |    30 |        | True    | @F990@ | @F991@ |
++----+--------+------------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.ged_wrong.list_living_married()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -360,8 +409,8 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-        
-    #US 11 No Bigamy
+
+    # US 11 No Bigamy
     def test_bigamy(self):
         fam_wrong = Family(
             uid='@F1@',
@@ -381,8 +430,8 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         #self.assertEqual(received, expected, msg)
-    
-    #US 13 Sibling Spacing
+
+    # US 13 Sibling Spacing
     def test_siblings(self):
         fam_wrong = Family(
             uid='@F1@',
@@ -405,7 +454,6 @@ class TestGedcomRachi(unittest.TestCase):
 
         # self.assertEqual(received, expected, msg)
 
-    
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -448,7 +496,7 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens="[@I2@]",
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('Error', '@F4@', ' has married before the age of 14',
+        expected = ('ERROR', '@F4@', ' has married before the age of 14',
                     ['@I4@', '@I5@'], ['Bruce Wayne', 'Martha Barbara'])
 
         received = familyWrong.validate_marr_after_14()
@@ -469,7 +517,7 @@ class TestGedcomShaunak(unittest.TestCase):
 
         )
 
-        expected = ('Error', '@I4@', 'Bruce Wayne',
+        expected = ('ERROR', '@I4@', 'Bruce Wayne',
                     'has married before its birth date')
         received = indiWrong.birth_before_marr_US02()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -486,7 +534,7 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F3@',
             db='Test.db'
         )
-        expected = ('Error', '@I1@', 'First Last',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is born after death of mother')
         received = indiWrong.birth_before_death_of_parents()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -503,7 +551,7 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F2@',
             db='Test.db'
         )
-        expected = ('Error', '@I1@', 'First Last',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is born before 9 months after death of father')
         received = indiWrong.birth_before_death_of_parents()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -519,7 +567,7 @@ class TestGedcomShaunak(unittest.TestCase):
         #print(expected, received)
 
         self.assertEqual(received, expected)
-        
+
     def test_siblingsShouldNotBeMarried(self):
         familyWrong = Family(
             uid="@F4@",
@@ -532,15 +580,14 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens="[@I13@]",
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('Error', '@F4@', ' are married siblings',
+        expected = ('ERROR', '@F4@', ' are married siblings',
                     ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
 
         received = familyWrong.validate_siblingsShouldNotBeMarried()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
+
     def test_maleSameLastName(self):
         familyWrong = Family(
             uid="@F4@",
@@ -557,11 +604,10 @@ class TestGedcomShaunak(unittest.TestCase):
                     ['@I13@', '@I4@'], ['Alex /Jane/', 'Bruce /Wayne/'])
 
         received = familyWrong.validate_maleSameLastName()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
+
     def test_fewerThan15Siblings(self):
         familyWrong = Family(
             uid="@F4@",
@@ -571,14 +617,15 @@ class TestGedcomShaunak(unittest.TestCase):
             wife_name="Mary Lane",
             marr="1940 DEC 6",
             div="",
-            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@', '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
+            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@',
+                       '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
             db='./tests/steven/steven_test_wrong.db'
         )
         expected = ('Error: ', '@F4@', 'has a children greater than 15',
                     ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
 
         received = familyWrong.validate_fewerThan15Siblings()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
@@ -592,7 +639,10 @@ def steven_suite():
     suite.addTest(TestGedcomSteven('test_parents_age'))
     suite.addTest(TestGedcomSteven('test_marriage_to_descendants'))
     suite.addTest(TestGedcomSteven('test_marriage_to_niblings'))
-    suite.addTest(TestGedcomSteven('test_ged_correct'))
+    suite.addTest(TestGedcomSteven('test_corresponding_entry_indi'))
+    suite.addTest(TestGedcomSteven('test_corresponding_entry_fam'))
+    suite.addTest(TestGedcomSteven('test_list_living_married'))
+    # suite.addTest(TestGedcomSteven('test_ged_correct'))
     # suite.addTest(TestGedcomSteven('test_ged_wrong'))
 
     return suite
@@ -602,7 +652,7 @@ def rachi_suite():
     suite = unittest.TestSuite()
     suite.addTest(TestGedcomRachi('test_mar_before_deat'))
     suite.addTest(TestGedcomRachi('test_div_before_deat'))
-    suite.addTest(TestGedcomRachi('test_ged_correct'))
+    # suite.addTest(TestGedcomRachi('test_ged_correct'))
     suite.addTest(TestGedcomRachi('test_siblings'))
     suite.addTest(TestGedcomRachi('test_bigamy'))
     # suite.addTest(TestGedcomRachi('test_ged_wrong'))
@@ -632,7 +682,7 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_birth_before_marr_US02'))
     suite.addTest(TestGedcomShaunak('test_birth_before_death_of_parents'))
     suite.addTest(TestGedcomShaunak('test2_birth_before_death_of_parents'))
-    suite.addTest(TestGedcomShaunak('test_ged_correct'))
+    # suite.addTest(TestGedcomShaunak('test_ged_correct'))
     suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))

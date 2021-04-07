@@ -108,8 +108,8 @@ class GedcomeItem:
             individual = self.list_to_indi(indi)
             individuals.append(individual)
         return individuals
-    
-    def db_indi_select_by_fams(self,fams,uid):
+
+    def db_indi_select_by_fams(self, fams, uid):
         select_query = '''SELECT * FROM individuals WHERE fams=?'''
         result = self.db_query(select_query, (fams,))
 
@@ -122,7 +122,7 @@ class GedcomeItem:
             individuals.append(individual)
         return individuals
 
-    def db_indi_select_parents(self,famc,uid):
+    def db_indi_select_parents(self, famc, uid):
         select_query = '''SELECT * FROM individuals WHERE fams=?'''
         result = self.db_query(select_query, (famc,))
 
@@ -134,6 +134,7 @@ class GedcomeItem:
             individual = self.list_to_indi(indi)
             individuals.append(individual)
         return individuals
+
 
 class Individual(GedcomeItem):
     DEFAULT_DATE_FORMAT = '%Y %b %d'
@@ -183,8 +184,8 @@ class Individual(GedcomeItem):
         parents = self.db_indi_select_parents(self.famc, self.uid)
         return parents
 
-
     # Retrieve a list of siblings of this individual (i.e. any individual that shares the same famc)
+
     def siblings(self):
         siblings = self.db_indi_select_by_famc(self.famc, self.uid)
         return siblings
@@ -285,7 +286,7 @@ class Individual(GedcomeItem):
                 familyData.marr, date_format)
 
             if birthDate > marriageDate:
-                return 'Error', self.uid, self.name, 'has married before its birth date'
+                return 'ERROR', self.uid, self.name, 'has married before its birth date'
 
     # Birth before death of parents
     def birth_before_death_of_parents(self, date_format=DEFAULT_DATE_FORMAT):
@@ -313,36 +314,52 @@ class Individual(GedcomeItem):
 
             if fatherDeath is not None:
                 if abs((birthDate - fatherDeath).days) > 280:
-                    return 'Error', self.uid, self.name, 'is born before 9 months after death of father'
+                    return 'ERROR', self.uid, self.name, 'is born before 9 months after death of father'
             elif motherDeath is not None:
                 if (motherDeath - birthDate).days < 0:
-                    return 'Error', self.uid, self.name, 'is born after death of mother'
+                    return 'ERROR', self.uid, self.name, 'is born after death of mother'
                 else:
                     return None
-    
-    
 
-                
-                
-    
+    # US25 - Steven
+    # Validate that all family this individual belong to exists (including famc and fams)
+    def validate_corresponding_entry(self):
+        msg = ''
+
+        if not self.db_family_select(self.famc):
+            msg += 'Family ' + self.famc + ' this individual is a child in does not exist, '
+
+        if not self.db_family_select(self.fams):
+            msg += 'Family ' + self.fams + ' this individual is a spouse in does not exist, '
+
+        if not msg:
+            return None
+
+        return 'ERROR', self.uid, self.name, msg[:-2]
 
     validations = [validate_birth_before_current_date,
                    validate_death_before_current_date, birth_before_death_of_parents,
                    birth_before_marr_US02,
                    validate_birt_deat,
                    validate_birt_before_marr,
-                   validate_age_from_birth,]
+                   validate_age_from_birth,
+                   validate_corresponding_entry]
 
     # Go through the list of validation functions in self.validations that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Individual object
-
-    def validate(self):
+    def validate(self, debug=False):
         messages = []
         if self.additional_validations is not None:
             self.validations += self.additional_validations
         for v in self.validations:
-            results = v(self)
+            try:
+                results = v(self)
+            except (AttributeError, ValueError, TypeError) as e:
+                if debug:
+                    print(e)
+                continue
+
             if results is not None:
                 msg = '{type}: {name} ({uid}) {msg}.'.format(
                     type=results[0], uid=results[1], name=results[2], msg=results[3])
@@ -532,117 +549,131 @@ class Family(GedcomeItem):
                         else:
                             # husband alive, wife died but no error
                             return None
-                        
-                   
-    #US 11 No Bigamy #Rachi
-    def validate_bigamy(self, wrongdb = None):
+
+    # US 11 No Bigamy #Rachi
+
+    def validate_bigamy(self, wrongdb=None):
         if wrongdb is None:
             wrongdb = self.db
         conn = sqlite3.connect(wrongdb)
         cursor = conn.cursor()
 
-        idcol = ["uid","name","sex","birt","age","deat","alive","famc","fams"]
-        famcol = ['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens']
+        idcol = ["uid", "name", "sex", "birt",
+                 "age", "deat", "alive", "famc", "fams"]
+        famcol = ['uid', 'husb', 'husb_name', 'wife',
+                  'wife_name', 'marr', 'div', 'childrens']
 
+        def createtable(cursorexecute, cols=None):
+            return pd.DataFrame(data=[*cursorexecute], columns=cols)
 
-        def createtable(cursorexecute, cols = None):
-            return pd.DataFrame(data = [*cursorexecute], columns=cols)
+        fam = createtable(
+            [*cursor.execute("select * from families", "")], famcol)
+        ind = createtable(
+            [*cursor.execute("select * from individuals", "")], idcol)
 
-        fam = createtable([*cursor.execute("select * from families","")], famcol)
-        ind = createtable([*cursor.execute("select * from individuals","")], idcol)
+        fms = fam[["husb", "wife", "div"]].drop_duplicates()
 
-        fms = fam[["husb","wife","div"]].drop_duplicates()
-
-        ids = ind[["uid","deat"]]
+        ids = ind[["uid", "deat"]]
         maps = dict(zip(ids.uid, ids.deat))
 
-        fms['h_deat'] = fms['husb'].apply(lambda x:maps.get(x))
-        fms['w_deat'] = fms['wife'].apply(lambda x:maps.get(x))
-        
+        fms['h_deat'] = fms['husb'].apply(lambda x: maps.get(x))
+        fms['w_deat'] = fms['wife'].apply(lambda x: maps.get(x))
+
         cursor.close()
 
-        if fms.wife.value_counts().max()>1:
-            wids, _ = zip(*filter(lambda x:x[1]>1,dict(fms.wife.value_counts()).items()))
+        if fms.wife.value_counts().max() > 1:
+            wids, _ = zip(
+                *filter(lambda x: x[1] > 1, dict(fms.wife.value_counts()).items()))
         else:
             wids = None
 
-        if fms.husb.value_counts().max()>1:
-            hids, _ = zip(*filter(lambda x:x[1]>1,dict(fms.husb.value_counts()).items()))
+        if fms.husb.value_counts().max() > 1:
+            hids, _ = zip(
+                *filter(lambda x: x[1] > 1, dict(fms.husb.value_counts()).items()))
         else:
             hids = None
 
         q = {}
         if hids:
             for h in hids:
-                temp = fms[fms.husb == h][["div","w_deat"]]
+                temp = fms[fms.husb == h][["div", "w_deat"]]
                 v = []
-                for i,j in zip(temp["div"],temp["w_deat"]):
+                for i, j in zip(temp["div"], temp["w_deat"]):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.husb == h][["wife_name", "wife","uid"]].drop_duplicates()
+                    fmi = fam[fam.husb == h][["wife_name",
+                                              "wife", "uid"]].drop_duplicates()
                     wifenames = [i for i in fmi.wife_name.unique()]
                     wifeids = [i for i in fmi.wife.unique()]
                     fmids = list(fmi.uid.unique())
                     return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
-        
+
         if wids:
             for h in wids:
-                temp = fms[fms.wife == h][["div","h_deat",]]
+                temp = fms[fms.wife == h][["div", "h_deat", ]]
                 v = []
-                for i,j in zip(temp["div"],temp["h_deat"]):
+                for i, j in zip(temp["div"], temp["h_deat"]):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.wife == h][["husb_name", "husb","uid"]].drop_duplicates()
+                    fmi = fam[fam.wife == h][["husb_name",
+                                              "husb", "uid"]].drop_duplicates()
                     hsbname = [i for i in fmi.husb_name.unique()]
                     hsbid = [i for i in fmi.husb.unique()]
                     fmids = list(fmi.uid.unique())
-                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
-                
+                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', hsbid, hsbname
+
         return None
-    
+
     # US 13 Sibling Spacing #Rachi
-    
-    def validate_checksiblings(self, wrongdb = None):
+
+    def validate_checksiblings(self, wrongdb=None):
         if wrongdb is None:
             wrongdb = self.db
         from itertools import combinations
         from functools import reduce
-        
+
         DEFAULT_DATE_FORMAT = '%Y %b %d'
         conn = sqlite3.connect(wrongdb)
         cursor = conn.cursor()
 
-        def createtable(cursorexecute, cols = None):
-            return pd.DataFrame(data = [*cursorexecute], columns=cols)
+        def createtable(cursorexecute, cols=None):
+            return pd.DataFrame(data=[*cursorexecute], columns=cols)
 
-        idcol = ["uid","name","sex","birt","age","deat","alive","famc","fams"]
-        famcol = ['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens']
+        idcol = ["uid", "name", "sex", "birt",
+                 "age", "deat", "alive", "famc", "fams"]
+        famcol = ['uid', 'husb', 'husb_name', 'wife',
+                  'wife_name', 'marr', 'div', 'childrens']
 
-        fam = createtable([*cursor.execute("select * from families","")], famcol)
-        ind = createtable([*cursor.execute("select * from individuals","")], idcol)
+        fam = createtable(
+            [*cursor.execute("select * from families", "")], famcol)
+        ind = createtable(
+            [*cursor.execute("select * from individuals", "")], idcol)
 
         cursor.close()
 
-        siblings = [*filter(lambda x:len(x)>1,list(map(eval, fam.childrens)))]
+        siblings = [*filter(lambda x:len(x) > 1,
+                            list(map(eval, fam.childrens)))]
         for sib in siblings:
-            dates = [*map(lambda x:ind[ind.uid == x].birt.unique().item(), sib)]
-            datecom = [*map(lambda x:datetime.datetime.strptime(x, DEFAULT_DATE_FORMAT), dates)]
-            for i in combinations(datecom,2):
-                j = reduce(lambda x,y:x-y, sorted(i,reverse=True))
-                if j.days>2 and j.days<8*30:
+            dates = [
+                *map(lambda x:ind[ind.uid == x].birt.unique().item(), sib)]
+            datecom = [
+                *map(lambda x:datetime.datetime.strptime(x, DEFAULT_DATE_FORMAT), dates)]
+            for i in combinations(datecom, 2):
+                j = reduce(lambda x, y: x-y, sorted(i, reverse=True))
+                if j.days > 2 and j.days < 8*30:
                     sibnames = [ind[ind.uid == s].name.item() for s in sib]
                     fid = ind[ind.uid == sib[0]].famc.values.item()
-                    return 'ERROR', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
-        
+                    return 'ERROR', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib, sibnames
+
         return None
-    
+
     # Marriage after 14
     def validate_marr_after_14(self, date_format=DEFAULT_DATE_FORMAT):
         # US10 @Shaunak1857 Shaunak Saklikar
         if self.marr is None:
-            return 'Error', self.uid, ' has no married date'
+            return 'ERROR', self.uid, ' has no married date'
 
         marriage_date = datetime.datetime.strptime(self.marr, date_format)
         if self.husb is not None:
@@ -652,7 +683,7 @@ class Family(GedcomeItem):
                     husband.birt, date_format)
                 if husband_birth is not None:
                     if (marriage_date.year - husband_birth.year) < 14:
-                        return 'Error', self.uid, ' has married before the age of 14', [self.husb, self.wife], [self.husb_name, self.wife_name]
+                        return 'ERROR', self.uid, ' has married before the age of 14', [self.husb, self.wife], [self.husb_name, self.wife_name]
                     else:
                         return None
 
@@ -662,7 +693,7 @@ class Family(GedcomeItem):
                 wife_birth = datetime.datetime.strptime(wife.birt, date_format)
                 if wife_birth is not None:
                     if (marriage_date.year - wife_birth.year) < 14:
-                        return 'Error', self.uid, ' has married before the age of 14', [self.wife, self.husb], [self.wife_name, self.husb_name]
+                        return 'ERROR', self.uid, ' has married before the age of 14', [self.wife, self.husb], [self.wife_name, self.husb_name]
                     else:
                         return None
 
@@ -735,16 +766,15 @@ class Family(GedcomeItem):
             return 'ERROR', self.uid, msg, [self.wife, self.husb], [self.wife_name, self.husb_name]
 
         return None
-    
-    
-    
+
     # US15 - There should be fewer than 15 siblings in a family
+
     def validate_fewerThan15Siblings(self):
         # US15 @Shaunak1857 Shaunak Saklikar
         if len(self.childrens) > 15:
             return 'Error: ', self.uid, 'has a children greater than 15', [self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
-    
+
     # US16 - All male members of a family should have the same last name
     def validate_maleSameLastName(self):
         # US16 @Shaunak1857 Shaunak Saklikar
@@ -758,23 +788,22 @@ class Family(GedcomeItem):
                 if child.sex == 'M':
                     if lastname != childLastname:
                         return 'Error:', self.uid, ' doesn''t have sme male last names', [self.husb, child.uid], [self.husb_name, child.name]
-            
+
             return None
-        
+
     # US18 - Siblings should not marry one another
     def validate_siblingsShouldNotBeMarried(self):
         # US18 @Shaunak1857 Shaunak Saklikar
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
-        
+
         if husband.famc != None and wife.famc != None:
             if husband.famc == wife.famc:
-                return 'Error', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
-            
+                return 'ERROR', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
+
         return None
-    
-    
-    #US14- Brendan - parents cannot have more than 5 kids at once
+
+    # US14- Brendan - parents cannot have more than 5 kids at once
     def validate_multipleBirths(self):
         dates = {}
         if len(self.childrens) > 4:
@@ -811,7 +840,34 @@ class Family(GedcomeItem):
             return 'ERROR', self.uid, 'cannot marry as they are first cousins.', 'Individual(s) involved - ', [self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
 
-        
+    # US26 - Steven
+    # Validate all individual in family exist (including husb, wife, and all children)
+    def validate_corresponding_entry(self):
+        msg = ''
+        individual_ids = []
+        individual_names = []
+
+        if not self.db_indi_select(self.husb):
+            msg += 'Husband ' + self.husb + ' does not exist, '
+            individual_ids.append(self.husb)
+            individual_names.append('Does Not Exist')
+
+        if not self.db_indi_select(self.wife):
+            msg += 'Wife ' + self.wife + ' does not exist, '
+            individual_ids.append(self.wife)
+            individual_names.append('Does Not Exist')
+
+        for c in self.childrens:
+            if not self.db_indi_select(c):
+                msg += 'Child ' + c + ' does not exist, '
+                individual_ids.append(c)
+                individual_names.append('Does Not Exist')
+
+        if not msg:
+            return None
+
+        msg = msg[:-2]
+        return 'ERROR', self.uid, msg, individual_ids, individual_names
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -828,20 +884,26 @@ class Family(GedcomeItem):
                    validate_bigamy,
                    validate_checksiblings,
                    validate_multipleBirths,
-                   validate_firstCousinMarriage ]
-
+                   validate_firstCousinMarriage,
+                   validate_corresponding_entry]
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
     # Output: List of errors/anomalies associated with this Family object
-    def validate(self):
+    def validate(self, debug=False):
         messages = []
         if self.additional_validations is not None:
             self.validations += self.additional_validations
         for v in self.validations:
-            results = v(self)
+            try:
+                results = v(self)
+            except (AttributeError, ValueError, TypeError) as e:
+                if debug:
+                    print(e)
+                continue
+
             if results is not None:
-                # print(results)
+                # print(v)
                 indi_uids = results[3]
                 indi_names = results[4]
                 indi_involved = ', '.join(
@@ -881,6 +943,10 @@ class Gedcom:
         self.individuals = individuals
         self.families = families
         self.reports = self.validate()
+
+        self.lists = {
+            'List of all living married individuals': self.list_living_married
+        }
 
         if sort is not None:
             self.sort(sort)
@@ -1043,12 +1109,16 @@ class Gedcom:
                         indiData.famc = elems[2]
                     if(elems[1] == 'HUSB'):
                         familyData.husb = elems[2]
-                        familyData.husb_name = indi_df[indi_df.uid ==
-                                                       familyData.husb].iloc[0]['name']     # Find the husband's name in the individual list
+                        # Find the husband's name in the individual list
+                        husb = indi_df[indi_df.uid == familyData.husb]
+                        if len(husb) > 0:
+                            familyData.husb_name = husb.iloc[0]['name']
                     if(elems[1] == 'WIFE'):
                         familyData.wife = elems[2]
-                        familyData.wife_name = indi_df[indi_df.uid ==
-                                                       familyData.wife].iloc[0]['name']     # Find the wife's name in the individual list
+                        # Find the wife's name in the individual list
+                        wife = indi_df[indi_df.uid == familyData.wife]
+                        if len(wife) > 0:
+                            familyData.wife_name = wife.iloc[0]['name']
                     if(elems[1] == 'CHIL'):
                         familyData.childrens.append(elems[2])
 
@@ -1120,6 +1190,15 @@ class Gedcom:
 
         return reports
 
+    # US30 - Steven
+    # List all living married people
+    def list_living_married(self):
+        indis = pd.DataFrame(columns=self.indi_df.columns)
+        for i in self.individuals:
+            if i.alive and i.fams:
+                indis = indis.append(i.as_dict(), ignore_index=True)
+        return tabulate(indis, headers='keys', tablefmt='psql')
+
     def pretty_print(self, filename=None):
         tables = self.__str__()
         print(tables)
@@ -1130,14 +1209,21 @@ class Gedcom:
     def __str__(self):
         tables = 'Individuals\n'
         tables += tabulate(self.indi_df, headers='keys', tablefmt='psql')
-        tables += '\n'
+        tables += '\n\n'
         tables += 'Families\n'
         tables += tabulate(self.fam_df, headers='keys', tablefmt='psql')
-        tables += '\n'
+        tables += '\n\n'
 
         if self.reports:
             tables += 'Anomalies/Errors\n'
             tables += '\n'.join(sum(self.reports, []))
+            tables += '\n\n'
+
+        if self.lists:
+            for l in self.lists:
+                tables += l + '\n'
+                tables += self.lists[l]()
+                tables += '\n'
 
         return tables
 
@@ -1163,14 +1249,14 @@ if __name__ == '__main__':
                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
     gedcom2.pretty_print(
         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
-    
-    #gedcom_wrong = Gedcom('./tests/rachi/rachi_test_wrong_new.ged',
-                          #db='./tests/rachi/rachi_test_wrong_new.db', sort='uid')
-    #gedcom_wrong.pretty_print(
-        #filename='./tests/rachi/rachi_gedcom_wrong_new.txt')
+
+    # gedcom_wrong = Gedcom('./tests/rachi/rachi_test_wrong_new.ged',
+    # db='./tests/rachi/rachi_test_wrong_new.db', sort='uid')
+    # gedcom_wrong.pretty_print(
+    # filename='./tests/rachi/rachi_gedcom_wrong_new.txt')
 
     brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
-                     db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
+                             db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
     brendan_sprint2.pretty_print(
         filename='./tests/brendan/brendan_sprint2_tests.txt')
 
