@@ -260,21 +260,29 @@ class TestGedcomBrendan(unittest.TestCase):
         self.assertEqual(received, expected, msg)
 
     def test_multipleBirths(self):
-        fam_wrong = Family(
-            uid='@F4@',
-            husb='@I9@',
-            husb_name='Jack Fakename',
-            wife='@I10@',
-            wife_name='Judy Rickles',
-            marr='1968 MAR 4',
-            db='./tests/brendan_sprint2_tests.db'
-        )
+        fam_wrong = Family(db='./tests/brendan/brendan_sprint2_tests.db')
 
-        expected = ('ERROR', '@f3@', 'cannot have more than 5 children at once.', 'Individual(s) involved - ',
-                    ['@I9@', '@I11@'], ['Jack Fakename', 'Judy Rickles'])
+        fam_wrong = fam_wrong.db_family_select('@F4@')
+
+        expected = ('ERROR', '@F4@', 'cannot have more than 5 children at once.', 'Individual(s) involved - ',
+                    ['@I9@', '@I10@'], ['Jack /Fakename/', 'Judy /Rickles/'])
 
         received = fam_wrong.validate_multipleBirths()
+        
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
+        self.assertEqual(received, expected, msg)
+    
+    def test_first_cousin_marriage(self):
+        fam_wrong = Family(db='./tests/brendan/brendan_sprint2_tests.db')
+
+        fam_wrong = fam_wrong.db_family_select('@F1@')
+
+        expected = ('ERROR', '@F1@', 'cannot marry as they are first cousins.', 'Individual(s) involved - ',
+                    ['@I1@', '@I8@'], ['John /Personson/', 'Judy /Realperson/'])
+
+        received = fam_wrong.validate_firstCousinMarriage()
+        
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
@@ -366,7 +374,7 @@ class TestGedcomRachi(unittest.TestCase):
             db='Test.db'
         )
 
-        expected = """Error: Family @I4@ Marriage should not occur during marriage to another spouse.
+        expected = """ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
                     Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)"""
         received = fam_wrong.validate_bigamy()
 
@@ -388,7 +396,7 @@ class TestGedcomRachi(unittest.TestCase):
         )
 
         expected = "ERROR : SIBLINGS TOGETHER"
-        expected = """Error: Family @I3@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+        expected = """ERROR: Family @F1@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
                         Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)"""
 
         received = fam_wrong.validate_checksiblings()
@@ -612,6 +620,7 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_age_from_birth'))
     suite.addTest(TestGedcomBrendan('test_age_from_death'))
     suite.addTest(TestGedcomBrendan('test_multipleBirths'))
+    suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite
@@ -632,7 +641,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    #runner.run(steven_suite())
-    #runner.run(rachi_suite())
+    runner.run(steven_suite())
+    runner.run(rachi_suite())
     runner.run(brendan_suite())
-    #runner.run(shaunak_suite())
+    runner.run(shaunak_suite())

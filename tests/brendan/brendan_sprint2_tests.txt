@@ -32,5 +32,7 @@ Families
 |  5 | @F6@  | @I11@  | Max /Realperson/  | @I12@  | Mary /Jacobs/     | 1965 SEP 5  |       | ['@I7@']                                              |
 +----+-------+--------+-------------------+--------+-------------------+-------------+-------+-------------------------------------------------------+
 Anomalies/Errors
-ERROR: Family @F4@ cannot have have more than 5 children at once.
-Individual(s) involved - @I9@ (Jack /Fakename/), @I10@ (Judy /Rickles/)
+ERROR: Family @F1@ cannot marry as they are first cousins.
+Individual(s) involved - @I1@ (John /Personson/), @I8@ (Judy /Realperson/)
+ERROR: Family @F4@ cannot have more than 5 children at once.
+Individual(s) involved - I (@I9@), n (@I10@)

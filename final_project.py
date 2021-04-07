@@ -180,7 +180,7 @@ class Individual(GedcomeItem):
         return list(descendants)
 
     def parents(self):
-        parents = self.db_indi_select_parents(self.fams, self.uid)
+        parents = self.db_indi_select_parents(self.famc, self.uid)
         return parents
 
 
@@ -533,8 +533,8 @@ class Family(GedcomeItem):
                             # husband alive, wife died but no error
                             return None
                         
+                   
     #US 11 No Bigamy #Rachi
-    
     def validate_bigamy(self, wrongdb = None):
         if wrongdb is None:
             wrongdb = self.db
@@ -580,23 +580,25 @@ class Family(GedcomeItem):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.husb == h][["wife_name", "wife",]].drop_duplicates()
+                    fmi = fam[fam.husb == h][["wife_name", "wife","uid"]].drop_duplicates()
                     wifenames = [i for i in fmi.wife_name.unique()]
                     wifeids = [i for i in fmi.wife.unique()]
-                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
+                    fmids = list(fmi.uid.unique())
+                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', wifeids, wifenames
         
         if wids:
             for h in wids:
-                temp = fms[fms.wife == h][["div","h_deat"]]
+                temp = fms[fms.wife == h][["div","h_deat",]]
                 v = []
                 for i,j in zip(temp["div"],temp["h_deat"]):
                     if i or j:
                         v.append(i or j)
                 if not v:
-                    fmi = fam[fam.wife == h][["husb_name", "husb",]].drop_duplicates()
+                    fmi = fam[fam.wife == h][["husb_name", "husb","uid"]].drop_duplicates()
                     hsbname = [i for i in fmi.husb_name.unique()]
                     hsbid = [i for i in fmi.husb.unique()]
-                    return 'Error', h, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
+                    fmids = list(fmi.uid.unique())
+                    return 'ERROR', fmids, 'Marriage should not occur during marriage to another spouse', hsbid,hsbname
                 
         return None
     
@@ -631,7 +633,8 @@ class Family(GedcomeItem):
                 j = reduce(lambda x,y:x-y, sorted(i,reverse=True))
                 if j.days>2 and j.days<8*30:
                     sibnames = [ind[ind.uid == s].name.item() for s in sib]
-                    return 'Error', sib[0], 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
+                    fid = ind[ind.uid == sib[0]].famc.values.item()
+                    return 'ERROR', fid, 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart', sib,sibnames
         
         return None
     
@@ -769,6 +772,8 @@ class Family(GedcomeItem):
                 return 'Error', self.uid, ' are married siblings', [self.husb, self.wife], [self.husb_name, self.wife_name]
             
         return None
+    
+    
     #US14- Brendan - parents cannot have more than 5 kids at once
     def validate_multipleBirths(self):
         dates = {}
@@ -780,44 +785,30 @@ class Family(GedcomeItem):
                 else:
                     #print(dates[child.birt])
                     if dates[child.birt] > 4:
-                        return 'ERROR', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
+                        return 'ERROR', self.uid, 'cannot have more than 5 children at once.', 'Individual(s) involved - ', [self.husb, self.wife], [self.husb_name, self.wife_name]
                     else: 
                         dates[child.birt] += 1
                         if dates[child.birt] > 4:
-                            return 'ERROR', self.uid, 'cannot have have more than 5 children at once', [self.husb, self.wife], [self.husb_name, self.wife_name]
+                            return 'ERROR', self.uid,'cannot have more than 5 children at once.', 'Individual(s) involved - ',[self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
 
-    #US19- Brendan - first cousins cannot marry
+    #US19- Brendan - first cousins cannot marry    
     def validate_firstCousinMarriage(self):
-
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
         husband_parents = husband.parents()
         wife_parents = wife.parents()
-        
-
-
-        husband_parent_siblings = []
-        wife_parent_siblings = []
-        for personLookup in husband_parents:
-            #person = self.db_indi_select(personLookup)
-            husband_parent_siblings += personLookup.siblings()
-        
-        for personLookup in wife_parents:
-            #person = self.db_indi_select(personLookup)
-            wife_parent_siblings += personLookup.siblings()
-       
-        check = []
-        check2 = []
-        cousin_check = []#list(set(husband_parent_siblings) & set(wife_parent_siblings))
-        #print(husband.uid)
-        #print(husband_parent_siblings)
-        #print(wife.uid)
-        #print(wife_parent_siblings)
-   
-        #if len(cousin_check) > 0:
-           # return 'ERROR', self.uid, 'cannot marry as first cousins', [self.husb, self.wife], [self.husb_name, self.wife_name]
-
+        husband_family = []
+        wife_family = []
+        for parent in husband_parents:
+            husband_family += parent.siblings()
+        for parent in wife_parents:
+            wife_family += parent.siblings()
+        husband_family = list(map(lambda x: x.name, husband_family))
+        wife_family = list(map(lambda x: x.name, wife_family))
+        family = husband_family + wife_family
+        if len(family) != len(set(family)):
+            return 'ERROR', self.uid, 'cannot marry as they are first cousins.', 'Individual(s) involved - ', [self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
 
         
@@ -837,7 +828,7 @@ class Family(GedcomeItem):
                    validate_bigamy,
                    validate_checksiblings,
                    validate_multipleBirths,
-                   validate_firstCousinMarriage]
+                   validate_firstCousinMarriage ]
 
 
     # Takes in a list of validation functions that follows the above mentioned standard
