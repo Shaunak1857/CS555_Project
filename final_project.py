@@ -872,6 +872,7 @@ class Family(GedcomeItem):
     
     
     def correctGenderRole(self):
+        # US21 @Shaunak1857 Shaunak Saklikar
         husband = self.db_indi_select(self.husb)
         wife = self.db_family_select(self.wife)
         
@@ -883,15 +884,13 @@ class Family(GedcomeItem):
         
     
     def orderSiblingsByAge(self):
+        # US28 @Shaunak1857 Shaunak Saklikar
         allChildren = []
-        
         if len(self.childrens) > 0:
             for i in self.childrens:
                 child = self.db_indi_select(i)
                 if child is not None:
                     allChildren.append(child)
-        
-        
        
         allChildren.sort(key=lambda x: x.age, reverse=True)
         
