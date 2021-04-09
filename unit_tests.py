@@ -579,6 +579,48 @@ class TestGedcomShaunak(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
+        
+        
+    def test_correctGenderRole(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I4@",
+            husb_name="Bruce /Wayne/",
+            wife="@I7@",
+            wife_name="Jane /List/",
+            marr="1940 DEC 6",
+            div="",
+            childrens=[],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error:', '@F4@', ' has wrong sex',
+                    ['@I7@', '@I4@'], ['Jane /List/', 'Bruce /Wayne/'])
+
+        received = familyWrong.correctGenderRole()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+    def test_orderSiblingsByAges(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex Jane",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="1940 DEC 6",
+            div="",
+            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@',
+                       '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('Error: ', '@F4@', 'has a children greater than 15',
+                    ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
+
+        received = familyWrong.orderSiblingsByAge()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        #self.assertEqual(received, expected, msg)
 
 
 def steven_suite():
@@ -637,12 +679,13 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))
+    suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
     return suite
 
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(steven_suite())
-    runner.run(rachi_suite())
-    runner.run(brendan_suite())
+#    runner.run(steven_suite())
+#    runner.run(rachi_suite())
+#    runner.run(brendan_suite())
     runner.run(shaunak_suite())

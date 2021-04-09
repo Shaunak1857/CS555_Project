@@ -8,6 +8,7 @@ import pandas as pd
 from tabulate import tabulate
 
 
+
 class GedcomeItem:
     def __init__(self, db):
         self.db = db
@@ -868,6 +869,41 @@ class Family(GedcomeItem):
 
         msg = msg[:-2]
         return 'ERROR', self.uid, msg, individual_ids, individual_names
+    
+    
+    def correctGenderRole(self):
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_family_select(self.wife)
+        
+        if husband.sex != "M":
+            return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
+        
+        if wife.sex != "F":
+            return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
+        
+    
+    def orderSiblingsByAge(self):
+        allChildren = []
+        
+        if len(self.childrens) > 0:
+            for i in self.childrens:
+                child = self.db_indi_select(i)
+                if child is not None:
+                    allChildren.append(child)
+        
+        
+       
+        allChildren.sort(key=lambda x: x.age, reverse=True)
+        
+        if len(allChildren) > 0:
+            print("The Family "+ self.uid +" List of the children in descending order:")
+        
+        for i in allChildren:
+            print(i.name, i.age)
+            
+        if len(allChildren) > 0:
+            print("The for list "+self.uid+" ends here....")
+        
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -885,7 +921,9 @@ class Family(GedcomeItem):
                    validate_checksiblings,
                    validate_multipleBirths,
                    validate_firstCousinMarriage,
-                   validate_corresponding_entry]
+                   validate_corresponding_entry,
+                   correctGenderRole,
+                   orderSiblingsByAge]
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
@@ -1232,6 +1270,7 @@ class Gedcom:
 
 
 if __name__ == '__main__':
+    
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
                             db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
