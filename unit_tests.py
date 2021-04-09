@@ -596,7 +596,7 @@ class TestGedcomShaunak(unittest.TestCase):
         expected = ('Error:', '@F4@', ' has wrong sex',
                     ['@I7@', '@I4@'], ['Jane /List/', 'Bruce /Wayne/'])
 
-        received = familyWrong.correctGenderRole()
+        received = familyWrong.validate_correctGenderRole()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
@@ -617,7 +617,7 @@ class TestGedcomShaunak(unittest.TestCase):
         expected = ('Error: ', '@F4@', 'has a children greater than 15',
                     ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
 
-        received = familyWrong.orderSiblingsByAge()
+        received = familyWrong.validate_orderSiblingsByAge()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         #self.assertEqual(received, expected, msg)
@@ -685,7 +685,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-#    runner.run(steven_suite())
-#    runner.run(rachi_suite())
-#    runner.run(brendan_suite())
+    runner.run(steven_suite())
+    runner.run(rachi_suite())
+    runner.run(brendan_suite())
     runner.run(shaunak_suite())

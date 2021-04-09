@@ -871,7 +871,7 @@ class Family(GedcomeItem):
         return 'ERROR', self.uid, msg, individual_ids, individual_names
     
     
-    def correctGenderRole(self):
+    def validate_correctGenderRole(self):
         # US21 @Shaunak1857 Shaunak Saklikar
         husband = self.db_indi_select(self.husb)
         wife = self.db_family_select(self.wife)
@@ -883,7 +883,7 @@ class Family(GedcomeItem):
             return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
         
     
-    def orderSiblingsByAge(self):
+    def validate_orderSiblingsByAge(self):
         # US28 @Shaunak1857 Shaunak Saklikar
         allChildren = []
         if len(self.childrens) > 0:
@@ -921,8 +921,8 @@ class Family(GedcomeItem):
                    validate_multipleBirths,
                    validate_firstCousinMarriage,
                    validate_corresponding_entry,
-                   correctGenderRole,
-                   orderSiblingsByAge]
+                   validate_correctGenderRole,
+                   validate_orderSiblingsByAge]
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
