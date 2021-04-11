@@ -313,9 +313,9 @@ class TestGedcomBrendan(unittest.TestCase):
 class TestGedcomRachi(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
-            './tests/rachi/rachi_test_correct.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
+            './tests/rachi/lopez.ged', './tests/rachi/lopez.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/rachi/rachi_test_wrong.ged', './tests/rachi/rachi_test_wrong.db', sort='uid')
+            './tests/rachi/lopez.ged', './tests/rachi/lopez.db', sort='uid')
 
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
@@ -380,7 +380,7 @@ class TestGedcomRachi(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
-        #self.assertEqual(received, expected, msg)
+        self.assertEqual(received, expected, msg)
 
     # US 13 Sibling Spacing
     def test_siblings(self):
@@ -402,8 +402,27 @@ class TestGedcomRachi(unittest.TestCase):
         received = fam_wrong.validate_checksiblings()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-
-        # self.assertEqual(received, expected, msg)
+        
+        self.assertEqual(received, expected, msg)
+    
+    # US 25: Unique first names in families
+    def test_validate_unique_first_name(self):
+        fam_wrong = Family(
+            uid='@F1@',
+            husb='@I11@',
+            husb_name='Joe Philipson',
+            wife='@I2@',
+            wife_name='Susan Johnson',
+            marr='2000 MAY 5',
+            div='1999 MAY 5',
+            db='Test.db'
+        )
+        expected = """ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
+                        Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)"""
+        received = fam_wrong.validate_unique_first_name()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        
+        self.assertEqual(received, expected, msg)
 
     def test_ged_correct(self):
         received = str(self.ged_correct)
@@ -426,7 +445,7 @@ class TestGedcomRachi(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
 
-
+        
 class TestGedcomShaunak(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
