@@ -429,15 +429,9 @@ class TestGedcomRachi(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
-<<<<<<< HEAD
-        #self.assertEqual(received, expected, msg)
-    
-    # 13 Sibling Spacing
-=======
         self.assertEqual(received, expected, msg)
 
     # US 13 Sibling Spacing
->>>>>>> 60579e3cbea1ec9910796fe393c5c78b0e2906dc
     def test_siblings(self):
         fam_wrong = Family(
             uid='@F1@',
