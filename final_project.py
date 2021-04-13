@@ -8,6 +8,7 @@ import pandas as pd
 from tabulate import tabulate
 
 
+
 class GedcomeItem:
     def __init__(self, db):
         self.db = db
@@ -321,7 +322,7 @@ class Individual(GedcomeItem):
                 else:
                     return None
 
-    # US25 - Steven
+    # US26 - Steven
     # Validate that all family this individual belong to exists (including famc and fams)
     def validate_corresponding_entry(self):
         msg = ''
@@ -551,7 +552,6 @@ class Family(GedcomeItem):
                             return None
 
     # US 11 No Bigamy #Rachi
-
     def validate_bigamy(self, wrongdb=None):
         if wrongdb is None:
             wrongdb = self.db
@@ -626,8 +626,37 @@ class Family(GedcomeItem):
 
         return None
 
-    # US 13 Sibling Spacing #Rachi
+    # US 25 Unique first names in families
+    def validate_unique_first_name(self):
+        import pandas as pd
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
 
+
+
+        fam = [*cursor.execute("SELECT * FROM families")]
+        indi = [*cursor.execute("SELECT * FROM individuals")]
+
+        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+        indi = pd.DataFrame(indi, columns=['uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+
+        sibs = fam[fam.childrens.map(lambda x:len(eval(x))>1)]
+        fmid = sibs.uid.tolist()
+        sibs = [*map(eval,sibs.childrens.tolist())]
+
+        for sib,fid in zip(sibs,fmid):
+            infos = []
+            for s in sib:
+                s = indi[indi.uid == s]
+                info = (s.name.values.item(), s.birt.values.item())
+                if not info in infos:
+                    infos.append(info)
+                else:
+                    sibname = [indi[indi.uid == s].name.values.item() for s in sib]
+                    return 'ERROR', fid, 'No more than one child with the same name and birth date should appear in a family', sib, sibname
+        return 
+
+    # US 13 Sibling Spacing #Rachi
     def validate_checksiblings(self, wrongdb=None):
         if wrongdb is None:
             wrongdb = self.db
@@ -868,6 +897,40 @@ class Family(GedcomeItem):
 
         msg = msg[:-2]
         return 'ERROR', self.uid, msg, individual_ids, individual_names
+    
+    
+    def validate_correctGenderRole(self):
+        # US21 @Shaunak1857 Shaunak Saklikar
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_family_select(self.wife)
+        
+        if husband.sex != "M":
+            return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
+        
+        if wife.sex != "F":
+            return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
+        
+    
+    def validate_orderSiblingsByAge(self):
+        # US28 @Shaunak1857 Shaunak Saklikar
+        allChildren = []
+        if len(self.childrens) > 0:
+            for i in self.childrens:
+                child = self.db_indi_select(i)
+                if child is not None:
+                    allChildren.append(child)
+       
+        allChildren.sort(key=lambda x: x.age, reverse=True)
+        
+        if len(allChildren) > 0:
+            print("The Family "+ self.uid +" List of the children in descending order:")
+        
+        for i in allChildren:
+            print(i.name, i.age)
+            
+        if len(allChildren) > 0:
+            print("The for list "+self.uid+" ends here....")
+        
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -885,7 +948,10 @@ class Family(GedcomeItem):
                    validate_checksiblings,
                    validate_multipleBirths,
                    validate_firstCousinMarriage,
-                   validate_corresponding_entry]
+                   validate_corresponding_entry,
+                   validate_correctGenderRole,
+                   validate_orderSiblingsByAge,
+                   validate_unique_first_name]
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self
@@ -945,7 +1011,9 @@ class Gedcom:
         self.reports = self.validate()
 
         self.lists = {
-            'List of all living married individuals': self.list_living_married
+            'List of all living married individuals': self.list_living_married,
+            'List individuals with age': self.list_individual_with_age(),
+            'List of all deceased individuals': self.list_deceased_individual,
         }
 
         if sort is not None:
@@ -1199,6 +1267,26 @@ class Gedcom:
                 indis = indis.append(i.as_dict(), ignore_index=True)
         return tabulate(indis, headers='keys', tablefmt='psql')
 
+    # US 27, Include individual age when listing #Rachi
+    def list_individual_with_age(self):
+        outtext = ""
+        for i in self.individuals:
+            outtext += f"Individual:@{i.uid}@, Age:{i.age}\n"
+        return outtext
+    
+    # US 29: List All Deceased individuals in gedcom files #Rachi
+    def list_deceased_individual(self):
+        import pandas as pd
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+
+        indi = [*cursor.execute("SELECT * FROM individuals")]
+        conn.close()
+        indi = pd.DataFrame(indi, columns=['uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+
+        out = tabulate(indi[~indi.deat.isna()],  headers='keys', tablefmt = 'psql')
+        return out
+
     def pretty_print(self, filename=None):
         tables = self.__str__()
         print(tables)
@@ -1222,7 +1310,10 @@ class Gedcom:
         if self.lists:
             for l in self.lists:
                 tables += l + '\n'
-                tables += self.lists[l]()
+                if not isinstance(self.lists[l], str):    
+                    tables += self.lists[l]()
+                else:
+                    tables += self.lists[l]
                 tables += '\n'
 
         return tables
@@ -1232,33 +1323,34 @@ class Gedcom:
 
 
 if __name__ == '__main__':
-    gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
-                            db='./tests/steven/steven_test_wrong.db', sort='uid')
-    gedcom_wrong.pretty_print(
-        filename='./tests/steven/steven_gedcom_wrong_table.txt')
+    
+     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
+                             db='./tests/steven/steven_test_wrong.db', sort='uid')
+     gedcom_wrong.pretty_print(
+         filename='./tests/steven/steven_gedcom_wrong_table.txt')
 
-    gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
-                            db='./tests/steven/steven_test_correct.db', sort='uid')
-    gedcom_correct.pretty_print(
-        filename='./tests/steven/steven_gedcom_correct_table.txt')
+     gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
+                             db='./tests/steven/steven_test_correct.db', sort='uid')
+     gedcom_correct.pretty_print(
+         filename='./tests/steven/steven_gedcom_correct_table.txt')
 
-    gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
-    gedcom1.pretty_print(filename='gedcom1_table.txt')
+     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
+     gedcom1.pretty_print(filename='gedcom1_table.txt')
 
-    gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
-                     db='./tests/brendan/brendan_test_wrong.db', sort='uid')
-    gedcom2.pretty_print(
-        filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+     gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
+                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
+     gedcom2.pretty_print(
+         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
 
-    # gedcom_wrong = Gedcom('./tests/rachi/rachi_test_wrong_new.ged',
-    # db='./tests/rachi/rachi_test_wrong_new.db', sort='uid')
-    # gedcom_wrong.pretty_print(
-    # filename='./tests/rachi/rachi_gedcom_wrong_new.txt')
+     gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new.ged',
+                            db='./tests/rachi/rachi_wrong_new.db', sort='uid')
+     gedcom_wrong.pretty_print(
+         filename='./tests/rachi/Sprint_3_Rachi.txt')
 
-    brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
-                             db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
-    brendan_sprint2.pretty_print(
-        filename='./tests/brendan/brendan_sprint2_tests.txt')
+     brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
+                              db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
+     brendan_sprint2.pretty_print(
+         filename='./tests/brendan/brendan_sprint2_tests.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')

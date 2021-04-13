@@ -4,11 +4,7 @@ Individuals
 |----+-------+--------------------+-------+------------+-------+--------+---------+--------+--------|
 |  0 | @I1@  | John /Personson/   | M     | 2000 JAN 2 |    21 |        | True    | @F2@   | @F1@   |
 |  1 | @I2@  | Jack /Personson/   | M     | 1969 FEB 4 |    52 |        | True    | @F3@   | @F2@   |
-<<<<<<< HEAD
 |  2 | @I3@  | Sally /Peopleton/  | F     | 1971 FEB 3 |    50 |        | True    | @F4@   | @F2@   |
-=======
-|  2 | @I3@  | Sally /Peopleton/  | F     | 1970 FEB 3 |    51 |        | True    | @F4@   | @F2@   |
->>>>>>> 51d1e70e89ff627d21ad236182e63f2c490857d3
 |  3 | @I4@  | Steve /Personson/  | M     | 1945 JUL 6 |    76 |        | True    |        | @F3@   |
 |  4 | @I5@  | Mary /Smith/       | F     | 1948 APR 3 |    73 |        | True    |        | @F3@   |
 |  5 | @I6@  | Jane /Personson/   | F     | 1973 FEB 6 |    48 |        | True    | @F3@   | @F5@   |
@@ -24,10 +20,7 @@ Individuals
 | 15 | @I16@ | Zachary /Fakename/ | M     | 1970 JAN 1 |    51 |        | True    | @F4@   |        |
 | 16 | @I17@ | Dave /Fakename/    | M     | 1970 JAN 1 |    51 |        | True    | @F4@   |        |
 +----+-------+--------------------+-------+------------+-------+--------+---------+--------+--------+
-<<<<<<< HEAD
-=======
 
->>>>>>> 51d1e70e89ff627d21ad236182e63f2c490857d3
 Families
 +----+-------+--------+-------------------+--------+-------------------+-------------+-------+-------------------------------------------------------+
 |    | uid   | husb   | husb_name         | wife   | wife_name         | marr        | div   | childrens                                             |
@@ -39,27 +32,12 @@ Families
 |  4 | @F5@  | @I7@   | Ray /Realperson/  | @I6@   | Jane /Personson/  | 1995 JUN 4  |       | ['@I8@']                                              |
 |  5 | @F6@  | @I11@  | Max /Realperson/  | @I12@  | Mary /Jacobs/     | 1965 SEP 5  |       | ['@I7@']                                              |
 +----+-------+--------+-------------------+--------+-------------------+-------------+-------+-------------------------------------------------------+
-<<<<<<< HEAD
-Anomalies/Errors
-ERROR: Family @F1@ cannot marry as they are first cousins.
-Individual(s) involved - @I1@ (John /Personson/), @I8@ (Judy /Realperson/)
-ERROR: Family @F4@ cannot have more than 5 children at once.
-Individual(s) involved - I (@I9@), n (@I10@)
-=======
 
 Anomalies/Errors
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
-ERROR: Family @F4@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-Individual(s) involved - @I3@ (Sally /Peopleton/), @I13@ (Rick /Fakename/), @I14@ (Ricky /Fakename/), @I15@ (Zach /Fakename/), @I16@ (Zachary /Fakename/), @I17@ (Dave /Fakename/)
+ERROR: Family @F1@ cannot marry as they are first cousins..
+Individual(s) involved - I (@I1@), n (@I8@)
+ERROR: Family @F4@ cannot have more than 5 children at once..
+Individual(s) involved - I (@I9@), n (@I10@)
 
 List of all living married individuals
 +----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------+
@@ -67,7 +45,7 @@ List of all living married individuals
 |----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------|
 |  0 | @I1@  | John /Personson/  | M     | 2000 JAN 2 |    21 |        | True    | @F2@   | @F1@   |
 |  1 | @I2@  | Jack /Personson/  | M     | 1969 FEB 4 |    52 |        | True    | @F3@   | @F2@   |
-|  2 | @I3@  | Sally /Peopleton/ | F     | 1970 FEB 3 |    51 |        | True    | @F4@   | @F2@   |
+|  2 | @I3@  | Sally /Peopleton/ | F     | 1971 FEB 3 |    50 |        | True    | @F4@   | @F2@   |
 |  3 | @I4@  | Steve /Personson/ | M     | 1945 JUL 6 |    76 |        | True    |        | @F3@   |
 |  4 | @I5@  | Mary /Smith/      | F     | 1948 APR 3 |    73 |        | True    |        | @F3@   |
 |  5 | @I6@  | Jane /Personson/  | F     | 1973 FEB 6 |    48 |        | True    | @F3@   | @F5@   |
@@ -78,4 +56,3 @@ List of all living married individuals
 | 10 | @I11@ | Max /Realperson/  | M     | 1944 APR 4 |    77 |        | True    |        | @F6@   |
 | 11 | @I12@ | Mary /Jacobs/     | F     | 1946 SEP 4 |    75 |        | True    |        | @F6@   |
 +----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------+
->>>>>>> 51d1e70e89ff627d21ad236182e63f2c490857d3
