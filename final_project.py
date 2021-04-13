@@ -364,12 +364,7 @@ class Individual(GedcomeItem):
 
         return 'ERROR', self.uid, self.name, msg[:-2]
     
-    #US22- Brendan - Validate all user ids are unique
-    def validate_unique_id(self):
-        individuals = self.db_select_all_individuals()
-
-        setCheck = set()
-        for individual in individuals:
+    
             
 
     validations = [validate_birth_before_current_date,
