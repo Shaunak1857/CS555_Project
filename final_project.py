@@ -1278,7 +1278,7 @@ class Gedcom:
         f.close()
         return individuals, families, indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
-    #Gedcom wide file validations
+    #Gedcom wide file validation
 
     def validate(self):
         reports = []
