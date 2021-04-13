@@ -127,7 +127,7 @@ class TestGedcomSteven(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
-        def test_corresponding_entry_indi(self):
+    def test_corresponding_entry_indi(self):
         indi_wrong = Individual(
             uid='@I8@',
             name='Not Real',
@@ -317,11 +317,11 @@ class TestGedcomBrendan(unittest.TestCase):
                     ['@I9@', '@I10@'], ['Jack /Fakename/', 'Judy /Rickles/'])
 
         received = fam_wrong.validate_multipleBirths()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-    
+
     def test_first_cousin_marriage(self):
         fam_wrong = Family(db='./tests/brendan/brendan_sprint2_tests.db')
 
@@ -331,7 +331,7 @@ class TestGedcomBrendan(unittest.TestCase):
                     ['@I1@', '@I8@'], ['John /Personson/', 'Judy /Realperson/'])
 
         received = fam_wrong.validate_firstCousinMarriage()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
@@ -409,7 +409,7 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-        
+
     # US 11 No Bigamy
     def test_bigamy(self):
         fam_wrong = Family(
@@ -451,9 +451,9 @@ class TestGedcomRachi(unittest.TestCase):
         received = fam_wrong.validate_checksiblings()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        
+
         self.assertEqual(received, expected, msg)
-    
+
     # US 25: Unique first names in families
     def test_validate_unique_first_name(self):
         fam_wrong = Family(
@@ -470,10 +470,9 @@ class TestGedcomRachi(unittest.TestCase):
                         Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)"""
         received = fam_wrong.validate_unique_first_name()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
-        
+
         self.assertEqual(received, expected, msg)
 
-    
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -495,7 +494,7 @@ class TestGedcomRachi(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
 
-        
+
 class TestGedcomShaunak(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
@@ -587,7 +586,7 @@ class TestGedcomShaunak(unittest.TestCase):
         #print(expected, received)
 
         self.assertEqual(received, expected)
-        
+
     def test_siblingsShouldNotBeMarried(self):
         familyWrong = Family(
             uid="@F4@",
@@ -607,8 +606,7 @@ class TestGedcomShaunak(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
+
     def test_maleSameLastName(self):
         familyWrong = Family(
             uid="@F4@",
@@ -625,11 +623,10 @@ class TestGedcomShaunak(unittest.TestCase):
                     ['@I13@', '@I4@'], ['Alex /Jane/', 'Bruce /Wayne/'])
 
         received = familyWrong.validate_maleSameLastName()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
+
     def test_fewerThan15Siblings(self):
         familyWrong = Family(
             uid="@F4@",
@@ -639,18 +636,18 @@ class TestGedcomShaunak(unittest.TestCase):
             wife_name="Mary Lane",
             marr="1940 DEC 6",
             div="",
-            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@', '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
+            childrens=['@I4@', '@I1@', '@I5@', '@I3@', '@I4@', '@I6@', '@I7@', '@I8@', '@I9@',
+                       '@I10@', '@I11@', '@I13@', '@I14@', '@I27@', '@I23@', '@I24@', '@I118@'],
             db='./tests/steven/steven_test_wrong.db'
         )
         expected = ('Error: ', '@F4@', 'has a children greater than 15',
                     ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
 
         received = familyWrong.validate_fewerThan15Siblings()
-        
+
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
+
     def test_correctGenderRole(self):
         familyWrong = Family(
             uid="@F4@",
@@ -670,7 +667,7 @@ class TestGedcomShaunak(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
+
     def test_orderSiblingsByAges(self):
         familyWrong = Family(
             uid="@F4@",

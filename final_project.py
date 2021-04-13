@@ -8,7 +8,6 @@ import pandas as pd
 from tabulate import tabulate
 
 
-
 class GedcomeItem:
     def __init__(self, db):
         self.db = db
@@ -363,14 +362,13 @@ class Individual(GedcomeItem):
             return None
 
         return 'ERROR', self.uid, self.name, msg[:-2]
-    
-    #US22- Brendan - Validate all user ids are unique
+
+    # US22- Brendan - Validate all user ids are unique
     def validate_unique_id(self):
         individuals = self.db_select_all_individuals()
 
         setCheck = set()
-        for individual in individuals:
-            
+        # for individual in individuals:
 
     validations = [validate_birth_before_current_date,
                    validate_death_before_current_date, birth_before_death_of_parents,
@@ -666,19 +664,19 @@ class Family(GedcomeItem):
         conn = sqlite3.connect(self.db)
         cursor = conn.cursor()
 
-
-
         fam = [*cursor.execute("SELECT * FROM families")]
         indi = [*cursor.execute("SELECT * FROM individuals")]
 
-        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
-        indi = pd.DataFrame(indi, columns=['uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+        fam = pd.DataFrame(fam, columns=[
+                           'uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
 
-        sibs = fam[fam.childrens.map(lambda x:len(eval(x))>1)]
+        sibs = fam[fam.childrens.map(lambda x:len(eval(x)) > 1)]
         fmid = sibs.uid.tolist()
-        sibs = [*map(eval,sibs.childrens.tolist())]
+        sibs = [*map(eval, sibs.childrens.tolist())]
 
-        for sib,fid in zip(sibs,fmid):
+        for sib, fid in zip(sibs, fmid):
             infos = []
             for s in sib:
                 s = indi[indi.uid == s]
@@ -686,9 +684,10 @@ class Family(GedcomeItem):
                 if not info in infos:
                     infos.append(info)
                 else:
-                    sibname = [indi[indi.uid == s].name.values.item() for s in sib]
+                    sibname = [indi[indi.uid == s].name.values.item()
+                               for s in sib]
                     return 'ERROR', fid, 'No more than one child with the same name and birth date should appear in a family', sib, sibname
-        return 
+        return
 
     # US 13 Sibling Spacing #Rachi
     def validate_checksiblings(self, wrongdb=None):
@@ -875,16 +874,16 @@ class Family(GedcomeItem):
                 if child.birt not in dates:
                     dates[child.birt] = 1
                 else:
-                    #print(dates[child.birt])
+                    # print(dates[child.birt])
                     if dates[child.birt] > 4:
                         return 'ERROR', self.uid, 'cannot have more than 5 children at once.', 'Individual(s) involved - ', [self.husb, self.wife], [self.husb_name, self.wife_name]
-                    else: 
+                    else:
                         dates[child.birt] += 1
                         if dates[child.birt] > 4:
-                            return 'ERROR', self.uid,'cannot have more than 5 children at once.', 'Individual(s) involved - ',[self.husb, self.wife], [self.husb_name, self.wife_name]
+                            return 'ERROR', self.uid, 'cannot have more than 5 children at once.', 'Individual(s) involved - ', [self.husb, self.wife], [self.husb_name, self.wife_name]
         return None
 
-    #US19- Brendan - first cousins cannot marry    
+    # US19- Brendan - first cousins cannot marry
     def validate_firstCousinMarriage(self):
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
@@ -931,20 +930,18 @@ class Family(GedcomeItem):
 
         msg = msg[:-2]
         return 'ERROR', self.uid, msg, individual_ids, individual_names
-    
-    
+
     def validate_correctGenderRole(self):
         # US21 @Shaunak1857 Shaunak Saklikar
         husband = self.db_indi_select(self.husb)
         wife = self.db_family_select(self.wife)
-        
+
         if husband.sex != "M":
             return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
-        
+
         if wife.sex != "F":
             return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
-        
-    
+
     def validate_orderSiblingsByAge(self):
         # US28 @Shaunak1857 Shaunak Saklikar
         allChildren = []
@@ -953,18 +950,18 @@ class Family(GedcomeItem):
                 child = self.db_indi_select(i)
                 if child is not None:
                     allChildren.append(child)
-       
+
         allChildren.sort(key=lambda x: x.age, reverse=True)
-        
+
         if len(allChildren) > 0:
-            print("The Family "+ self.uid +" List of the children in descending order:")
-        
+            print("The Family " + self.uid +
+                  " List of the children in descending order:")
+
         for i in allChildren:
             print(i.name, i.age)
-            
+
         if len(allChildren) > 0:
             print("The for list "+self.uid+" ends here....")
-        
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -1278,7 +1275,7 @@ class Gedcom:
         f.close()
         return individuals, families, indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
-    #Gedcom wide file validation
+    # Gedcom wide file validation
 
     def validate(self):
         reports = []
@@ -1309,7 +1306,7 @@ class Gedcom:
         for i in self.individuals:
             outtext += f"Individual:@{i.uid}@, Age:{i.age}\n"
         return outtext
-    
+
     # US 29: List All Deceased individuals in gedcom files #Rachi
     def list_deceased_individual(self):
         import pandas as pd
@@ -1318,9 +1315,11 @@ class Gedcom:
 
         indi = [*cursor.execute("SELECT * FROM individuals")]
         conn.close()
-        indi = pd.DataFrame(indi, columns=['uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
 
-        out = tabulate(indi[~indi.deat.isna()],  headers='keys', tablefmt = 'psql')
+        out = tabulate(indi[~indi.deat.isna()],
+                       headers='keys', tablefmt='psql')
         return out
 
     def pretty_print(self, filename=None):
@@ -1346,7 +1345,7 @@ class Gedcom:
         if self.lists:
             for l in self.lists:
                 tables += l + '\n'
-                if not isinstance(self.lists[l], str):    
+                if not isinstance(self.lists[l], str):
                     tables += self.lists[l]()
                 else:
                     tables += self.lists[l]
@@ -1359,34 +1358,34 @@ class Gedcom:
 
 
 if __name__ == '__main__':
-    
-     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
-                             db='./tests/steven/steven_test_wrong.db', sort='uid')
-     gedcom_wrong.pretty_print(
-         filename='./tests/steven/steven_gedcom_wrong_table.txt')
 
-     gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
-                             db='./tests/steven/steven_test_correct.db', sort='uid')
-     gedcom_correct.pretty_print(
-         filename='./tests/steven/steven_gedcom_correct_table.txt')
+    gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
+                          db='./tests/steven/steven_test_wrong.db', sort='uid')
+    gedcom_wrong.pretty_print(
+        filename='./tests/steven/steven_gedcom_wrong_table.txt')
 
-     gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
-     gedcom1.pretty_print(filename='gedcom1_table.txt')
+    gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
+                            db='./tests/steven/steven_test_correct.db', sort='uid')
+    gedcom_correct.pretty_print(
+        filename='./tests/steven/steven_gedcom_correct_table.txt')
 
-     gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
-                      db='./tests/brendan/brendan_test_wrong.db', sort='uid')
-     gedcom2.pretty_print(
-         filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+    gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
+    gedcom1.pretty_print(filename='gedcom1_table.txt')
 
-     gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new.ged',
-                            db='./tests/rachi/rachi_wrong_new.db', sort='uid')
-     gedcom_wrong.pretty_print(
-         filename='./tests/rachi/Sprint_3_Rachi.txt')
+    gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
+                     db='./tests/brendan/brendan_test_wrong.db', sort='uid')
+    gedcom2.pretty_print(
+        filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
 
-     brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
-                              db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
-     brendan_sprint2.pretty_print(
-         filename='./tests/brendan/brendan_sprint2_tests.txt')
+    gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new.ged',
+                          db='./tests/rachi/rachi_wrong_new.db', sort='uid')
+    gedcom_wrong.pretty_print(
+        filename='./tests/rachi/Sprint_3_Rachi.txt')
+
+    brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
+                             db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
+    brendan_sprint2.pretty_print(
+        filename='./tests/brendan/brendan_sprint2_tests.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
