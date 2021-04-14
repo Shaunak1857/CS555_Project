@@ -362,9 +362,9 @@ class TestGedcomBrendan(unittest.TestCase):
 class TestGedcomRachi(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
-            './tests/rachi/lopez.ged', './tests/rachi/lopez.db', sort='uid')
+            './tests/rachi/lopez.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/rachi/lopez.ged', './tests/rachi/lopez.db', sort='uid')
+            './tests/rachi/lopez.ged', './tests/rachi/rachi_wrong_new.db', sort='uid')
 
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
@@ -472,7 +472,7 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-
+         
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -712,6 +712,7 @@ def rachi_suite():
     suite.addTest(TestGedcomRachi('test_ged_correct'))
     suite.addTest(TestGedcomRachi('test_siblings'))
     suite.addTest(TestGedcomRachi('test_bigamy'))
+    suite.addTest(TestGedcomRachi('test_validate_unique_first_name'))
     # suite.addTest(TestGedcomRachi('test_ged_wrong'))
 
     return suite
