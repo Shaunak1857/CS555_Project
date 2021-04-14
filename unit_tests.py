@@ -499,7 +499,6 @@ Individual:@@I21@@, Age:33
 Individual:@@I22@@, Age:28
 Individual:@@I23@@, Age:28
 '''
-
         received = self.ged_wrong.list_individual_with_age()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
@@ -515,12 +514,9 @@ Individual:@@I23@@, Age:28
 | 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 |       0 |        | @F8@   |
 | 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  |       0 |        |        |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+'''
-
         received = self.ged_wrong.list_deceased_individual()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-    
-    
     
     def test_ged_correct(self):
         received = str(self.ged_correct)
