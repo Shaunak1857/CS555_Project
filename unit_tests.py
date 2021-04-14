@@ -362,9 +362,9 @@ class TestGedcomBrendan(unittest.TestCase):
 class TestGedcomRachi(unittest.TestCase):
     def setUp(self):
         self.ged_correct = Gedcom(
-            './tests/rachi/lopez.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
+            './tests/rachi/rachi_test_correct.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/rachi/lopez.ged', './tests/rachi/rachi_wrong_new.db', sort='uid')
+            './tests/rachi/rachi_wrong_new.ged', './tests/rachi/rachi_wrong_new.db', sort='uid')
 
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
