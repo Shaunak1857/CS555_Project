@@ -472,7 +472,56 @@ class TestGedcomRachi(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-         
+    
+    # US 27, Include individual age when listing 
+    def test_list_individual_with_age(self):
+        expected = ''' Individual:@@I1@@, Age:56
+Individual:@@I2@@, Age:57
+Individual:@@I3@@, Age:26
+Individual:@@I4@@, Age:83
+Individual:@@I5@@, Age:80
+Individual:@@I6@@, Age:74
+Individual:@@I7@@, Age:75
+Individual:@@I8@@, Age:26
+Individual:@@I9@@, Age:24
+Individual:@@I10@@, Age:321
+Individual:@@I11@@, Age:200
+Individual:@@I12@@, Age:51
+Individual:@@I13@@, Age:44
+Individual:@@I14@@, Age:49
+Individual:@@I15@@, Age:43
+Individual:@@I16@@, Age:57
+Individual:@@I17@@, Age:41
+Individual:@@I18@@, Age:51
+Individual:@@I19@@, Age:81
+Individual:@@I20@@, Age:36
+Individual:@@I21@@, Age:33
+Individual:@@I22@@, Age:28
+Individual:@@I23@@, Age:28
+'''
+
+        received = self.ged_wrong.list_individual_with_age()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+    # US 29: List All Deceased individuals in gedcom files
+    def test_list_deceased_individual(self):
+        expected = ''' +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name               | sex   | birt        |   age | deat        |   alive | famc   | fams   |
+|----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  1 | @I2@  | Mary /Smith/       | F     | 1968 MAR 12 |    57 | 2025 MAR 8  |       0 | @F3@   | @F1@   |
+| 10 | @I11@ | Alexa /Fakename/   | F     | 1800 JAN 3  |   200 | 2000 FEB 3  |       0 |        | @F5@   |
+| 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  |       0 |        | @F7@   |
+| 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 |       0 |        | @F8@   |
+| 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  |       0 |        |        |
++----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+'''
+
+        received = self.ged_wrong.list_deceased_individual()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+    
+    
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
