@@ -362,19 +362,9 @@ class Individual(GedcomeItem):
             return None
 
         return 'ERROR', self.uid, self.name, msg[:-2]
-<<<<<<< HEAD
     
     
             
-=======
-
-    # US22- Brendan - Validate all user ids are unique
-    def validate_unique_id(self):
-        individuals = self.db_select_all_individuals()
-
-        setCheck = set()
-        # for individual in individuals:
->>>>>>> e64e17fa4b64a4f1a145baf6e2a014d0d55bc624
 
     validations = [validate_birth_before_current_date,
                    validate_death_before_current_date, birth_before_death_of_parents,
@@ -1052,6 +1042,8 @@ class Gedcom:
             'List individuals with age': self.list_individual_with_age(),
             'List of all deceased individuals': self.list_deceased_individual,
         }
+        self.duplicateIndividual = False
+        self.duplicateFamily = False
 
         if sort is not None:
             self.sort(sort)
@@ -1145,6 +1137,11 @@ class Gedcom:
             success = True
         except sqlite3.Error as e:
             print(e)
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+            raise e
         finally:
             if cursor:
                 cursor.close()
@@ -1245,30 +1242,40 @@ class Gedcom:
                 if(elems[0] == '0'):
                     if(indi == 1):  # adding the last object in the file
                         # insert individual into database
-                        if not self.db_insert(indiData):
-                            raise
+                        try: 
+                            self.db_insert(indiData)
+                            individuals.append(indiData)
+                            indi_df = indi_df.append(
+                                    indiData.as_dict(), ignore_index=True)
+                            indiData = Individual(
+                                        db=self.db, additional_validations=self.indi_validations)
+                            indi = 0
+                        except:
+                            self.duplicateIndividual = True
+                            
+
+                        
                         # report = indiData.validate()
                         # if len(report) > 0:
                         #     reports[i] = report
-                        individuals.append(indiData)
-                        indi_df = indi_df.append(
-                            indiData.as_dict(), ignore_index=True)
-                        indiData = Individual(
-                            db=self.db, additional_validations=self.indi_validations)
-                        indi = 0
+                        
                     if(fam == 1):
                         # Insert family into database
-                        if not self.db_insert(familyData):
-                            raise
+                        try:
+                            self.db_insert(familyData)
+                            families.append(familyData)
+                            fam_df = fam_df.append(
+                                    familyData.as_dict(), ignore_index=True)
+                            familyData = Family(
+                                    db=self.db, additional_validations=self.indi_validations)
+                            fam = 0
+                        except:
+                            self.duplicateFamily = True
+
                         # report = familyData.validate()
                         # if len(report) > 0:
                         #     reports[i] = report
-                        families.append(familyData)
-                        fam_df = fam_df.append(
-                            familyData.as_dict(), ignore_index=True)
-                        familyData = Family(
-                            db=self.db, additional_validations=self.indi_validations)
-                        fam = 0
+                        
                     if(elems[1] in ['NOTE', 'TRLR', 'HEAD']):
                         pass
                     else:
@@ -1282,6 +1289,59 @@ class Gedcom:
         return individuals, families, indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
     # Gedcom wide file validation
+    #US 22- Brendan- File Wide Unique Ids
+    def validate_filewide_unique_individual_id(self):
+        if self.duplicateIndividual:
+            return 'ERROR- filewide ids for individuals must be unique'
+        return None
+    
+    def validate_filewide_unique_family_id(self):
+        if self.duplicateFamily:
+            return 'ERROR- filewide ids for families must be unique'
+        return None
+    
+    #US 23- Brendan- Individuals must all have unique name birth combinations
+    def validate_filewide_unique_individual_combination(self):
+        individuals = {}
+        for i in self.individuals:
+            if i.name in individuals:
+                if individuals[i.name] == i.birt:
+                    return 'ERROR- filewide name birth combinations must be unique'
+            else:
+                individuals[i.name] = i.birt
+        return None
+
+    #US 24- Brendan- Families must all have unique spouse name wedding date combinations
+    def validate_filewide_unique_family_combination(self):
+        families = {}
+        for f in self.families:
+            if (f.husb_name, f.wife_name) in families:
+                if families[(f.husb_name, f.wife_name)] == f.marr:
+                    return 'ERROR- filewide spouse name and wedding dates combinations must be unique'
+            else:
+                families[(f.husb_name, f.wife_name)] = f.marr
+        return None
+
+
+    validations = [validate_filewide_unique_individual_id,
+                  validate_filewide_unique_family_id,
+                  validate_filewide_unique_individual_combination,
+                  validate_filewide_unique_family_combination]
+
+    def fileValidate(self, debug=False):
+        messages = []
+        for v in self.validations:
+            try:
+                results = v(self)
+            except (AttributeError, ValueError, TypeError) as e:
+                if debug:
+                    print(e)
+                continue
+
+            if results is not None:
+                msg = results
+                messages.append(msg)
+        return messages
 
     def validate(self):
         reports = []
@@ -1294,7 +1354,7 @@ class Gedcom:
             r = f.validate()
             if r:
                 reports.append(f.validate())
-
+        reports.append(self.fileValidate())
         return reports
 
     # US30 - Steven
@@ -1364,7 +1424,7 @@ class Gedcom:
 
 
 if __name__ == '__main__':
-
+    '''
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
                           db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
@@ -1392,6 +1452,11 @@ if __name__ == '__main__':
                              db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
     brendan_sprint2.pretty_print(
         filename='./tests/brendan/brendan_sprint2_tests.txt')
+    '''
+    brendan_sprint3 = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+    #brendan_sprint3.pretty_print(
+        #filename='./tests/brendan/brendan_sprint3_test.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')

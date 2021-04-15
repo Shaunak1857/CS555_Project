@@ -1,0 +1,146 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 3
+1 DATE 14 APR 2021
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Steve Tester
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Jake /Manperson/
+2 GIVN Jake
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX M
+1 BIRT
+2 DATE 2 JAN 2000
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Steven /Manperson/
+2 GIVN Steven
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX M
+1 BIRT
+2 DATE 2 MAR 1970
+1 FAMS @F1@
+1 FAMC @F2@
+0 @I3@ INDI
+1 NAME Susan /Testname/
+2 GIVN Susan
+2 SURN Testname
+2 _MARNM Manperson
+1 SEX F
+1 BIRT
+2 DATE 2 JAN 1970
+1 FAMS @F1@
+0 @I4@ INDI
+1 NAME Jake /Manperson/
+2 GIVN Jake
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX M
+1 BIRT
+2 DATE 2 JAN 2000
+1 FAMC @F1@
+0 @I1@ INDI
+1 NAME Sussanne /Manperson/
+2 GIVN Sussanne
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX F
+1 BIRT
+2 DATE 3 JAN 2002
+1 FAMC @F1@
+0 @I6@ INDI
+1 NAME Jackson /Manperson/
+2 GIVN Jackson
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX M
+1 BIRT
+2 DATE 2 JAN 1941
+1 FAMS @F2@
+0 @I7@ INDI
+1 NAME Mildred /Testerton/
+2 GIVN Mildred
+2 SURN Testerton
+2 _MARNM Manperson
+1 SEX F
+1 BIRT
+2 DATE 6 MAY 1944
+1 FAMS @F2@
+0 @I8@ INDI
+1 NAME Steven /Manperson/
+2 GIVN Steven
+2 SURN Manperson
+2 _MARNM Manperson
+1 SEX M
+1 BIRT
+2 DATE 6 APR 1972
+1 FAMS @F3@
+1 FAMC @F2@
+0 @I9@ INDI
+1 NAME Susan /Testname/
+2 GIVN Susan
+2 SURN Testname
+2 _MARNM Manperson
+1 SEX F
+1 BIRT
+2 DATE 11 JUN 1972
+1 FAMS @F3@
+1 FAMC @F4@
+0 @I10@ INDI
+1 NAME Franklin /Testname/
+2 GIVN Franklin
+2 SURN Testname
+2 _MARNM Testname
+1 SEX M
+1 BIRT
+2 DATE 3 MAY 1938
+1 FAMS @F4@
+0 @I11@ INDI
+1 NAME Renee /Outofname/
+2 GIVN Renee
+2 SURN Outofname
+2 _MARNM Testname
+1 SEX F
+1 BIRT
+2 DATE 3 FEB 1939
+1 FAMS @F4@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I1@
+1 CHIL @I4@
+1 CHIL @I1@
+1 MARR
+2 DATE 1 FEB 1997
+1 _CURRENT Y
+0 @F2@ FAM
+1 HUSB @I6@
+1 WIFE @I7@
+1 CHIL @I2@
+1 CHIL @I8@
+1 MARR
+2 DATE 3 FEB 1968
+1 _CURRENT Y
+0 @F3@ FAM
+1 HUSB @I8@
+1 WIFE @I9@
+1 MARR
+2 DATE 1 FEB 1997
+1 _CURRENT Y
+0 @F2@ FAM
+1 HUSB @I10@
+1 WIFE @I11@
+1 CHIL @I9@
+1 MARR
+2 DATE 1 JUL 1967
+1 _CURRENT Y
+0 TRLR

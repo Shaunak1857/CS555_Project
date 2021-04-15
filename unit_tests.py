@@ -336,6 +336,17 @@ class TestGedcomBrendan(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
 
+    def test_unique_filewide_individuals_ids(self):
+        gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+        expected = ''
+
+        received = gedcomTest.validate_filewide_unique_family_id()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -774,6 +785,7 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_age_from_death'))
     suite.addTest(TestGedcomBrendan('test_multipleBirths'))
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
+    suite.addTest(TestGedcomBrendan('test_unique_filewide_individuals_ids'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite
@@ -795,7 +807,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(steven_suite())
-    runner.run(rachi_suite())
+    #runner.run(steven_suite())
+    #runner.run(rachi_suite())
     runner.run(brendan_suite())
-    runner.run(shaunak_suite())
+    #runner.run(shaunak_suite())

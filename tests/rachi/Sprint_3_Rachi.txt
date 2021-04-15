@@ -132,7 +132,28 @@ ERROR: Family @F1@ Birthdate of siblings should be more than 8 months apart or l
 Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
+ERROR- filewide name birth combinations must be unique
 
+List of all living married individuals
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name             | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@  | Jack /Tester/    | M     | 1965 AUG 12 |    56 |        | True    | @F2@   | @F1@   |
+|  1 | @I3@  | Steve /Tester/   | M     | 1995 FEB 2  |    26 |        | True    | @F1@   | @F4@   |
+|  2 | @I4@  | Rick /Smith/     | M     | 1938 MAY 4  |    83 |        | True    | @F5@   | @F3@   |
+|  3 | @I5@  | Jane /Adams/     | F     | 1941 MAR 6  |    80 |        | True    |        | @F3@   |
+|  4 | @I6@  | Steven /Tester/  | M     | 1947 JUN 15 |    74 |        | True    |        | @F2@   |
+|  5 | @I7@  | Lilian /Roberts/ | F     | 1946 APR 4  |    75 |        | True    |        | @F2@   |
+|  6 | @I9@  | Sally /Johnson/  | F     | 1997 JAN 10 |    24 |        | True    | @F6@   | @F4@   |
+|  7 | @I10@ | Alex /Smith/     | M     | 1700 JAN 13 |   321 |        | True    |        | @F5@   |
+|  8 | @I12@ | Amy /Tester/     | F     | 1970 MAR 10 |    51 |        | True    | @F2@   | @F7@   |
+|  9 | @I14@ | Jimmy /Smith/    | M     | 1972 MAR 3  |    49 |        | True    | @F3@   | @F8@   |
+| 10 | @I16@ | Jason /Johnson/  | M     | 1964 APR 4  |    57 |        | True    |        | @F6@   |
+| 11 | @I18@ | Jenny /Fischer/  | F     | 1970 APR 5  |    51 |        | True    |        | @F9@   |
+| 12 | @I19@ | Alisha /Jones/   | F     | 1940 APR 8  |    81 |        | True    |        | @F9@   |
+| 13 | @I20@ | Jack /Lopez/     | M     | 1985 APR 6  |    36 |        | True    |        | @F70@  |
+| 14 | @I21@ | Hilary /Lopez/   | F     | 1988 APR 2  |    33 |        | True    |        | @F70@  |
++----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
 List individuals with age
 Individual:@@I1@@, Age:56
 Individual:@@I2@@, Age:57

@@ -46,3 +46,22 @@ List of all living married individuals
 |  6 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |        | True    |        | @F5@   |
 |  7 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |        | True    |        | @F5@   |
 +----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+List individuals with age
+Individual:@@I1@@, Age:52
+Individual:@@I2@@, Age:49
+Individual:@@I3@@, Age:14
+Individual:@@I4@@, Age:71
+Individual:@@I5@@, Age:71
+Individual:@@I6@@, Age:72
+Individual:@@I7@@, Age:73
+Individual:@@I8@@, Age:30
+Individual:@@I9@@, Age:30
+Individual:@@I10@@, Age:74
+Individual:@@I11@@, Age:73
+
+List of all deceased individuals
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name         | sex   | birt        |   age | deat        |   alive | famc   | fams   |
+|----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  7 | @I8@  | Henry /Lane/ | M     | 1970 OCT 13 |    30 | 2000 NOV 12 |       0 | @F5@   | @F3@   |
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+

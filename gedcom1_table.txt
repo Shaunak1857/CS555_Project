@@ -50,3 +50,30 @@ List of all living married individuals
 |  5 | @I14@ | Jeniffer /Smith/     | F     | 1969 MAY 9  |    52 |        | True    | @F2@   | @F6@   |
 |  6 | @I15@ | Steven /Henricks/    | M     | 1967 FEB 10 |    54 |        | True    |        | @F6@   |
 +----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------+
+List individuals with age
+Individual:@@I1@@, Age:58
+Individual:@@I2@@, Age:54
+Individual:@@I3@@, Age:26
+Individual:@@I4@@, Age:78
+Individual:@@I5@@, Age:25
+Individual:@@I6@@, Age:65
+Individual:@@I7@@, Age:83
+Individual:@@I8@@, Age:72
+Individual:@@I9@@, Age:44
+Individual:@@I10@@, Age:22
+Individual:@@I11@@, Age:56
+Individual:@@I12@@, Age:53
+Individual:@@I13@@, Age:13
+Individual:@@I14@@, Age:52
+Individual:@@I15@@, Age:54
+Individual:@@I16@@, Age:18
+
+List of all deceased individuals
++----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat        |   alive | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  4 | @I5@  | Linda /McGee/   | F     | 1946 JUN 8  |    25 | 1971 JAN 3  |       0 |        | @F3@   |
+|  5 | @I6@  | Ted /Smith/     | M     | 1932 MAY 7  |    65 | 1997 MAR 11 |       0 |        | @F2@   |
+| 10 | @I11@ | Joe /Philipson/ | M     | 1938 JUN 8  |    56 | 1994 JUN 3  |       0 |        | @F5@   |
+| 12 | @I13@ | Jacob /Smith/   | M     | 1965 MAR 14 |    13 | 1978 FEB 5  |       0 | @F2@   |        |
++----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------+

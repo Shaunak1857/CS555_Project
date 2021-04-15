@@ -79,3 +79,26 @@ List of all living married individuals
 |  9 | @I14@  | Gabe /Lane/      | M     | 1991 MAY 10 |    30 |        | True    | @F7@   | @F8@   |
 | 10 | @I999@ | Not /Real/       | M     | 1991 MAY 10 |    30 |        | True    | @F990@ | @F991@ |
 +----+--------+------------------+-------+-------------+-------+--------+---------+--------+--------+
+List individuals with age
+Individual:@@I1@@, Age:52
+Individual:@@I2@@, Age:49
+Individual:@@I3@@, Age:14
+Individual:@@I4@@, Age:71
+Individual:@@I5@@, Age:71
+Individual:@@I6@@, Age:72
+Individual:@@I7@@, Age:73
+Individual:@@I8@@, Age:-67
+Individual:@@I9@@, Age:30
+Individual:@@I10@@, Age:171
+Individual:@@I11@@, Age:141
+Individual:@@I12@@, Age:51
+Individual:@@I13@@, Age:50
+Individual:@@I14@@, Age:30
+Individual:@@I999@@, Age:30
+
+List of all deceased individuals
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name         | sex   | birt        |   age | deat        |   alive | famc   | fams   |
+|----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  7 | @I8@  | Henry /Lane/ | M     | 1967 OCT 13 |   -67 | 1900 FEB 12 |       0 | @F5@   | @F3@   |
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
