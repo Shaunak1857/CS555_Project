@@ -938,9 +938,11 @@ class Family(GedcomeItem):
         if wife.sex != "F":
             return 'ERROR', self.uid, ' has wrong sex', [self.wife, self.husb], [self.wife_name, self.husb_name]
 
-    def validate_orderSiblingsByAge(self):
+    def list_orderSiblingsByAge(self):
         # US28 @Shaunak1857 Shaunak Saklikar
+        
         allChildren = []
+        
         if len(self.childrens) > 0:
             for i in self.childrens:
                 child = self.db_indi_select(i)
@@ -950,8 +952,7 @@ class Family(GedcomeItem):
         allChildren.sort(key=lambda x: x.age, reverse=True)
 
         if len(allChildren) > 0:
-            print("The Family " + self.uid +
-                  " List of the children in descending order:")
+            print("The Family " + self.uid + " List of the children in descending order:")
 
         for i in allChildren:
             print(i.name, i.age)
@@ -977,8 +978,9 @@ class Family(GedcomeItem):
                    validate_firstCousinMarriage,
                    validate_corresponding_entry,
                    validate_correctGenderRole,
-                   validate_orderSiblingsByAge,
-                   validate_unique_first_name]
+                   validate_unique_first_name,
+                   #list_orderSiblingsByAge
+                   ]
 
     # Takes in a list of validation functions that follows the above mentioned standard
     # Input : self

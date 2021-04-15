@@ -609,7 +609,7 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens="[@I2@]",
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('Error', '@F4@', ' has married before the age of 14',
+        expected = ('ERROR', '@F4@', ' has married before the age of 14',
                     ['@I4@', '@I5@'], ['Bruce Wayne', 'Martha Barbara'])
 
         received = familyWrong.validate_marr_after_14()
@@ -630,7 +630,7 @@ class TestGedcomShaunak(unittest.TestCase):
 
         )
 
-        expected = ('Error', '@I4@', 'Bruce Wayne',
+        expected = ('ERROR', '@I4@', 'Bruce Wayne',
                     'has married before its birth date')
         received = indiWrong.birth_before_marr_US02()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -647,7 +647,7 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F3@',
             db='Test.db'
         )
-        expected = ('Error', '@I1@', 'First Last',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is born after death of mother')
         received = indiWrong.birth_before_death_of_parents()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -664,7 +664,7 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F2@',
             db='Test.db'
         )
-        expected = ('Error', '@I1@', 'First Last',
+        expected = ('ERROR', '@I1@', 'First Last',
                     'is born before 9 months after death of father')
         received = indiWrong.birth_before_death_of_parents()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -693,7 +693,7 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens="[@I13@]",
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('Error', '@F4@', ' are married siblings',
+        expected = ('ERROR', '@F4@', ' are married siblings',
                     ['@I13@', '@I2@'], ['Alex Jane', 'Mary Lane'])
 
         received = familyWrong.validate_siblingsShouldNotBeMarried()
@@ -848,7 +848,7 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))
-    suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
+    #suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
     return suite
 
 
