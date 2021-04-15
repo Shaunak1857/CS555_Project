@@ -805,7 +805,7 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_age_from_death'))
     suite.addTest(TestGedcomBrendan('test_multipleBirths'))
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
-    suite.addTest(TestGedcomBrendan('test_unique_filewide_individuals_ids'))
+    suite.addTest(TestGedcomBrendan('test_unique_filewide_individual_ids'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_family_ids'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
