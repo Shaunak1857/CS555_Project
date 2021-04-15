@@ -349,7 +349,7 @@ class TestGedcomBrendan(unittest.TestCase):
 
     def test_unique_filewide_family_ids(self):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
-                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
 
         expected = 'ERROR- filewide ids for families must be unique'
 
@@ -358,10 +358,10 @@ class TestGedcomBrendan(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-    
+
     def test_filewide_unique_individual_combination(self):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
-                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
 
         expected = 'ERROR- filewide name birth combinations must be unique'
 
@@ -370,10 +370,10 @@ class TestGedcomBrendan(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-    
+
     def test_filewide_unique_family_combination(self):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
-                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
 
         expected = 'ERROR- filewide spouse name and wedding dates combinations must be unique'
 
@@ -382,8 +382,6 @@ class TestGedcomBrendan(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-    
-
 
     def test_ged_correct(self):
         received = str(self.ged_correct)
@@ -469,11 +467,11 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='Test.db'
+            db='./tests/rachi/rachi_wrong_new.db'
         )
 
-        expected = """ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-                    Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)"""
+        expected = ('ERROR', ['@F3@', '@F10@'], 'Marriage should not occur during marriage to another spouse', [
+                    '@I5@', '@I19@'], ['Jane /Adams/', 'Alisha /Jones/'])
         received = fam_wrong.validate_bigamy()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -490,12 +488,14 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='Test.db'
+            db='./tests/rachi/rachi_wrong_new.db'
         )
 
-        expected = "ERROR : SIBLINGS TOGETHER"
-        expected = """ERROR: Family @F1@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
-                        Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)"""
+        # expected = "ERROR : SIBLINGS TOGETHER"
+        # expected = """ERROR: Family @F1@ Birthdate of siblings should be more than 8 months apart or less than 2 days apart.
+        #                 Individual(s) involved - @I3@ (Steve /Tester/), @I8@ (Jim /Tester/)"""
+        expected = ('ERROR', '@F1@', 'Birthdate of siblings should be more than 8 months apart or less than 2 days apart',
+                    ['@I3@', '@I8@'], ['Steve /Tester/', 'Jim /Tester/'])
 
         received = fam_wrong.validate_checksiblings()
 
@@ -513,16 +513,18 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='Test.db'
+            db='./tests/rachi/rachi_wrong_new.db'
         )
-        expected = """ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
-                        Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)"""
+        # expected = """ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
+        #                 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)"""
+        expected = ('ERROR', '@F70@', 'No more than one child with the same name and birth date should appear in a family',
+                    ['@I22@', '@I23@'], ['Julio /Lopez/', 'Julio /Lopez/'])
         received = fam_wrong.validate_unique_first_name()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
-    
-    # US 27, Include individual age when listing 
+
+    # US 27, Include individual age when listing
     def test_list_individual_with_age(self):
         expected = '''Individual:@@I1@@, Age:56
 Individual:@@I2@@, Age:57
@@ -551,7 +553,7 @@ Individual:@@I23@@, Age:28
         received = self.ged_wrong.list_individual_with_age()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-    
+
     # US 29: List All Deceased individuals in gedcom files
     def test_list_deceased_individual(self):
         expected = '''+----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
@@ -566,7 +568,7 @@ Individual:@@I23@@, Age:28
         received = self.ged_wrong.list_deceased_individual()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-    
+
     def test_ged_correct(self):
         received = str(self.ged_correct)
 
@@ -831,7 +833,8 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_individual_ids'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_family_ids'))
-    suite.addTest(TestGedcomBrendan('test_filewide_unique_individual_combination'))
+    suite.addTest(TestGedcomBrendan(
+        'test_filewide_unique_individual_combination'))
     suite.addTest(TestGedcomBrendan('test_filewide_unique_family_combination'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
@@ -848,7 +851,7 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))
-    #suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
+    # suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
     return suite
 
 
