@@ -336,9 +336,21 @@ class TestGedcomBrendan(unittest.TestCase):
 
         self.assertEqual(received, expected, msg)
 
-    def test_unique_filewide_individuals_ids(self):
+    def test_unique_filewide_individual_ids(self):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
                             db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+        expected = ''
+
+        received = gedcomTest.validate_filewide_unique_individual_id()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+
+    def test_unique_filewide_family_ids(self):
+        gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+
         expected = ''
 
         received = gedcomTest.validate_filewide_unique_family_id()
@@ -346,6 +358,8 @@ class TestGedcomBrendan(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
         self.assertEqual(received, expected, msg)
+    
+
 
     def test_ged_correct(self):
         received = str(self.ged_correct)
@@ -755,6 +769,10 @@ def steven_suite():
     suite.addTest(TestGedcomSteven('test_parents_age'))
     suite.addTest(TestGedcomSteven('test_marriage_to_descendants'))
     suite.addTest(TestGedcomSteven('test_marriage_to_niblings'))
+    suite.addTest(TestGedcomSteven('test_list_living_married'))
+    suite.addTest(TestGedcomSteven('test_corresponding_entry_indi'))
+    suite.addTest(TestGedcomSteven('test_corresponding_entry_fam'))
+    suite.addTest(TestGedcomSteven('test_list_living_married'))
     suite.addTest(TestGedcomSteven('test_ged_correct'))
     # suite.addTest(TestGedcomSteven('test_ged_wrong'))
 
@@ -769,6 +787,8 @@ def rachi_suite():
     suite.addTest(TestGedcomRachi('test_siblings'))
     suite.addTest(TestGedcomRachi('test_bigamy'))
     suite.addTest(TestGedcomRachi('test_validate_unique_first_name'))
+    suite.addTest(TestGedcomRachi('test_list_individual_with_age'))
+    suite.addTest(TestGedcomRachi('test_list_deceased_individual'))
     # suite.addTest(TestGedcomRachi('test_ged_wrong'))
 
     return suite
@@ -786,6 +806,7 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_multipleBirths'))
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_individuals_ids'))
+    suite.addTest(TestGedcomBrendan('test_unique_filewide_family_ids'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite
