@@ -1424,7 +1424,7 @@ class Gedcom:
 
 
 if __name__ == '__main__':
-    '''
+    
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
                           db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
@@ -1452,11 +1452,11 @@ if __name__ == '__main__':
                              db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
     brendan_sprint2.pretty_print(
         filename='./tests/brendan/brendan_sprint2_tests.txt')
-    '''
+    
     brendan_sprint3 = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
                             db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
-    #brendan_sprint3.pretty_print(
-        #filename='./tests/brendan/brendan_sprint3_test.txt')
+    brendan_sprint3.pretty_print(
+        filename='./tests/brendan/brendan_sprint3_test.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')

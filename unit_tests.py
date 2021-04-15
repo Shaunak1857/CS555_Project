@@ -524,7 +524,7 @@ class TestGedcomRachi(unittest.TestCase):
     
     # US 27, Include individual age when listing 
     def test_list_individual_with_age(self):
-        expected = ''' Individual:@@I1@@, Age:56
+        expected = '''Individual:@@I1@@, Age:56
 Individual:@@I2@@, Age:57
 Individual:@@I3@@, Age:26
 Individual:@@I4@@, Age:83
@@ -554,7 +554,7 @@ Individual:@@I23@@, Age:28
     
     # US 29: List All Deceased individuals in gedcom files
     def test_list_deceased_individual(self):
-        expected = ''' +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
+        expected = '''+----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
 |    | uid   | name               | sex   | birt        |   age | deat        |   alive | famc   | fams   |
 |----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------|
 |  1 | @I2@  | Mary /Smith/       | F     | 1968 MAR 12 |    57 | 2025 MAR 8  |       0 | @F3@   | @F1@   |
