@@ -339,7 +339,7 @@ class TestGedcomBrendan(unittest.TestCase):
     def test_unique_filewide_individual_ids(self):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
                             db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
-        expected = ''
+        expected = 'ERROR- filewide ids for individuals must be unique'
 
         received = gedcomTest.validate_filewide_unique_individual_id()
 
@@ -351,9 +351,33 @@ class TestGedcomBrendan(unittest.TestCase):
         gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
                     db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
 
-        expected = ''
+        expected = 'ERROR- filewide ids for families must be unique'
 
         received = gedcomTest.validate_filewide_unique_family_id()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+    
+    def test_filewide_unique_individual_combination(self):
+        gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+
+        expected = 'ERROR- filewide name birth combinations must be unique'
+
+        received = gedcomTest.validate_filewide_unique_individual_combination()
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+
+        self.assertEqual(received, expected, msg)
+    
+    def test_filewide_unique_family_combination(self):
+        gedcomTest = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+                    db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+
+        expected = 'ERROR- filewide spouse name and wedding dates combinations must be unique'
+
+        received = gedcomTest.validate_filewide_unique_family_combination()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
@@ -807,6 +831,8 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_individual_ids'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_family_ids'))
+    suite.addTest(TestGedcomBrendan('test_filewide_unique_individual_combination'))
+    suite.addTest(TestGedcomBrendan('test_filewide_unique_family_combination'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite
@@ -828,7 +854,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    #runner.run(steven_suite())
-    #runner.run(rachi_suite())
+    runner.run(steven_suite())
+    runner.run(rachi_suite())
     runner.run(brendan_suite())
-    #runner.run(shaunak_suite())
+    runner.run(shaunak_suite())

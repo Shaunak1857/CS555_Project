@@ -1028,7 +1028,9 @@ class Gedcom:
             self.db = db
         else:
             raise
-
+        
+        self.duplicateIndividual = False
+        self.duplicateFamily = False
         individuals, families, indi_df, fam_df = self.fileparser(filename)
 
         self.indi_df = indi_df
@@ -1042,8 +1044,7 @@ class Gedcom:
             'List individuals with age': self.list_individual_with_age(),
             'List of all deceased individuals': self.list_deceased_individual,
         }
-        self.duplicateIndividual = False
-        self.duplicateFamily = False
+        
 
         if sort is not None:
             self.sort(sort)
@@ -1136,7 +1137,6 @@ class Gedcom:
             conn.commit()
             success = True
         except sqlite3.Error as e:
-            print(e)
             if cursor:
                 cursor.close()
             if conn:
