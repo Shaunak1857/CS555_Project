@@ -786,6 +786,82 @@ class TestGedcomShaunak(unittest.TestCase):
         #self.assertEqual(received, expected, msg)
 
 
+    def test_partialDatesFamilyMarriage(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex Jane",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="DEC 6",
+            div="",
+            childrens=[],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('ERROR', '@F4@', ' include partial marriage date', ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
+
+        received = familyWrong.validate_includePartialDatesFamilyMarraige()
+       
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+    def test_partialDatesFamilyDivorce(self):
+        familyWrong = Family(
+            uid="@F4@",
+            husb="@I13@",
+            husb_name="Alex Jane",
+            wife="@I2@",
+            wife_name="Mary Lane",
+            marr="1999 DEC 6",
+            div="MAR 8",
+            childrens=[],
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('ERROR', '@F4@', ' include partial divorce date', ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
+
+        received = familyWrong.validate_includePartialDatesFamilyDivorce()
+       
+
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+    
+    def test_partialDatesFamilyBirth(self):
+        # 
+        indiWrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt=' JAN 5',
+            deat='2050 OCT 20',
+            famc='@F2@',
+            db='./tests/steven/steven_test_wrong.db'
+        )
+        expected = ('ERROR', '@I1@', 'First Last', ' include partial birth date')
+        received = indiWrong.validate_includePartialDatesIndividualBirth()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+    def test_partialDatesFamilyDeath(self):
+        # 
+        indiWrong = Individual(
+            uid='@I1@',
+            name='First Last',
+            sex='M',
+            birt='1998 JAN 5',
+            deat=' OCT 20',
+            famc='@F2@',
+            db='Test.db'
+        )
+        expected = ('ERROR', '@I1@', 'First Last', ' include partial death date')
+        received = indiWrong.validate_includePartialDatesIndividualDeath()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+        
+        
+        
+        
 def steven_suite():
     suite = unittest.TestSuite()
     suite.addTest(TestGedcomSteven('test_birt_after_deat'))
@@ -852,6 +928,10 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))
     # suite.addTest(TestGedcomShaunak('test_orderSiblingsByAges'))
+    suite.addTest(TestGedcomShaunak('test_partialDatesFamilyMarriage'))
+    suite.addTest(TestGedcomShaunak('test_partialDatesFamilyDivorce'))
+    suite.addTest(TestGedcomShaunak('test_partialDatesFamilyBirth'))
+    suite.addTest(TestGedcomShaunak('test_partialDatesFamilyDeath'))
     return suite
 
 

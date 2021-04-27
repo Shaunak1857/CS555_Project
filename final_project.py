@@ -181,14 +181,17 @@ class Individual(GedcomeItem):
         self.additional_validations = additional_validations
 
     def get_age(self, date_format=DEFAULT_DATE_FORMAT):
-        if self.birt is not None:
-            last_year = datetime.date.today().year
-            if self.deat is not None:
-                last_year = datetime.datetime.strptime(
-                    self.deat, date_format).year
-            return last_year - datetime.datetime.strptime(self.birt, date_format).year
-        else:
-            return None
+        try:
+            if self.birt is not None:
+                last_year = datetime.date.today().year
+                if self.deat is not None:
+                    last_year = datetime.datetime.strptime(
+                        self.deat, date_format).year
+                return last_year - datetime.datetime.strptime(self.birt, date_format).year
+            else:
+                return None
+        except ValueError as err:
+            return 'ERROR', self.uid, self.name, ' include partial birth date'
 
     def age_at(self, date, date_format=DEFAULT_DATE_FORMAT):
         year = datetime.datetime.strptime(date, date_format).year
@@ -364,7 +367,21 @@ class Individual(GedcomeItem):
         return 'ERROR', self.uid, self.name, msg[:-2]
     
     
-            
+    def validate_includePartialDatesIndividualBirth(self, date_format=DEFAULT_DATE_FORMAT):
+        # US 41 @Shaunak1857
+        try:
+            birthDate = datetime.datetime.strptime(self.birt, date_format)
+            return None
+        except ValueError as err:
+            return 'ERROR', self.uid, self.name, ' include partial birth date'
+        
+    def validate_includePartialDatesIndividualDeath(self, date_format=DEFAULT_DATE_FORMAT):
+        # US 41 @Shaunak1857
+        try:
+            birthDate = datetime.datetime.strptime(self.deat, date_format)
+            return None
+        except ValueError as err:
+            return 'ERROR', self.uid, self.name, ' include partial death date'
 
     validations = [validate_birth_before_current_date,
                    validate_death_before_current_date, birth_before_death_of_parents,
@@ -372,7 +389,10 @@ class Individual(GedcomeItem):
                    validate_birt_deat,
                    validate_birt_before_marr,
                    validate_age_from_birth,
-                   validate_corresponding_entry]
+                   validate_corresponding_entry,
+                   validate_includePartialDatesIndividualBirth,
+                   validate_includePartialDatesIndividualDeath
+                   ]
 
     # Go through the list of validation functions in self.validations that follows the above mentioned standard
     # Input : self
@@ -959,6 +979,67 @@ class Family(GedcomeItem):
 
         if len(allChildren) > 0:
             print("The for list "+self.uid+" ends here....")
+            
+            
+            
+            
+    def listLargeAgeDifferences(self, date_format=DEFAULT_DATE_FORMAT):
+        #US 34 @Shaunak1857
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+        
+        husbandAge = husband.age
+        wifeAge = wife.age
+        
+        olderOne = max(husbandAge, wifeAge)
+        youngerOne = min(husbandAge, wifeAge)
+        
+        
+        if 2*youngerOne <= olderOne:
+            print(2*youngerOne <= olderOne)
+            print("The family "+self.uid+" has large age differenes")
+    
+    def upcomingAnniversaries(self, date_format=DEFAULT_DATE_FORMAT):
+        #US 39 @Shaunak1857
+        husband = self.db_indi_select(self.husb)
+        wife = self.db_indi_select(self.wife)
+        
+        if husband.deat is not None:
+            return None
+        if wife.deat is not None:
+            return None
+        
+        
+        
+        marriageDate = datetime.datetime.strptime(self.marr, date_format)
+        today = datetime.date.today();
+        marrDate = datetime.date(today.year, marriageDate.month, marriageDate.day)
+        
+        if abs((marrDate - today).days) <= 30:
+            print('The living couple from '+ self.uid + " has marriage anniversey in next 30 days")
+    
+    
+    
+    def validate_includePartialDatesFamilyMarraige(self, date_format=DEFAULT_DATE_FORMAT):
+        #US 41 @Shaunak1857
+        try:
+            marrDate = datetime.datetime.strptime(self.marr, date_format)
+            return None
+        except ValueError as err:
+            return 'ERROR', self.uid, ' include partial marriage date', [self.wife, self.husb], [self.wife_name, self.husb_name]
+            
+        
+        
+    def validate_includePartialDatesFamilyDivorce(self, date_format=DEFAULT_DATE_FORMAT):
+        #US 41 @Shaunak1857
+        try:
+            
+            divDate = datetime.datetime.strptime(self.div, date_format)
+            return None
+        except ValueError as err:
+            return 'ERROR', self.uid, ' include partial divorce date', [self.wife, self.husb], [self.wife_name, self.husb_name]
+
+
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -973,13 +1054,16 @@ class Family(GedcomeItem):
                    validate_maleSameLastName,
                    validate_siblingsShouldNotBeMarried,
                    validate_bigamy,
-                   validate_checksiblings,
                    validate_multipleBirths,
                    validate_firstCousinMarriage,
                    validate_corresponding_entry,
                    validate_correctGenderRole,
                    validate_unique_first_name,
-                   #list_orderSiblingsByAge
+                   #list_orderSiblingsByAge,
+                   #listLargeAgeDifferences,
+                   #upcomingAnniversaries,
+                   validate_includePartialDatesFamilyMarraige,
+                   validate_includePartialDatesFamilyDivorce
                    ]
 
     # Takes in a list of validation functions that follows the above mentioned standard
@@ -1042,9 +1126,9 @@ class Gedcom:
         self.reports = self.validate()
 
         self.lists = {
-            'List of all living married individuals': self.list_living_married,
-            'List individuals with age': self.list_individual_with_age(),
-            'List of all deceased individuals': self.list_deceased_individual,
+            #'List of all living married individuals': self.list_living_married,
+            #'List individuals with age': self.list_individual_with_age(),
+            #'List of all deceased individuals': self.list_deceased_individual,
         }
         
 
@@ -1325,10 +1409,11 @@ class Gedcom:
         return None
 
 
-    validations = [validate_filewide_unique_individual_id,
-                  validate_filewide_unique_family_id,
-                  validate_filewide_unique_individual_combination,
-                  validate_filewide_unique_family_combination]
+    validations = [#validate_filewide_unique_individual_id,
+                  #validate_filewide_unique_family_id,
+                  #validate_filewide_unique_individual_combination,
+                  #validate_filewide_unique_family_combination
+                  ]
 
     def fileValidate(self, debug=False):
         messages = []
@@ -1431,7 +1516,7 @@ if __name__ == '__main__':
                           db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
         filename='./tests/steven/steven_gedcom_wrong_table.txt')
-
+    
     gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
                             db='./tests/steven/steven_test_correct.db', sort='uid')
     gedcom_correct.pretty_print(

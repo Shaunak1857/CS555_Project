@@ -24,52 +24,5 @@ Families
 +----+-------+--------+---------------------+--------+---------------------+------------+-------+--------------------------+
 
 Anomalies/Errors
-ANOMALY: @I6@ (Jackson /Manperson/) has a birth date before his parents' marriage date.
-ERROR: Susan /Testname/ (@I9@) Family @F4@ this individual is a child in does not exist.
-ERROR: Family @F1@ cannot marry as they are first cousins..
-Individual(s) involved - I (@I2@), n (@I3@)
-ERROR: Family @F1@ No more than one child with the same name and birth date should appear in a family.
-Individual(s) involved - @I1@ (Jake /Manperson/), @I4@ (Jake /Manperson/), @I1@ (Jake /Manperson/)
-ERROR: Family @F2@ cannot marry as they are first cousins..
-Individual(s) involved - I (@I6@), n (@I7@)
-ERROR: Family @F1@ No more than one child with the same name and birth date should appear in a family.
-Individual(s) involved - @I1@ (Jake /Manperson/), @I4@ (Jake /Manperson/), @I1@ (Jake /Manperson/)
-ERROR: Family @F3@ cannot marry as they are first cousins..
-Individual(s) involved - I (@I8@), n (@I9@)
-ERROR: Family @F1@ No more than one child with the same name and birth date should appear in a family.
-Individual(s) involved - @I1@ (Jake /Manperson/), @I4@ (Jake /Manperson/), @I1@ (Jake /Manperson/)
-ERROR- filewide ids for individuals must be unique
-ERROR- filewide ids for families must be unique
-ERROR- filewide name birth combinations must be unique
-ERROR- filewide spouse name and wedding dates combinations must be unique
 
-List of all living married individuals
-+----+-------+---------------------+-------+-------------+-------+--------+---------+--------+--------+
-|    | uid   | name                | sex   | birt        |   age | deat   | alive   | famc   | fams   |
-|----+-------+---------------------+-------+-------------+-------+--------+---------+--------+--------|
-|  0 | @I2@  | Steven /Manperson/  | M     | 1970 MAR 2  |    51 |        | True    | @F2@   | @F1@   |
-|  1 | @I3@  | Susan /Testname/    | F     | 1970 JAN 2  |    51 |        | True    |        | @F1@   |
-|  2 | @I6@  | Jackson /Manperson/ | M     | 1941 JAN 2  |    80 |        | True    | @F1@   | @F2@   |
-|  3 | @I7@  | Mildred /Testerton/ | F     | 1944 MAY 6  |    77 |        | True    |        | @F2@   |
-|  4 | @I8@  | Steven /Manperson/  | M     | 1972 APR 6  |    49 |        | True    | @F2@   | @F3@   |
-|  5 | @I9@  | Susan /Testname/    | F     | 1972 JUN 11 |    49 |        | True    | @F4@   | @F3@   |
-|  6 | @I10@ | Franklin /Testname/ | M     | 1938 MAY 3  |    83 |        | True    |        | @F4@   |
-|  7 | @I11@ | Renee /Outofname/   | F     | 1939 FEB 3  |    82 |        | True    |        | @F4@   |
-+----+-------+---------------------+-------+-------------+-------+--------+---------+--------+--------+
-List individuals with age
-Individual:@@I1@@, Age:21
-Individual:@@I2@@, Age:51
-Individual:@@I3@@, Age:51
-Individual:@@I4@@, Age:21
-Individual:@@I6@@, Age:80
-Individual:@@I7@@, Age:77
-Individual:@@I8@@, Age:49
-Individual:@@I9@@, Age:49
-Individual:@@I10@@, Age:83
-Individual:@@I11@@, Age:82
 
-List of all deceased individuals
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+
-| uid   | name   | sex   | birt   | age   | deat   | alive   | famc   | fams   |
-|-------+--------+-------+--------+-------+--------+---------+--------+--------|
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+

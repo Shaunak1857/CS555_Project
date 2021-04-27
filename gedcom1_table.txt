@@ -33,47 +33,5 @@ Families
 +----+-------+--------+-------------------+--------+----------------------+-------------+------------+----------------------------+
 
 Anomalies/Errors
-ERROR: Jim /Smith/ (@I1@) is born before 9 months after death of father.
-ERROR: Henry /Philipson/ (@I12@) is born before 9 months after death of father.
-ERROR: Jacob /Smith/ (@I13@) is born before 9 months after death of father.
-ERROR: Jeniffer /Smith/ (@I14@) is born before 9 months after death of father.
 
-List of all living married individuals
-+----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------+
-|    | uid   | name                 | sex   | birt        |   age | deat   | alive   | famc   | fams   |
-|----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------|
-|  0 | @I1@  | Jim /Smith/          | M     | 1963 SEP 10 |    58 |        | True    | @F2@   | @F1@   |
-|  1 | @I2@  | Susan /Johnson/      | F     | 1967 JUN 8  |    54 |        | True    | @F3@   | @F1@   |
-|  2 | @I4@  | Rick /Johnson/       | M     | 1943 MAR 6  |    78 |        | True    |        | @F4@   |
-|  3 | @I7@  | Maryanne /Rodriguez/ | F     | 1938 MAR 5  |    83 |        | True    |        | @F2@   |
-|  4 | @I8@  | Jamie /Adams/        | F     | 1949 NOV 7  |    72 |        | True    |        | @F5@   |
-|  5 | @I14@ | Jeniffer /Smith/     | F     | 1969 MAY 9  |    52 |        | True    | @F2@   | @F6@   |
-|  6 | @I15@ | Steven /Henricks/    | M     | 1967 FEB 10 |    54 |        | True    |        | @F6@   |
-+----+-------+----------------------+-------+-------------+-------+--------+---------+--------+--------+
-List individuals with age
-Individual:@@I1@@, Age:58
-Individual:@@I2@@, Age:54
-Individual:@@I3@@, Age:26
-Individual:@@I4@@, Age:78
-Individual:@@I5@@, Age:25
-Individual:@@I6@@, Age:65
-Individual:@@I7@@, Age:83
-Individual:@@I8@@, Age:72
-Individual:@@I9@@, Age:44
-Individual:@@I10@@, Age:22
-Individual:@@I11@@, Age:56
-Individual:@@I12@@, Age:53
-Individual:@@I13@@, Age:13
-Individual:@@I14@@, Age:52
-Individual:@@I15@@, Age:54
-Individual:@@I16@@, Age:18
 
-List of all deceased individuals
-+----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------+
-|    | uid   | name            | sex   | birt        |   age | deat        |   alive | famc   | fams   |
-|----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------|
-|  4 | @I5@  | Linda /McGee/   | F     | 1946 JUN 8  |    25 | 1971 JAN 3  |       0 |        | @F3@   |
-|  5 | @I6@  | Ted /Smith/     | M     | 1932 MAY 7  |    65 | 1997 MAR 11 |       0 |        | @F2@   |
-| 10 | @I11@ | Joe /Philipson/ | M     | 1938 JUN 8  |    56 | 1994 JUN 3  |       0 |        | @F5@   |
-| 12 | @I13@ | Jacob /Smith/   | M     | 1965 MAR 14 |    13 | 1978 FEB 5  |       0 | @F2@   |        |
-+----+-------+-----------------+-------+-------------+-------+-------------+---------+--------+--------+

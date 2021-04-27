@@ -27,41 +27,5 @@ Families
 +----+-------+--------+---------------+--------+------------------+-------------+-------+-------------+
 
 Anomalies/Errors
-ERROR: Bruce /Wayne/ (@I4@) has married before its birth date.
-ERROR: Martha /Barbara/ (@I5@) has married before its birth date.
-ERROR: Stephen /Lane/ (@I9@) is born before 9 months after death of father.
-ERROR: Family @F4@  has married before the age of 14.
-Individual(s) involved - @I4@ (Bruce /Wayne/), @I5@ (Martha /Barbara/)
 
-List of all living married individuals
-+----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
-|    | uid   | name             | sex   | birt        |   age | deat   | alive   | famc   | fams   |
-|----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------|
-|  0 | @I1@  | John /Smith/     | M     | 1969 NOV 10 |    52 |        | True    | @F2@   | @F1@   |
-|  1 | @I2@  | Mary /Jane/      | F     | 1972 MAR 18 |    49 |        | True    | @F4@   | @F3@   |
-|  2 | @I4@  | Bruce /Wayne/    | M     | 1950 OCT 16 |    71 |        | True    |        | @F4@   |
-|  3 | @I5@  | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |        | True    |        | @F4@   |
-|  4 | @I6@  | Adam /Smith/     | M     | 1949 JUN 6  |    72 |        | True    |        | @F2@   |
-|  5 | @I7@  | Jane /List/      | F     | 1948 SEP 6  |    73 |        | True    |        | @F2@   |
-|  6 | @I10@ | Joe /Lane/       | M     | 1947 DEC 20 |    74 |        | True    |        | @F5@   |
-|  7 | @I11@ | Amy /Luis/       | F     | 1948 JUN 9  |    73 |        | True    |        | @F5@   |
-+----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
-List individuals with age
-Individual:@@I1@@, Age:52
-Individual:@@I2@@, Age:49
-Individual:@@I3@@, Age:14
-Individual:@@I4@@, Age:71
-Individual:@@I5@@, Age:71
-Individual:@@I6@@, Age:72
-Individual:@@I7@@, Age:73
-Individual:@@I8@@, Age:30
-Individual:@@I9@@, Age:30
-Individual:@@I10@@, Age:74
-Individual:@@I11@@, Age:73
 
-List of all deceased individuals
-+----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
-|    | uid   | name         | sex   | birt        |   age | deat        |   alive | famc   | fams   |
-|----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------|
-|  7 | @I8@  | Henry /Lane/ | M     | 1970 OCT 13 |    30 | 2000 NOV 12 |       0 | @F5@   | @F3@   |
-+----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+

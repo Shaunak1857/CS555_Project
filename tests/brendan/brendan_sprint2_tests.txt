@@ -34,49 +34,5 @@ Families
 +----+-------+--------+-------------------+--------+-------------------+-------------+-------+-------------------------------------------------------+
 
 Anomalies/Errors
-ERROR: Family @F1@ cannot marry as they are first cousins..
-Individual(s) involved - I (@I1@), n (@I8@)
-ERROR: Family @F4@ cannot have more than 5 children at once..
-Individual(s) involved - I (@I9@), n (@I10@)
 
-List of all living married individuals
-+----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------+
-|    | uid   | name              | sex   | birt       |   age | deat   | alive   | famc   | fams   |
-|----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------|
-|  0 | @I1@  | John /Personson/  | M     | 2000 JAN 2 |    21 |        | True    | @F2@   | @F1@   |
-|  1 | @I2@  | Jack /Personson/  | M     | 1969 FEB 4 |    52 |        | True    | @F3@   | @F2@   |
-|  2 | @I3@  | Sally /Peopleton/ | F     | 1971 FEB 3 |    50 |        | True    | @F4@   | @F2@   |
-|  3 | @I4@  | Steve /Personson/ | M     | 1945 JUL 6 |    76 |        | True    |        | @F3@   |
-|  4 | @I5@  | Mary /Smith/      | F     | 1948 APR 3 |    73 |        | True    |        | @F3@   |
-|  5 | @I6@  | Jane /Personson/  | F     | 1973 FEB 6 |    48 |        | True    | @F3@   | @F5@   |
-|  6 | @I7@  | Ray /Realperson/  | M     | 1971 DEC 4 |    50 |        | True    | @F6@   | @F5@   |
-|  7 | @I8@  | Judy /Realperson/ | F     | 1998 MAR 6 |    23 |        | True    | @F5@   | @F1@   |
-|  8 | @I9@  | Jack /Fakename/   | M     | 1946 JUN 3 |    75 |        | True    |        | @F4@   |
-|  9 | @I10@ | Judy /Rickles/    | F     | 1948 APR 7 |    73 |        | True    |        | @F4@   |
-| 10 | @I11@ | Max /Realperson/  | M     | 1944 APR 4 |    77 |        | True    |        | @F6@   |
-| 11 | @I12@ | Mary /Jacobs/     | F     | 1946 SEP 4 |    75 |        | True    |        | @F6@   |
-+----+-------+-------------------+-------+------------+-------+--------+---------+--------+--------+
-List individuals with age
-Individual:@@I1@@, Age:21
-Individual:@@I2@@, Age:52
-Individual:@@I3@@, Age:50
-Individual:@@I4@@, Age:76
-Individual:@@I5@@, Age:73
-Individual:@@I6@@, Age:48
-Individual:@@I7@@, Age:50
-Individual:@@I8@@, Age:23
-Individual:@@I9@@, Age:75
-Individual:@@I10@@, Age:73
-Individual:@@I11@@, Age:77
-Individual:@@I12@@, Age:75
-Individual:@@I13@@, Age:51
-Individual:@@I14@@, Age:51
-Individual:@@I15@@, Age:51
-Individual:@@I16@@, Age:51
-Individual:@@I17@@, Age:51
 
-List of all deceased individuals
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+
-| uid   | name   | sex   | birt   | age   | deat   | alive   | famc   | fams   |
-|-------+--------+-------+--------+-------+--------+---------+--------+--------|
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+
