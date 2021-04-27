@@ -1475,6 +1475,93 @@ class Gedcom:
                        headers='keys', tablefmt='psql')
         return out
 
+    # US 31: List living single; List all living people over 30 who have never been married in a GEDCOM file #Rachi
+    def list_living_single(self):
+        import pandas as pd
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+
+        indi = [*cursor.execute("SELECT * FROM individuals where age>30 & fams is NULL")]
+        conn.close()
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+        indi = indi[indi.deat.isna()]
+        indi = indi[pd.to_numeric(indi.age)>30]
+
+        out = tabulate(indi,
+                       headers='keys', tablefmt='psql')
+        return out
+
+    # US 32: List multiple births	List all multiple births in a GEDCOM file #Rachi
+    def list_multiple_births(self):
+        import pandas as pd
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+
+        indi = [*cursor.execute("SELECT * FROM individuals")]
+        fam = [*cursor.execute("SELECT * FROM families")]
+        
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+        
+        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+        conn.close()
+        
+        siblings = [*filter(lambda x:len(x) > 1,
+                                list(map(eval, fam.childrens)))]
+        
+        mlsib = []
+        for sib in siblings:
+            sib = indi[indi.uid.isin(sib)]
+            for s in sib.birt.unique():
+                multisib = sib[sib.birt == s].uid.values.tolist()
+                if len(multisib)>1:
+                    mlsib.extend(multisib)
+        indi = indi[indi.uid.isin(mlsib)]
+        
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+
+        out = tabulate(indi,
+                    headers='keys', tablefmt='psql')
+        return out
+    
+    # US 37: List recent survivors	List all living spouses and descendants of people in a GEDCOM file who died in the last 30 days #Rachi
+    def list_deceased_individual_spouse_descendants(self):
+        import pandas as pd
+        from itertools import chain
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+
+        indi = [*cursor.execute("SELECT * FROM individuals")]
+        fam = [*cursor.execute("SELECT * FROM families")]
+        
+        indi = pd.DataFrame(indi, columns=[
+                            'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
+        
+        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+        
+        conn.close()
+        
+        
+        dead = indi[~indi.deat.isna()]
+        today = datetime.datetime.today().strftime(DEFAULT_DATE_FORMAT)#'2016 JAN 1'
+        dead = dead[dead.deat.apply(lambda deat:(datetime.datetime.strptime(today,DEFAULT_DATE_FORMAT) -\
+                                        datetime.datetime.strptime(deat, DEFAULT_DATE_FORMAT)).days).isin(range(31))]
+        uids = []
+        fams = fam[fam.uid.isin(dead.fams)]
+
+        uids.extend(fams.husb.tolist())
+        uids.extend(fams.wife.tolist())
+        uids.extend([*chain.from_iterable([*map(lambda x:eval(x),fams.childrens.tolist())])])
+        living = indi[indi.uid.isin(uids)]
+        living = living[living.deat.isna()]
+        
+        out = tabulate(living,
+                    headers='keys', tablefmt='psql')
+        
+        return out
+
     def pretty_print(self, filename=None):
         tables = self.__str__()
         print(tables)
@@ -1511,6 +1598,13 @@ class Gedcom:
 
 
 if __name__ == '__main__':
+
+    gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new_1.ged',
+                          db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
+    # gedcom_wrong.pretty_print(
+    #     filename='./tests/rachi/rachi_wrong_new_1.txt')
+
+    """
     
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
                           db='./tests/steven/steven_test_wrong.db', sort='uid')
@@ -1547,3 +1641,5 @@ if __name__ == '__main__':
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
+
+    """
