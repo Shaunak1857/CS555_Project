@@ -432,7 +432,7 @@ class TestGedcomRachi(unittest.TestCase):
         self.ged_correct = Gedcom(
             './tests/rachi/rachi_test_correct.ged', './tests/rachi/rachi_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
-            './tests/rachi/rachi_wrong_new.ged', './tests/rachi/rachi_wrong_new.db', sort='uid')
+            './tests/rachi/rachi_wrong_new_1.ged', './tests/rachi/rachi_wrong_new_1.db', sort='uid')
 
     # US5 : Unit Test, Rachi
     def test_mar_before_deat(self):
@@ -444,7 +444,7 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='Test.db'
+            db= './tests/rachi/rachi_wrong_new_1.db'
         )
 
         expected = ('ERROR', '@I11@', 'has a marriage date after his death date',
@@ -466,7 +466,7 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='Test.db'
+            db='./tests/rachi/rachi_wrong_new.db'
         )
 
         expected = ('ERROR', '@I11@', 'has a divorce date after his death',
@@ -488,11 +488,10 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='./tests/rachi/rachi_wrong_new.db'
+            db='./tests/rachi/rachi_wrong_new_1.db'
         )
 
-        expected = ('ERROR', ['@F3@', '@F10@'], 'Marriage should not occur during marriage to another spouse', [
-                    '@I5@', '@I19@'], ['Jane /Adams/', 'Alisha /Jones/'])
+        expected = ('ERROR', ['@F4@', '@F9@'], 'Marriage should not occur during marriage to another spouse', ['@I9@', '@I18@'], ['Sally /Johnson/', 'Jenny /Fischer/'])
         received = fam_wrong.validate_bigamy()
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -509,7 +508,7 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='./tests/rachi/rachi_wrong_new.db'
+            db='./tests/rachi/rachi_wrong_new_1.db'
         )
 
         # expected = "ERROR : SIBLINGS TOGETHER"
@@ -534,7 +533,7 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='./tests/rachi/rachi_wrong_new.db'
+            db='./tests/rachi/rachi_wrong_new_1.db'
         )
         # expected = """ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
         #                 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)"""
@@ -568,6 +567,14 @@ Individual:@@I18@@, Age:51
 Individual:@@I19@@, Age:81
 Individual:@@I20@@, Age:36
 Individual:@@I21@@, Age:33
+Individual:@@I45@@, Age:34
+Individual:@@I60@@, Age:28
+Individual:@@I61@@, Age:27
+Individual:@@I62@@, Age:22
+Individual:@@I63@@, Age:20
+Individual:@@I30@@, Age:43
+Individual:@@I50@@, Age:19
+Individual:@@I51@@, Age:19
 Individual:@@I22@@, Age:28
 Individual:@@I23@@, Age:28
 '''
@@ -585,8 +592,47 @@ Individual:@@I23@@, Age:28
 | 12 | @I13@ | Ryan /Fredricks/   | M     | 1968 APR 2  |    44 | 2012 MAR 7  |       0 |        | @F7@   |
 | 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 |       0 |        | @F8@   |
 | 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  |       0 |        |        |
+| 23 | @I61@ | Hilton/Day/        | M     | 1994 APR 16 |    27 | 2021 APR 5  |       0 |        | @F88@  |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+'''
         received = self.ged_wrong.list_deceased_individual()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+    # US 31
+    def test_list_living_single(self):
+        expected = '''+----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
+|  2 | @I45@ | James /Hillary/ | M     | 1987 JUL 12 |    34 |        |       1 |        |        |
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.ged_wrong.list_living_single()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+    
+    # US 32
+    def test_list_multiple_births(self):
+        expected = '''+----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
+| 27 | @I50@ | Jamil /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  | @F75@  |
+| 28 | @I51@ | Janet /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  |        |
+| 29 | @I22@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
+| 30 | @I23@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.ged_wrong.list_multiple_births()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    # us 37
+    def test_list_deceased_individual_spouse_descendants(self):
+        expected = '''+----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name           | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------|
+| 22 | @I60@ | Joana /Day/    | F     | 1993 MAR 25 |    28 |        |       1 |        | @F88@  |
+| 24 | @I62@ | Hamilton /Day/ | M     | 1999 JUL 8  |    22 |        |       1 | @F88@  |        |
+| 25 | @I63@ | Leo /Day/      | F     | 2001 JUN 18 |    20 |        |       1 | @F88@  |        |
++----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.ged_wrong.list_deceased_individual_spouse_descendants()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
@@ -911,6 +957,9 @@ def rachi_suite():
     suite.addTest(TestGedcomRachi('test_validate_unique_first_name'))
     suite.addTest(TestGedcomRachi('test_list_individual_with_age'))
     suite.addTest(TestGedcomRachi('test_list_deceased_individual'))
+    suite.addTest(TestGedcomRachi('test_list_living_single'))
+    suite.addTest(TestGedcomRachi('test_list_multiple_births'))
+    suite.addTest(TestGedcomRachi('test_list_deceased_individual_spouse_descendants'))
     # suite.addTest(TestGedcomRachi('test_ged_wrong'))
 
     return suite
@@ -957,7 +1006,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(steven_suite())
+    # runner.run(steven_suite())
     runner.run(rachi_suite())
-    runner.run(brendan_suite())
-    runner.run(shaunak_suite())
+    # runner.run(brendan_suite())
+    # runner.run(shaunak_suite())
