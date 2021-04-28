@@ -166,13 +166,34 @@ class TestGedcomSteven(unittest.TestCase):
 |  3 | @I5@   | Martha /Barbara/ | F     | 1950 SEP 17 |    71 |        | True    |        | @F4@   |
 |  4 | @I6@   | Adam /Smith/     | M     | 1949 JUN 6  |    72 |        | True    |        | @F2@   |
 |  5 | @I7@   | Jane /List/      | F     | 1948 SEP 6  |    73 |        | True    |        | @F2@   |
-|  6 | @I10@  | Joe /Lane/       | M     | 1850 DEC 20 |   171 |        | True    |        | @F5@   |
-|  7 | @I12@  | Alex /Lane/      | M     | 1970 JUN 9  |    51 |        | True    | @F5@   | @F7@   |
-|  8 | @I13@  | Alyssa /Rex/     | F     | 1971 MAY 10 |    50 |        | True    | @F4@   | @F7@   |
-|  9 | @I14@  | Gabe /Lane/      | M     | 1991 MAY 10 |    30 |        | True    | @F7@   | @F8@   |
-| 10 | @I999@ | Not /Real/       | M     | 1991 MAY 10 |    30 |        | True    | @F990@ | @F991@ |
+|  6 | @I12@  | Alex /Lane/      | M     | 1970 JUN 9  |    51 |        | True    | @F5@   | @F7@   |
+|  7 | @I13@  | Alyssa /Rex/     | F     | 1971 MAY 31 |    50 |        | True    | @F4@   | @F7@   |
+|  8 | @I14@  | Gabe /Lane/      | M     | 1991 MAY 10 |    30 |        | True    | @F7@   | @F8@   |
+|  9 | @I999@ | Not /Real/       | M     | 1991 MAY 10 |    30 |        | True    | @F990@ | @F991@ |
 +----+--------+------------------+-------+-------------+-------+--------+---------+--------+--------+'''
         received = self.ged_wrong.list_living_married()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_list_orphans(self):
+        expected = '''+----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name         | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I8@  | Henry /Lane/ | M     | 2010 OCT 13 |    11 | 2021 APR 12 | False   | @F5@   | @F3@   |
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+'''
+        received = self.ged_wrong.list_orphans()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_list_recently_deceased(self):
+        expected = '''+----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+
+|    | uid   | name         | sex   | birt        |   age | deat        | alive   | famc   | fams   |
+|----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------|
+|  0 | @I8@  | Henry /Lane/ | M     | 2010 OCT 13 |    11 | 2021 APR 12 | False   | @F5@   | @F3@   |
+|  1 | @I10@ | Joe /Lane/   | M     | 1850 DEC 20 |   171 | 2021 APR 20 | False   |        | @F5@   |
+|  2 | @I11@ | Amy /Luis/   | F     | 1880 JUN 9  |   141 | 2021 APR 26 | False   |        |        |
++----+-------+--------------+-------+-------------+-------+-------------+---------+--------+--------+'''
+        received = self.ged_wrong.list_recently_deceased()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
@@ -785,7 +806,6 @@ class TestGedcomShaunak(unittest.TestCase):
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         #self.assertEqual(received, expected, msg)
 
-
     def test_partialDatesFamilyMarriage(self):
         familyWrong = Family(
             uid="@F4@",
@@ -798,14 +818,14 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens=[],
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('ERROR', '@F4@', ' include partial marriage date', ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
+        expected = ('ERROR', '@F4@', ' include partial marriage date',
+                    ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
 
         received = familyWrong.validate_includePartialDatesFamilyMarraige()
-       
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
+
     def test_partialDatesFamilyDivorce(self):
         familyWrong = Family(
             uid="@F4@",
@@ -818,17 +838,16 @@ class TestGedcomShaunak(unittest.TestCase):
             childrens=[],
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('ERROR', '@F4@', ' include partial divorce date', ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
+        expected = ('ERROR', '@F4@', ' include partial divorce date',
+                    ['@I2@', '@I13@'], ['Mary Lane', 'Alex Jane'])
 
         received = familyWrong.validate_includePartialDatesFamilyDivorce()
-       
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-    
+
     def test_partialDatesFamilyBirth(self):
-        # 
+        #
         indiWrong = Individual(
             uid='@I1@',
             name='First Last',
@@ -838,13 +857,14 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F2@',
             db='./tests/steven/steven_test_wrong.db'
         )
-        expected = ('ERROR', '@I1@', 'First Last', ' include partial birth date')
+        expected = ('ERROR', '@I1@', 'First Last',
+                    ' include partial birth date')
         received = indiWrong.validate_includePartialDatesIndividualBirth()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
+
     def test_partialDatesFamilyDeath(self):
-        # 
+        #
         indiWrong = Individual(
             uid='@I1@',
             name='First Last',
@@ -854,14 +874,13 @@ class TestGedcomShaunak(unittest.TestCase):
             famc='@F2@',
             db='Test.db'
         )
-        expected = ('ERROR', '@I1@', 'First Last', ' include partial death date')
+        expected = ('ERROR', '@I1@', 'First Last',
+                    ' include partial death date')
         received = indiWrong.validate_includePartialDatesIndividualDeath()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
-        
-        
-        
-        
+
+
 def steven_suite():
     suite = unittest.TestSuite()
     suite.addTest(TestGedcomSteven('test_birt_after_deat'))
@@ -875,7 +894,8 @@ def steven_suite():
     suite.addTest(TestGedcomSteven('test_corresponding_entry_indi'))
     suite.addTest(TestGedcomSteven('test_corresponding_entry_fam'))
     suite.addTest(TestGedcomSteven('test_list_living_married'))
-    suite.addTest(TestGedcomSteven('test_ged_correct'))
+    suite.addTest(TestGedcomSteven('test_list_orphans'))
+    suite.addTest(TestGedcomSteven('test_list_recently_deceased'))
     # suite.addTest(TestGedcomSteven('test_ged_wrong'))
 
     return suite
@@ -885,7 +905,7 @@ def rachi_suite():
     suite = unittest.TestSuite()
     suite.addTest(TestGedcomRachi('test_mar_before_deat'))
     suite.addTest(TestGedcomRachi('test_div_before_deat'))
-    suite.addTest(TestGedcomRachi('test_ged_correct'))
+    # suite.addTest(TestGedcomRachi('test_ged_correct'))
     suite.addTest(TestGedcomRachi('test_siblings'))
     suite.addTest(TestGedcomRachi('test_bigamy'))
     suite.addTest(TestGedcomRachi('test_validate_unique_first_name'))
@@ -923,7 +943,7 @@ def shaunak_suite():
     suite.addTest(TestGedcomShaunak('test_birth_before_marr_US02'))
     suite.addTest(TestGedcomShaunak('test_birth_before_death_of_parents'))
     suite.addTest(TestGedcomShaunak('test2_birth_before_death_of_parents'))
-    suite.addTest(TestGedcomShaunak('test_ged_correct'))
+    # suite.addTest(TestGedcomShaunak('test_ged_correct'))
     suite.addTest(TestGedcomShaunak('test_siblingsShouldNotBeMarried'))
     suite.addTest(TestGedcomShaunak('test_maleSameLastName'))
     suite.addTest(TestGedcomShaunak('test_fewerThan15Siblings'))

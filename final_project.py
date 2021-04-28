@@ -3,6 +3,7 @@ import re
 import os
 import json
 import sqlite3
+from typing import List
 
 import pandas as pd
 from tabulate import tabulate
@@ -96,10 +97,9 @@ class GedcomeItem:
         return families
 
     # Given and individual's famc and uid, select all other individuals that share the same uid.
-    def db_indi_select_by_famc(self, famc, uid):
+    def db_indi_select_by_famc(self, famc):
         select_query = '''SELECT * FROM individuals WHERE famc=?'''
         result = self.db_query(select_query, (famc,))
-
         if not result:
             return []
 
@@ -216,7 +216,7 @@ class Individual(GedcomeItem):
     # Retrieve a list of siblings of this individual (i.e. any individual that shares the same famc)
 
     def siblings(self):
-        siblings = self.db_indi_select_by_famc(self.famc, self.uid)
+        siblings = self.db_indi_select_by_famc(self.famc)
         return siblings
 
     # Retrieve a list of nieces/nephews uid (NOT Individual object) for this individual
@@ -365,8 +365,7 @@ class Individual(GedcomeItem):
             return None
 
         return 'ERROR', self.uid, self.name, msg[:-2]
-    
-    
+
     def validate_includePartialDatesIndividualBirth(self, date_format=DEFAULT_DATE_FORMAT):
         # US 41 @Shaunak1857
         try:
@@ -374,7 +373,7 @@ class Individual(GedcomeItem):
             return None
         except ValueError as err:
             return 'ERROR', self.uid, self.name, ' include partial birth date'
-        
+
     def validate_includePartialDatesIndividualDeath(self, date_format=DEFAULT_DATE_FORMAT):
         # US 41 @Shaunak1857
         try:
@@ -960,9 +959,9 @@ class Family(GedcomeItem):
 
     def list_orderSiblingsByAge(self):
         # US28 @Shaunak1857 Shaunak Saklikar
-        
+
         allChildren = []
-        
+
         if len(self.childrens) > 0:
             for i in self.childrens:
                 child = self.db_indi_select(i)
@@ -972,74 +971,65 @@ class Family(GedcomeItem):
         allChildren.sort(key=lambda x: x.age, reverse=True)
 
         if len(allChildren) > 0:
-            print("The Family " + self.uid + " List of the children in descending order:")
+            print("The Family " + self.uid +
+                  " List of the children in descending order:")
 
         for i in allChildren:
             print(i.name, i.age)
 
         if len(allChildren) > 0:
             print("The for list "+self.uid+" ends here....")
-            
-            
-            
-            
+
     def listLargeAgeDifferences(self, date_format=DEFAULT_DATE_FORMAT):
-        #US 34 @Shaunak1857
+        # US 34 @Shaunak1857
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
-        
+
         husbandAge = husband.age
         wifeAge = wife.age
-        
+
         olderOne = max(husbandAge, wifeAge)
         youngerOne = min(husbandAge, wifeAge)
-        
-        
+
         if 2*youngerOne <= olderOne:
             print(2*youngerOne <= olderOne)
             print("The family "+self.uid+" has large age differenes")
-    
+
     def upcomingAnniversaries(self, date_format=DEFAULT_DATE_FORMAT):
-        #US 39 @Shaunak1857
+        # US 39 @Shaunak1857
         husband = self.db_indi_select(self.husb)
         wife = self.db_indi_select(self.wife)
-        
+
         if husband.deat is not None:
             return None
         if wife.deat is not None:
             return None
-        
-        
-        
+
         marriageDate = datetime.datetime.strptime(self.marr, date_format)
-        today = datetime.date.today();
-        marrDate = datetime.date(today.year, marriageDate.month, marriageDate.day)
-        
+        today = datetime.date.today()
+        marrDate = datetime.date(
+            today.year, marriageDate.month, marriageDate.day)
+
         if abs((marrDate - today).days) <= 30:
-            print('The living couple from '+ self.uid + " has marriage anniversey in next 30 days")
-    
-    
-    
+            print('The living couple from ' + self.uid +
+                  " has marriage anniversey in next 30 days")
+
     def validate_includePartialDatesFamilyMarraige(self, date_format=DEFAULT_DATE_FORMAT):
-        #US 41 @Shaunak1857
+        # US 41 @Shaunak1857
         try:
             marrDate = datetime.datetime.strptime(self.marr, date_format)
             return None
         except ValueError as err:
             return 'ERROR', self.uid, ' include partial marriage date', [self.wife, self.husb], [self.wife_name, self.husb_name]
-            
-        
-        
+
     def validate_includePartialDatesFamilyDivorce(self, date_format=DEFAULT_DATE_FORMAT):
-        #US 41 @Shaunak1857
+        # US 41 @Shaunak1857
         try:
-            
+
             divDate = datetime.datetime.strptime(self.div, date_format)
             return None
         except ValueError as err:
             return 'ERROR', self.uid, ' include partial divorce date', [self.wife, self.husb], [self.wife_name, self.husb_name]
-
-
 
     validations = [validate_marr_before_current_date,
                    validate_div_before_current_date,
@@ -1059,9 +1049,9 @@ class Family(GedcomeItem):
                    validate_corresponding_entry,
                    validate_correctGenderRole,
                    validate_unique_first_name,
-                   #list_orderSiblingsByAge,
-                   #listLargeAgeDifferences,
-                   #upcomingAnniversaries,
+                   # list_orderSiblingsByAge,
+                   # listLargeAgeDifferences,
+                   # upcomingAnniversaries,
                    validate_includePartialDatesFamilyMarraige,
                    validate_includePartialDatesFamilyDivorce
                    ]
@@ -1106,6 +1096,8 @@ class Family(GedcomeItem):
 
 
 class Gedcom:
+    DEFAULT_DATE_FORMAT = '%Y %b %d'
+
     def __init__(self, filename, db, indi_validations=None, fam_validations=None, sort=None):
         self.indi_validations = indi_validations
         self.fam_validations = fam_validations
@@ -1114,23 +1106,24 @@ class Gedcom:
             self.db = db
         else:
             raise
-        
+
         self.duplicateIndividual = False
         self.duplicateFamily = False
         individuals, families, indi_df, fam_df = self.fileparser(filename)
 
         self.indi_df = indi_df
         self.fam_df = fam_df
-        self.individuals = individuals
-        self.families = families
+        self.individuals: List[Individual] = individuals
+        self.families: List[Family] = families
         self.reports = self.validate()
 
         self.lists = {
-            #'List of all living married individuals': self.list_living_married,
-            #'List individuals with age': self.list_individual_with_age(),
-            #'List of all deceased individuals': self.list_deceased_individual,
+            'List of all living married individuals': self.list_living_married,
+            'List individuals with age': self.list_individual_with_age,
+            'List of all deceased individuals': self.list_deceased_individual,
+            'List of all orphans': self.list_orphans,
+            'List of all recently deceased': self.list_recently_deceased
         }
-        
 
         if sort is not None:
             self.sort(sort)
@@ -1328,32 +1321,30 @@ class Gedcom:
                 if(elems[0] == '0'):
                     if(indi == 1):  # adding the last object in the file
                         # insert individual into database
-                        try: 
+                        try:
                             self.db_insert(indiData)
                             individuals.append(indiData)
                             indi_df = indi_df.append(
-                                    indiData.as_dict(), ignore_index=True)
+                                indiData.as_dict(), ignore_index=True)
                             indiData = Individual(
-                                        db=self.db, additional_validations=self.indi_validations)
+                                db=self.db, additional_validations=self.indi_validations)
                             indi = 0
                         except:
                             self.duplicateIndividual = True
-                            
 
-                        
                         # report = indiData.validate()
                         # if len(report) > 0:
                         #     reports[i] = report
-                        
+
                     if(fam == 1):
                         # Insert family into database
                         try:
                             self.db_insert(familyData)
                             families.append(familyData)
                             fam_df = fam_df.append(
-                                    familyData.as_dict(), ignore_index=True)
+                                familyData.as_dict(), ignore_index=True)
                             familyData = Family(
-                                    db=self.db, additional_validations=self.indi_validations)
+                                db=self.db, additional_validations=self.indi_validations)
                             fam = 0
                         except:
                             self.duplicateFamily = True
@@ -1361,7 +1352,7 @@ class Gedcom:
                         # report = familyData.validate()
                         # if len(report) > 0:
                         #     reports[i] = report
-                        
+
                     if(elems[1] in ['NOTE', 'TRLR', 'HEAD']):
                         pass
                     else:
@@ -1375,18 +1366,18 @@ class Gedcom:
         return individuals, families, indi_df.reset_index(drop=True), fam_df.reset_index(drop=True)
 
     # Gedcom wide file validation
-    #US 22- Brendan- File Wide Unique Ids
+    # US 22- Brendan- File Wide Unique Ids
     def validate_filewide_unique_individual_id(self):
         if self.duplicateIndividual:
             return 'ERROR- filewide ids for individuals must be unique'
         return None
-    
+
     def validate_filewide_unique_family_id(self):
         if self.duplicateFamily:
             return 'ERROR- filewide ids for families must be unique'
         return None
-    
-    #US 23- Brendan- Individuals must all have unique name birth combinations
+
+    # US 23- Brendan- Individuals must all have unique name birth combinations
     def validate_filewide_unique_individual_combination(self):
         individuals = {}
         for i in self.individuals:
@@ -1397,7 +1388,7 @@ class Gedcom:
                 individuals[i.name] = i.birt
         return None
 
-    #US 24- Brendan- Families must all have unique spouse name wedding date combinations
+    # US 24- Brendan- Families must all have unique spouse name wedding date combinations
     def validate_filewide_unique_family_combination(self):
         families = {}
         for f in self.families:
@@ -1408,12 +1399,37 @@ class Gedcom:
                 families[(f.husb_name, f.wife_name)] = f.marr
         return None
 
+    # US 42 Steven verify dates are correct
+    def validate_filewide_correct_date(self, date_format=DEFAULT_DATE_FORMAT):
+        error = ''
 
-    validations = [#validate_filewide_unique_individual_id,
-                  #validate_filewide_unique_family_id,
-                  #validate_filewide_unique_individual_combination,
-                  #validate_filewide_unique_family_combination
-                  ]
+        for i in self.individuals:
+            try:
+                datetime.datetime.strptime(i.birt, date_format)
+                if i.deat is not None:
+                    datetime.datetime.strptime(i.deat, date_format)
+            except ValueError:
+                error += i.uid + ' is created with incorrect date format\n'
+
+        for f in self.families:
+            try:
+                datetime.datetime.strptime(f.marr, date_format)
+                if f.div is not None:
+                    datetime.datetime.strptime(f.div, date_format)
+            except ValueError:
+                error += f.uid + ' is created with incorrect date format\n'
+
+        if error:
+            return error
+        return None
+
+    validations = [
+        validate_filewide_unique_individual_id,
+        validate_filewide_unique_family_id,
+        validate_filewide_unique_individual_combination,
+        validate_filewide_unique_family_combination,
+        validate_filewide_correct_date
+    ]
 
     def fileValidate(self, debug=False):
         messages = []
@@ -1481,12 +1497,13 @@ class Gedcom:
         conn = sqlite3.connect(self.db)
         cursor = conn.cursor()
 
-        indi = [*cursor.execute("SELECT * FROM individuals where age>30 & fams is NULL")]
+        indi = [
+            *cursor.execute("SELECT * FROM individuals where age>30 & fams is NULL")]
         conn.close()
         indi = pd.DataFrame(indi, columns=[
                             'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
         indi = indi[indi.deat.isna()]
-        indi = indi[pd.to_numeric(indi.age)>30]
+        indi = indi[pd.to_numeric(indi.age) > 30]
 
         out = tabulate(indi,
                        headers='keys', tablefmt='psql')
@@ -1500,32 +1517,33 @@ class Gedcom:
 
         indi = [*cursor.execute("SELECT * FROM individuals")]
         fam = [*cursor.execute("SELECT * FROM families")]
-        
+
         indi = pd.DataFrame(indi, columns=[
                             'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
-        
-        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+
+        fam = pd.DataFrame(fam, columns=[
+                           'uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
         conn.close()
-        
+
         siblings = [*filter(lambda x:len(x) > 1,
-                                list(map(eval, fam.childrens)))]
-        
+                            list(map(eval, fam.childrens)))]
+
         mlsib = []
         for sib in siblings:
             sib = indi[indi.uid.isin(sib)]
             for s in sib.birt.unique():
                 multisib = sib[sib.birt == s].uid.values.tolist()
-                if len(multisib)>1:
+                if len(multisib) > 1:
                     mlsib.extend(multisib)
         indi = indi[indi.uid.isin(mlsib)]
-        
+
         indi = pd.DataFrame(indi, columns=[
                             'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
 
         out = tabulate(indi,
-                    headers='keys', tablefmt='psql')
+                       headers='keys', tablefmt='psql')
         return out
-    
+
     # US 37: List recent survivors	List all living spouses and descendants of people in a GEDCOM file who died in the last 30 days #Rachi
     def list_deceased_individual_spouse_descendants(self):
         import pandas as pd
@@ -1535,32 +1553,58 @@ class Gedcom:
 
         indi = [*cursor.execute("SELECT * FROM individuals")]
         fam = [*cursor.execute("SELECT * FROM families")]
-        
+
         indi = pd.DataFrame(indi, columns=[
                             'uid', 'name', 'sex', 'birt', 'age', 'deat', 'alive', 'famc', 'fams'])
-        
-        fam = pd.DataFrame(fam, columns=['uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
-        
+
+        fam = pd.DataFrame(fam, columns=[
+                           'uid', 'husb', 'husb_name', 'wife', 'wife_name', 'marr', 'div', 'childrens'])
+
         conn.close()
-        
-        
+
         dead = indi[~indi.deat.isna()]
-        today = datetime.datetime.today().strftime(DEFAULT_DATE_FORMAT)#'2016 JAN 1'
-        dead = dead[dead.deat.apply(lambda deat:(datetime.datetime.strptime(today,DEFAULT_DATE_FORMAT) -\
-                                        datetime.datetime.strptime(deat, DEFAULT_DATE_FORMAT)).days).isin(range(31))]
+        today = datetime.datetime.today().strftime(DEFAULT_DATE_FORMAT)  # '2016 JAN 1'
+        dead = dead[dead.deat.apply(lambda deat:(datetime.datetime.strptime(today, DEFAULT_DATE_FORMAT) -
+                                                 datetime.datetime.strptime(deat, DEFAULT_DATE_FORMAT)).days).isin(range(31))]
         uids = []
         fams = fam[fam.uid.isin(dead.fams)]
 
         uids.extend(fams.husb.tolist())
         uids.extend(fams.wife.tolist())
-        uids.extend([*chain.from_iterable([*map(lambda x:eval(x),fams.childrens.tolist())])])
+        uids.extend(
+            [*chain.from_iterable([*map(lambda x:eval(x), fams.childrens.tolist())])])
         living = indi[indi.uid.isin(uids)]
         living = living[living.deat.isna()]
-        
+
         out = tabulate(living,
-                    headers='keys', tablefmt='psql')
-        
+                       headers='keys', tablefmt='psql')
+
         return out
+
+    # US33 Steven Zhao
+    def list_orphans(self):
+        indis = pd.DataFrame(columns=self.indi_df.columns)
+        for indi in self.individuals:
+            parents: List[Individual] = indi.parents()
+            orphaned = True if indi.age < 18 else False
+            for p in parents:
+                if p.alive:
+                    orphaned = False
+                    break
+            if orphaned:
+                indis = indis.append(indi.as_dict(), ignore_index=True)
+        return tabulate(indis, headers='keys', tablefmt='psql')
+
+    # US36 Steven Zhao
+    def list_recently_deceased(self, date_format=DEFAULT_DATE_FORMAT):
+        indis = pd.DataFrame(columns=self.indi_df.columns)
+        for indi in self.individuals:
+            if indi.deat is not None:
+                death_date = datetime.datetime.strptime(indi.deat, date_format)
+                today = datetime.datetime.now()
+                if abs((today - death_date).days <= 31):
+                    indis = indis.append(indi.as_dict(), ignore_index=True)
+        return tabulate(indis, headers='keys', tablefmt='psql')
 
     def pretty_print(self, filename=None):
         tables = self.__str__()
@@ -1599,47 +1643,43 @@ class Gedcom:
 
 if __name__ == '__main__':
 
-    gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new_1.ged',
-                          db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
+    # gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new_1.ged',
+    #                       db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
     # gedcom_wrong.pretty_print(
     #     filename='./tests/rachi/rachi_wrong_new_1.txt')
 
-    """
-    
     gedcom_wrong = Gedcom('./tests/steven/steven_test_wrong.ged',
                           db='./tests/steven/steven_test_wrong.db', sort='uid')
     gedcom_wrong.pretty_print(
         filename='./tests/steven/steven_gedcom_wrong_table.txt')
-    
-    gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
-                            db='./tests/steven/steven_test_correct.db', sort='uid')
-    gedcom_correct.pretty_print(
-        filename='./tests/steven/steven_gedcom_correct_table.txt')
 
-    gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
-    gedcom1.pretty_print(filename='gedcom1_table.txt')
+    # gedcom_correct = Gedcom('./tests/steven/steven_test_correct.ged',
+    #                         db='./tests/steven/steven_test_correct.db', sort='uid')
+    # gedcom_correct.pretty_print(
+    #     filename='./tests/steven/steven_gedcom_correct_table.txt')
 
-    gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
-                     db='./tests/brendan/brendan_test_wrong.db', sort='uid')
-    gedcom2.pretty_print(
-        filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
+    # gedcom1 = Gedcom('Test.ged', db='Test.db', sort='uid')
+    # gedcom1.pretty_print(filename='gedcom1_table.txt')
 
-    gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new.ged',
-                          db='./tests/rachi/rachi_wrong_new.db', sort='uid')
-    gedcom_wrong.pretty_print(
-        filename='./tests/rachi/Sprint_3_Rachi.txt')
+    # gedcom2 = Gedcom('./tests/brendan/brendan_test_wrong.ged',
+    #                  db='./tests/brendan/brendan_test_wrong.db', sort='uid')
+    # gedcom2.pretty_print(
+    #     filename='./tests/brendan/brendan_gedcom_wrong_table.txt')
 
-    brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
-                             db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
-    brendan_sprint2.pretty_print(
-        filename='./tests/brendan/brendan_sprint2_tests.txt')
-    
-    brendan_sprint3 = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
-                            db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
-    brendan_sprint3.pretty_print(
-        filename='./tests/brendan/brendan_sprint3_test.txt')
+    # gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new.ged',
+    #                       db='./tests/rachi/rachi_wrong_new.db', sort='uid')
+    # gedcom_wrong.pretty_print(
+    #     filename='./tests/rachi/Sprint_3_Rachi.txt')
+
+    # brendan_sprint2 = Gedcom('./tests/brendan/brendan_sprint2_tests.ged',
+    #                          db='./tests/brendan/brendan_sprint2_tests.db', sort='uid')
+    # brendan_sprint2.pretty_print(
+    #     filename='./tests/brendan/brendan_sprint2_tests.txt')
+
+    # brendan_sprint3 = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
+    #                         db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+    # brendan_sprint3.pretty_print(
+    #     filename='./tests/brendan/brendan_sprint3_test.txt')
 
     # gedcomShaunakWrong = Gedcom('./tests/shaunak/test_shaunak.ged', db='./tests/shaunak/test_shaunak.db', sort='uid')
     # gedcomShaunakWrong.pretty_print(filename='gedcomShaunak_table.txt')
-
-    """
