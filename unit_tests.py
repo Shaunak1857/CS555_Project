@@ -230,6 +230,8 @@ class TestGedcomBrendan(unittest.TestCase):
             './tests/steven/steven_test_correct.ged', './tests/steven/steven_test_correct.db', sort='uid')
         self.ged_wrong = Gedcom(
             './tests/brendan/brendan_test_wrong.ged', './tests/brendan/brendan_test_wrong.db', sort='uid')
+        self.sprint4 = Gedcom(
+            './tests/brendan/brendan_sprint4_tests.ged', './tests/brendan/brendan_sprint4_tests.db', sort='uid')
 
     # US1: Unit Test, Brendan
 
@@ -402,6 +404,29 @@ class TestGedcomBrendan(unittest.TestCase):
 
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
 
+        self.assertEqual(received, expected, msg)
+    
+    def test_list_recently_born(self):
+        expected = '''+----+-------+---------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name          | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+---------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I4@  | Tyler /Smith/ | M     | 2021 APR 19 |     0 |        | True    | @F1@   |        |
+|  1 | @I5@  | Jake /Smith/  | M     | 2021 APR 19 |     0 |        | True    | @F1@   |        |
++----+-------+---------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.sprint4.list_recently_born()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
+        self.assertEqual(received, expected, msg)
+
+    def test_list_upcoming_birthday(self):
+        expected = '''+----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat   | alive   | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
+|  0 | @I1@  | Susan /Philips/ | F     | 1979 MAY 24 |    42 |        | True    |        | @F1@   |
+|  1 | @I2@  | Steve /Smith/   | M     | 1980 MAY 22 |    41 |        | True    |        | @F1@   |
+|  2 | @I3@  | John /Smith/    | M     | 2000 MAY 21 |    21 |        | True    | @F1@   |        |
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+'''
+        received = self.sprint4.list_upcoming_birthday()
+        msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
         self.assertEqual(received, expected, msg)
 
     def test_ged_correct(self):
@@ -978,9 +1003,10 @@ def brendan_suite():
     suite.addTest(TestGedcomBrendan('test_first_cousin_marriage'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_individual_ids'))
     suite.addTest(TestGedcomBrendan('test_unique_filewide_family_ids'))
-    suite.addTest(TestGedcomBrendan(
-        'test_filewide_unique_individual_combination'))
+    suite.addTest(TestGedcomBrendan('test_filewide_unique_individual_combination'))
     suite.addTest(TestGedcomBrendan('test_filewide_unique_family_combination'))
+    suite.addTest(TestGedcomBrendan('test_list_recently_born'))
+    suite.addTest(TestGedcomBrendan('test_list_upcoming_birthday'))
     # suite.addTest(TestGedcomBrendan('test_ged_wrong'))
 
     return suite
@@ -1006,7 +1032,7 @@ def shaunak_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    # runner.run(steven_suite())
+    runner.run(steven_suite())
     runner.run(rachi_suite())
-    # runner.run(brendan_suite())
-    # runner.run(shaunak_suite())
+    runner.run(brendan_suite())
+    runner.run(shaunak_suite())

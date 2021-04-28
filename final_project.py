@@ -1,4 +1,5 @@
 import datetime
+from datetime import timedelta, date
 import re
 import os
 import json
@@ -1125,7 +1126,9 @@ class Gedcom:
             'List individuals with age': self.list_individual_with_age,
             'List of all deceased individuals': self.list_deceased_individual,
             'List of all orphans': self.list_orphans,
-            'List of all recently deceased': self.list_recently_deceased
+            'List of all recently deceased': self.list_recently_deceased,
+            'List of all recently born': self.list_recently_born,
+            'List of all who have a birthday coming up': self.list_upcoming_birthday
         }
 
         if sort is not None:
@@ -1607,6 +1610,35 @@ class Gedcom:
                     indis = indis.append(indi.as_dict(), ignore_index=True)
         return tabulate(indis, headers='keys', tablefmt='psql')
 
+    def list_recently_born(self, date_format=DEFAULT_DATE_FORMAT):
+        indis = pd.DataFrame(columns=self.indi_df.columns)
+        for indi in self.individuals:
+            birth_date = datetime.datetime.strptime(indi.birt, date_format)
+            today = datetime.datetime.now()
+            if (today-birth_date).days <= 30:
+                indis = indis.append(indi.as_dict(), ignore_index=True)
+        return tabulate(indis, headers='keys', tablefmt='psql')
+
+    def calculateAge(self,birthdate):
+        days_in_year = 365.2425    
+        age = int((date.today() - birthdate).days / days_in_year)
+        return age
+
+    def calculateAgeIn30Days(self,birthdate):
+        future = date.today() + timedelta(days=30)
+        days_in_year = 365.2425 
+        age = int((future - birthdate).days / days_in_year)
+        return age
+    
+    def list_upcoming_birthday(self, date_format=DEFAULT_DATE_FORMAT):
+        indis = pd.DataFrame(columns=self.indi_df.columns)
+        for indi in self.individuals:
+            birth_date = datetime.datetime.strptime(indi.birt, date_format).date()
+            
+            if self.calculateAgeIn30Days(birth_date) != self.calculateAge(birth_date):
+                indis = indis.append(indi.as_dict(), ignore_index=True)
+        return tabulate(indis, headers='keys', tablefmt='psql')
+
     def pretty_print(self, filename=None):
         tables = self.__str__()
         print(tables)
@@ -1649,8 +1681,14 @@ if __name__ == '__main__':
                           db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
     gedcom_wrong.pretty_print(
         filename='./tests/rachi/rachi_wrong_new_1.txt')
-    
+
     '''
+    #brendan_sprint4 = Gedcom('./tests/brendan/brendan_sprint4_tests.ged',
+    #                        db='./tests/brendan/brendan_sprint4_tests.db', sort='uid')
+    #brendan_sprint4.pretty_print(
+    #     filename='./tests/brendan/brendan_sprint4_tests.txt')
+    
+    
     # gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new_1.ged',
     #                       db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
     # gedcom_wrong.pretty_print(
@@ -1684,8 +1722,8 @@ if __name__ == '__main__':
     # brendan_sprint2.pretty_print(
     #     filename='./tests/brendan/brendan_sprint2_tests.txt')
 
-    # brendan_sprint3 = Gedcom('./tests/brendan/brendan_sprint3_test.ged',
-    #                         db='./tests/brendan/brendan_sprint3_tests.db', sort='uid')
+    # brendan_sprint4 = Gedcom('./tests/brendan/brendan_sprint4_tests.ged',
+    #                         db='./tests/brendan/brendan_sprint4_tests.db', sort='uid')
     # brendan_sprint3.pretty_print(
     #     filename='./tests/brendan/brendan_sprint3_test.txt')
 
