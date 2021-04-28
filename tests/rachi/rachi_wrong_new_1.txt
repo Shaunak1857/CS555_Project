@@ -63,82 +63,80 @@ ERROR: Leo /Day/ (@I63@) is born before 9 months after death of father.
 ERROR: Jamil /Johnson/ (@I50@) has married before its birth date.
 ERROR: Family @F70@  has married before the age of 14.
 Individual(s) involved - @I20@ (Jack /Lopez/), @I21@ (Hilary /Lopez/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F88@  has married before the age of 14.
 Individual(s) involved - @I61@ (Hilton/Day/), @I60@ (Joana /Day/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 Error:: Family @F75@  doesnt have sme male last names.
 Individual(s) involved - @I45@ (James /Hillary/), @I51@ (Janet /Johnson/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F75@ Wife @30@ does not exist.
 Individual(s) involved - @30@ (Does Not Exist)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F2@ has a divorce date later than today's date.
 Individual(s) involved - @I6@ (Steven /Tester/), @I7@ (Lilian /Roberts/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F4@ has a marriage date later than today's date.
 Individual(s) involved - @I3@ (Steve /Tester/), @I9@ (Sally /Johnson/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F5@ Alexa /Fakename/ is more than 60 years older than her child Rick /Smith/, Alex /Smith/ is more than 80 years older than his child Rick /Smith/.
 Individual(s) involved - @I11@ (Alexa /Fakename/), @I10@ (Alex /Smith/), @I4@ (Rick /Smith/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @I17@ has a divorce date after her death.
 Individual(s) involved - @I16@ (Jason /Johnson/), @I17@ (Alyssa /Peterson/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @I13@ has a marriage date after his death date.
 Individual(s) involved - @I13@ (Ryan /Fredricks/), @I12@ (Amy /Tester/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @I15@ has a divorce date after her death.
 Individual(s) involved - @I14@ (Jimmy /Smith/), @I15@ (Jackie /Jergensen/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F9@  has married before the age of 14.
 Individual(s) involved - @I3@ (Steve /Tester/), @I18@ (Jenny /Fischer/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F10@  has married before the age of 14.
 Individual(s) involved - @I4@ (Rick /Smith/), @I19@ (Alisha /Jones/)
-ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
-Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+ERROR: Family ['@F3@', '@F10@'] Marriage should not occur during marriage to another spouse.
+Individual(s) involved - @I5@ (Jane /Adams/), @I19@ (Alisha /Jones/)
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
-ERROR- filewide ids for individuals must be unique
-ERROR- filewide name birth combinations must be unique
 
 List of all living married individuals
 +----+-------+------------------+-------+-------------+-------+--------+---------+--------+--------+
@@ -207,15 +205,26 @@ List of all deceased individuals
 | 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  |       0 |        |        |
 | 23 | @I61@ | Hilton/Day/        | M     | 1994 APR 16 |    27 | 2021 APR 5  |       0 |        | @F88@  |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+
-List of all orphans
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+
-| uid   | name   | sex   | birt   | age   | deat   | alive   | famc   | fams   |
-|-------+--------+-------+--------+-------+--------+---------+--------+--------|
-+-------+--------+-------+--------+-------+--------+---------+--------+--------+
-List of all recently deceased
-+----+-------+--------------+-------+-------------+-------+------------+---------+--------+--------+
-|    | uid   | name         | sex   | birt        |   age | deat       | alive   | famc   | fams   |
-|----+-------+--------------+-------+-------------+-------+------------+---------+--------+--------|
-|  0 | @I2@  | Mary /Smith/ | F     | 1968 MAR 12 |    57 | 2025 MAR 8 | False   | @F3@   | @F1@   |
-|  1 | @I61@ | Hilton/Day/  | M     | 1994 APR 16 |    27 | 2021 APR 5 | False   |        | @F88@  |
-+----+-------+--------------+-------+-------------+-------+------------+---------+--------+--------+
+List all living people over 30 who have never been married in a GEDCOM file
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
+|  2 | @I45@ | James /Hillary/ | M     | 1987 JUL 12 |    34 |        |       1 |        |        |
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+List all multiple births in a GEDCOM file
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name            | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
+| 27 | @I50@ | Jamil /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  | @F75@  |
+| 28 | @I51@ | Janet /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  |        |
+| 29 | @I22@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
+| 30 | @I23@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
++----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+
+List all living spouses and descendants of people in a GEDCOM file who died in the last 30 days
++----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------+
+|    | uid   | name           | sex   | birt        |   age | deat   |   alive | famc   | fams   |
+|----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------|
+| 22 | @I60@ | Joana /Day/    | F     | 1993 MAR 25 |    28 |        |       1 |        | @F88@  |
+| 24 | @I62@ | Hamilton /Day/ | M     | 1999 JUL 8  |    22 |        |       1 | @F88@  |        |
+| 25 | @I63@ | Leo /Day/      | F     | 2001 JUN 18 |    20 |        |       1 | @F88@  |        |
++----+-------+----------------+-------+-------------+-------+--------+---------+--------+--------+
