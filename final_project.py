@@ -384,7 +384,8 @@ class Individual(GedcomeItem):
             return 'ERROR', self.uid, self.name, ' include partial death date'
 
     validations = [validate_birth_before_current_date,
-                   validate_death_before_current_date, birth_before_death_of_parents,
+                   validate_death_before_current_date, 
+                   birth_before_death_of_parents,
                    birth_before_marr_US02,
                    validate_birt_deat,
                    validate_birt_before_marr,
@@ -555,48 +556,61 @@ class Family(GedcomeItem):
     # US6 - Divorce can only occur before death of both spouses
     def validate_divorce_before_death(self, date_format=DEFAULT_DATE_FORMAT):
         if self.div is None:
+            # print("No Divorce")
             # not divroced
             return None
         else:
             # only if divorced
+            # print("YEs Divorce")
             divorce_date = datetime.datetime.strptime(self.div, date_format)
             husb, wife = self.db_indi_select(
                 uid=self.husb), self.db_indi_select(uid=self.wife)
 
             if husb.deat is None:
+                # print("Husb Living")
                 # husb living
                 if wife.deat is None:
+                    # print("Wife Living ")
                     # wife living
                     return None
                 else:
+                    # print("Wife Dead ")
                     # wife is dead, check error
                     wifedeat = datetime.datetime.strptime(
                         wife.deat, date_format)
                     if (wifedeat - divorce_date).days < 0:
+                        # print(f"Error=: {self.wife, self.husb}")
                         # husband alive, wife died but error, wife might be dead before divorce
                         return 'ERROR', self.wife, 'has a divorce date after her death', [self.husb, self.wife], [self.husb_name, self.wife_name]
                     else:
+                        # print(f"NO Error: {self.wife, self.husb}")
                         # husband alive, wife died but no error
                         return None
             else:
                 # husb died, and check error
+                # print("Husb Died")
                 husbdeat = datetime.datetime.strptime(husb.deat, date_format)
                 if (husbdeat - divorce_date).days < 0:
                     # husband dided and there is an error
+                    # print("Error : {self.wife, self.husb}")
                     return 'ERROR', self.husb, 'has a divorce date after his death', [self.husb, self.wife], [self.husb_name, self.wife_name]
                 else:
                     if wife.deat is None:
                         # wife living
+                        # print("Wife not dead")
                         return None
                     else:
                         # wife is dead, check error
                         wifedeat = datetime.datetime.strptime(
                             wife.deat, date_format)
                         if (wifedeat - divorce_date).days < 0:
+                            # print(f"Error=: {self.wife, self.husb}")
                             # husband alive, wife died but error, wife might be dead before divorce
                             return 'ERROR', self.wife, 'has a divorce date after her death', [self.husb, self.wife], [self.husb_name, self.wife_name]
+
                         else:
                             # husband alive, wife died but no error
+                            # print(f"From HERe NO Error: {self.wife, self.husb}")
                             return None
 
     # US 11 No Bigamy #Rachi

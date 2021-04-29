@@ -470,6 +470,7 @@ class TestGedcomRachi(unittest.TestCase):
             marr='2000 MAY 5',
             div='1999 MAY 5',
             db= './tests/rachi/rachi_wrong_new_1.db'
+            
         )
 
         expected = ('ERROR', '@I11@', 'has a marriage date after his death date',
@@ -491,11 +492,15 @@ class TestGedcomRachi(unittest.TestCase):
             wife_name='Susan Johnson',
             marr='2000 MAY 5',
             div='1999 MAY 5',
-            db='./tests/rachi/rachi_wrong_new.db'
+            db='./tests/rachi/rachi_wrong_new_1.db'
         )
+
+        
 
         expected = ('ERROR', '@I11@', 'has a divorce date after his death',
                     ['@I11@', '@I2@'], ['Joe Philipson', 'Susan Johnson'])
+        
+        expected = None
 
         received = fam_wrong.validate_divorce_before_death()
 
@@ -600,6 +605,8 @@ Individual:@@I63@@, Age:20
 Individual:@@I30@@, Age:43
 Individual:@@I50@@, Age:19
 Individual:@@I51@@, Age:19
+Individual:@@I90@@, Age:25
+Individual:@@I91@@, Age:18
 Individual:@@I22@@, Age:28
 Individual:@@I23@@, Age:28
 '''
@@ -618,6 +625,7 @@ Individual:@@I23@@, Age:28
 | 14 | @I15@ | Jackie /Jergensen/ | F     | 1974 FEB 4  |    43 | 2017 DEC 21 |       0 |        | @F8@   |
 | 16 | @I17@ | Alyssa /Peterson/  | F     | 1971 MAR 5  |    41 | 2012 FEB 3  |       0 |        |        |
 | 23 | @I61@ | Hilton/Day/        | M     | 1994 APR 16 |    27 | 2021 APR 5  |       0 |        | @F88@  |
+| 30 | @I91@ | Sam /Jade/         | F     | 1997 JAN 10 |    18 | 2015 FEB 6  |       0 | @120@  |        |
 +----+-------+--------------------+-------+-------------+-------+-------------+---------+--------+--------+'''
         received = self.ged_wrong.list_deceased_individual()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
@@ -641,8 +649,8 @@ Individual:@@I23@@, Age:28
 |----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------|
 | 27 | @I50@ | Jamil /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  | @F75@  |
 | 28 | @I51@ | Janet /Johnson/ | M     | 2002 AUG 26 |    19 |        |       1 | @F75@  |        |
-| 29 | @I22@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
-| 30 | @I23@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
+| 31 | @I22@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
+| 32 | @I23@ | Julio /Lopez/   | M     | 1993 APR 9  |    28 |        |       1 | @F70@  |        |
 +----+-------+-----------------+-------+-------------+-------+--------+---------+--------+--------+'''
         received = self.ged_wrong.list_multiple_births()
         msg = 'Expected:\n' + str(expected) + '\nReceived:\n' + str(received)
