@@ -132,6 +132,7 @@ ERROR: Family @F9@  has married before the age of 14.
 Individual(s) involved - @I3@ (Steve /Tester/), @I18@ (Jenny /Fischer/)
 ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
 Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+<<<<<<< HEAD
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @I91@ has a divorce date after her death.
@@ -140,6 +141,8 @@ ERROR: Family @F120@  are married siblings.
 Individual(s) involved - @I90@ (Alis /Jade/), @I91@ (Sam /Jade/)
 ERROR: Family ['@F4@', '@F9@'] Marriage should not occur during marriage to another spouse.
 Individual(s) involved - @I9@ (Sally /Johnson/), @I18@ (Jenny /Fischer/)
+=======
+>>>>>>> efb9c15149afaca39973d66c74980f3f0376d35f
 ERROR: Family @F70@ No more than one child with the same name and birth date should appear in a family.
 Individual(s) involved - @I22@ (Julio /Lopez/), @I23@ (Julio /Lopez/)
 ERROR: Family @F10@  has married before the age of 14.

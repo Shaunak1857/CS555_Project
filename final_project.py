@@ -4,7 +4,9 @@ import re
 import os
 import json
 import sqlite3
+import argparse
 from typing import List
+import sys
 
 import pandas as pd
 from tabulate import tabulate
@@ -1690,13 +1692,32 @@ class Gedcom:
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', help="required: filename of gedcom file being parsed")
+    args = parser.parse_args()
 
+    if args.filename.endswith('.ged' )== False:
+	    print('file must be a gedcom file to parse')
+	    sys.exit()
+
+    try:
+        dbName = args.filename.replace('.ged', '.db')
+        fName = args.filename.replace('.ged','.txt')
+        print(dbName)
+        inputGedcom = Gedcom(args.filename, db=dbName, sort='uid')
+
+        inputGedcom.pretty_print(filename=fName)
+    except:
+        print('Unable to read file')
+        sys.exit()
+
+    '''
     gedcom_wrong = Gedcom('./tests/rachi/rachi_wrong_new_1.ged',
                           db='./tests/rachi/rachi_wrong_new_1.db', sort='uid')
     gedcom_wrong.pretty_print(
         filename='./tests/rachi/rachi_wrong_new_1.txt')
 
-    '''
+    
     #brendan_sprint4 = Gedcom('./tests/brendan/brendan_sprint4_tests.ged',
     #                        db='./tests/brendan/brendan_sprint4_tests.db', sort='uid')
     #brendan_sprint4.pretty_print(
